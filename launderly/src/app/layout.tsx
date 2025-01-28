@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ToastContainer } from "react-toastify";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
 
@@ -19,6 +20,13 @@ export default function RootLayout({
       >
         <Toaster/>
         {children}
+        <ToastContainer
+            draggable
+            closeOnClick
+            autoClose={5000}
+            theme="dark"
+            position="bottom-right"
+          />
       </body>
     </html>
   );

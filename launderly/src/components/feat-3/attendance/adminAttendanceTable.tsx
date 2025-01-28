@@ -1,4 +1,7 @@
+"use client"
 import { formatTime } from "@/helpers/timeFormatter";
+import Pagination from "../paginationButton";
+import { useState } from "react";
 
 interface IAttendanceTable {
     date: string;
@@ -9,6 +12,12 @@ interface IAttendanceTable {
     username: string
 }
 export default function AttendanceTable({date, workHour, checkIn, checkOut, id, username}: IAttendanceTable) {
+      const [currentPage, setCurrentPage] = useState(1);
+      const [totalPages, setTotalPages] = useState(1);
+      const handlePageChange = (page: number) => {
+        setCurrentPage(page);
+      };
+    
     return(
         <div>
           <table className="table-fixed">
@@ -43,6 +52,7 @@ export default function AttendanceTable({date, workHour, checkIn, checkOut, id, 
     </tr>
   </tbody>
 </table>
+ <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
         </div>
     )
 }

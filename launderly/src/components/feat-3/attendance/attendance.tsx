@@ -77,7 +77,7 @@ export default function WorkerAttendance( {id, name, role, profile}: IProfile ) 
     return(
         <div className="flex bg-neutral-100 lg:py-8 p-3 lg:px-10 rounded-xl justify-evenly items-center shadow-md lg:mx-2">
             <div className="flex flex-col justify-center items-start h-full w-full">
-            <p className="text-white w-max bg-blue-300 px-2 rounded-xl mb-1">{formatDate(new Date().toISOString())}</p>
+            <p className="text-white border-blue-600 w-max bg-blue-400 px-2 rounded-xl mb-1">{formatDate(new Date().toISOString())}</p>
                 <h1>id: {id}</h1>
                 <h1>name: {name}</h1>
                 <h1>{role}</h1>

@@ -33,7 +33,7 @@ export default function Attendance() {
   const [sortBy, setSortBy] = useState<string>("createdAt");
   const [order, setOrder] = useState<{ [key: string]: "asc" | "desc" }>({
     createdAt: "desc",
-    workHour: "desc",
+    workHour: "asc",
   });
 
   const getData = async (page: number, sortBy: string, order: "asc" | "desc") => {
@@ -47,7 +47,6 @@ export default function Attendance() {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
       const result: ApiResponse = await res.json();
-      console.log("Data received:", result);
       setAttendanceData(result.data);
       setTotalPages(result.pagination.totalPages);
       setCurrentPage(result.pagination.page);
@@ -59,19 +58,20 @@ export default function Attendance() {
   };
 
   const handleSort = (sortBy: string, newOrder: "asc" | "desc") => {
+    setSortBy(sortBy)
     setOrder((prevOrder) => ({
       ...prevOrder,
-      [sortBy]: newOrder,
+      [sortBy]: prevOrder[sortBy] === "asc" ? "desc" : "asc"
     }));
-  };
+};
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
   useEffect(() => {
-    getData(currentPage, sortBy, order.createdAt || order.workHour);
-  }, [currentPage, sortBy, order]);
+    getData(currentPage, sortBy, order[sortBy]);
+  }, [currentPage, sortBy, order[sortBy]]);
 
   return (
     <div className="flex bg-white ">

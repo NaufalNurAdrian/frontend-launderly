@@ -1,5 +1,5 @@
+import HistoryTable from "@/components/feat-3/history/table";
 import Sidebar from "@/components/feat-3/sidebar";
-
 
 export default function History() {
   return (
@@ -8,6 +8,13 @@ export default function History() {
 
       <div className="w-screen flex flex-col justify-center mt-10">
         <h1 className="m-4 text-2xl font-bold text-center"> History </h1>
+        <div>
+            <HistoryTable 
+            orderId={0}
+            orderType=""
+            date={new Date().toISOString()}
+            />
+        </div>
       </div>
     </div>
   );

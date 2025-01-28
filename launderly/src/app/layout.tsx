@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ToastContainer } from "react-toastify";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -17,6 +18,13 @@ export default function RootLayout({
         className="font-sans"
       >
         {children}
+        <ToastContainer
+            draggable
+            closeOnClick
+            autoClose={5000}
+            theme="dark"
+            position="bottom-right"
+          />
       </body>
     </html>
   );

@@ -1,6 +1,8 @@
 "use client";
 import WorkerAttendance from "@/components/feat-3/attendance/attendance";
 import Table from "@/components/feat-3/attendance/attendanceTable";
+import DefaultLoading from "@/components/feat-3/defaultLoading";
+import NotFound from "@/components/feat-3/notFound";
 import Pagination from "@/components/feat-3/paginationButton";
 import Sidebar from "@/components/feat-3/sidebar";
 import SortButton from "@/components/feat-3/sortingButton";
@@ -74,7 +76,7 @@ export default function Attendance() {
   }, [currentPage, sortBy, order[sortBy]]);
 
   return (
-    <div className="flex bg-white ">
+    <div className="flex bg-white min-h-screen py-3">
       <Sidebar />
       <div className="ml-28 mt-10">
         <div className="w-[85vw] flex justify-end mx-10 my-5">
@@ -88,9 +90,9 @@ export default function Attendance() {
           </div>
         </div>
         {loading ? (
-          <div className="flex justify-center items-center text-3xl font-bold my-20">Loading...</div>
+          <div className="flex justify-center items-center text-3xl font-bold my-20"><DefaultLoading/></div>
         ) : attendanceData.length === 0 ? (
-          <div className="flex justify-center items-center text-3xl font-bold my-20 text-red-500">No attendance data found.</div>
+          <div className="flex justify-center items-center"><NotFound text="No attendance data found."/></div>
         ) : (
           <div className="mx-10">
             {attendanceData.map((data: AttendanceData, index: number) => (

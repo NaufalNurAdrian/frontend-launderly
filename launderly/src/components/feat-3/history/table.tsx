@@ -1,14 +1,14 @@
 "use client"
-import { formatTime } from "@/helpers/timeFormatter";
 import Pagination from "../paginationButton";
 import { useState } from "react";
 
 interface IHistoryTable {
     date: string;
+    time: string;
     orderId: number;
     orderType: string    
 }
-export default function HistoryTable({date, orderId, orderType}: IHistoryTable) {
+export default function HistoryTable({date, time, orderId, orderType}: IHistoryTable) {
       const [currentPage, setCurrentPage] = useState(1);
       const [totalPages, setTotalPages] = useState(1);
       const handlePageChange = (page: number) => {
@@ -16,28 +16,30 @@ export default function HistoryTable({date, orderId, orderType}: IHistoryTable) 
       };
     
     return(
-        <div className="flex flex-col justify-center w-full items-center">
-          <table className="table-auto bg-blue-300">
-  <thead>
-    <tr>
-      <th>Date</th>
-      <th>Order Id</th>
-      <th>Order Type</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>{date}</td>
-    </tr>
-    <tr>
-      <td>{orderId}</td>
-    </tr>
-    <tr>
-      <td>{orderType}</td>
-    </tr>
-  </tbody>
-</table>
- <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
-        </div>
+               <div>
+                <div className="w-full bg-blue-300 my-5 ">
+         <table className="table table-lg w-[700px] text-lg">
+           {/* head */}
+           <thead className="border border-b-blue-600">
+             <tr className="border border-b-white text-blue-600 bg-blue-400 text-lg">
+               <th>Id</th>
+               <th>Date</th>
+               <th>Time</th>
+               <th>Type</th>
+               </tr>
+           </thead>
+           <tbody className="border border-white text-center">
+             {/* row 1 */}
+             <tr className="border border-collapse-white">
+               <td className="p-5">{orderId}</td>
+               <td>{date}</td>
+               <td>{time}</td>
+               <td>{orderType}</td>
+               </tr>
+           </tbody>
+         </table>
+       </div>
+        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+               </div>
     )
 }

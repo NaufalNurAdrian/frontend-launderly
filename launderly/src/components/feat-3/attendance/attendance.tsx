@@ -13,24 +13,25 @@ interface IProfile{
 export default function WorkerAttendance( {id, name, role, profile}: IProfile ) {
     const [attendanceStatus, setAttendanceStatus] = useState<"ACTIVE" | "INACTIVE">("INACTIVE");
     const data = { userId : 3}
-  
     useEffect(() => {
         const fetchAttendanceStatus = async () => {
           try {
             const response = await fetch(`http://localhost:8000/api/attendance/history/${data.userId}`);
             if (!response.ok) {
-              throw new Error("Failed to fetch attendance status");
+                const errorData = await response.json(); 
+                toast.error(errorData.message || "You are already checked in today");
+                return;
             }
             const result = await response.json();
-            setAttendanceStatus(result.data.status); 
+            setAttendanceStatus(result.status); 
           } catch (error) {
             console.error("Failed to fetch attendance status:", error);
             toast.error("Failed to fetch attendance status");
           }
         };
-      
+    
         fetchAttendanceStatus();
-      }, [data.userId]); 
+      }, [data.userId]);
 
       const handleCheckIn = async () => {
         try {

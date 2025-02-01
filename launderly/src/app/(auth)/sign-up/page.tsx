@@ -2,63 +2,28 @@
 
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useState } from "react";
-import axios from "axios";
-import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { validationSchema } from "@/libs/schema";
+import { registerUser } from "@/api/auth";
+import { FormValues, initialValues } from "@/types/auth";
 
 export default function CustomerSignUpPage() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  interface FormValues {
-    fullName: string;
-    email: string;
-    password: string;
-    confirmPassword: string;
-  }
-
-  const initialValues: FormValues = {
-    fullName: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  };
-
   const handleSubmit = async (values: FormValues) => {
     try {
       setIsLoading(true);
-
-      // Kirim request untuk registrasi
-      const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL_BE}/register`,
-        values,
-        {
-          withCredentials: true,
-        }
-      );
-
-      // Sukses registrasi
-      toast.success(res.data.message || "Registration successful!");
-      router.push("/");
-    } catch (err: unknown) {
-      // Validasi apakah err berasal dari Axios
-      if (axios.isAxiosError(err)) {
-        const errorMessage =
-          err.response?.data?.message ||
-          err.message ||
-          "An error occurred during registration";
-        toast.error(errorMessage);
-      } else {
-        // Error tidak diketahui
-        console.error("Unexpected error during registration:", err);
-        toast.error("An unexpected error occurred.");
-      }
+      const response = await registerUser(values);
+  
+      router.push("/"); 
+    } catch (err) {
     } finally {
       setIsLoading(false);
     }
   };
+  
 
   return (
     <div className="flex flex-col md:flex-row h-screen bg-black text-gray-300 mt-16">

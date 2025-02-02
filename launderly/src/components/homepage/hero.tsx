@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export function Hero() {
   return (
@@ -60,9 +61,9 @@ export function Hero() {
       </div>
 
       <div className="flex w-full justify-center gap-2 py-2">
-        <a href="#item1" className="btn btn-xs">
+        <Link href="#item1" className="btn btn-xs">
           1
-        </a>
+        </Link>
         <a href="#item2" className="btn btn-xs">
           2
         </a>

@@ -1,4 +1,4 @@
-import { LoginResponse, RegisterValues } from "@/types/auth";
+import { RegisterValues } from "@/types/auth";
 import axios from "axios";
 import { toast } from "react-toastify";
 
@@ -16,44 +16,20 @@ export async function registerUser(values: RegisterValues): Promise<any> {
   }
 }
 
-export async function loginUser(values: {
-  username: string;
-  role: string;
-  password: string;
-}) {
-  const payload = {
-    data: {
-      username: values.username,
-      role: values.role,
-    },
-    password: values.password,
-  };
-
-  const res = await axios.post<LoginResponse>(
-    `${base_url}/auth/login`,
-    payload,
-    {
-      withCredentials: true,
-    }
-  );
-
-  return res.data;
-}
-
-export async function getUserProfile(role: string, token: string) {
-  if (role !== "customer") {
-    throw new Error("Invalid role");
-  }
-
+export async function loginUser(values: { email: string; password: string }) {
   try {
-    const res = await axios.get(`${base_url}/user/profile`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const payload = { email: values.email, password: values.password };
+    const res = await axios.post(`${base_url}/auth/login`, payload);
 
-    return res.data; 
+    // Menyimpan token di localStorage
+    localStorage.setItem("token", res.data.token);
+    console.log("Token saved to localStorage:", res.data.token);
+
+    return res.data;
   } catch (error) {
-    throw error; 
+    console.error("Login failed", error);
+    throw error;
   }
 }
+
+

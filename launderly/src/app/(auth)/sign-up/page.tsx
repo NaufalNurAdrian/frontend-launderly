@@ -4,9 +4,10 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { validationSchema } from "@/libs/schema";
+import { RegisterSchema } from "@/libs/schema";
 import { registerUser } from "@/api/auth";
 import { FormValues, initialValues } from "@/types/auth";
+import Link from "next/link";
 
 export default function CustomerSignUpPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -16,66 +17,63 @@ export default function CustomerSignUpPage() {
     try {
       setIsLoading(true);
       const response = await registerUser(values);
-  
-      router.push("/"); 
+      router.push("/"); // redirect after success
     } catch (err) {
+      // Handle error here
     } finally {
       setIsLoading(false);
     }
   };
-  
 
   return (
-    <div className="flex flex-col md:flex-row h-screen bg-black text-gray-300 mt-16">
-      <div className="w-full lg:w-1/2 relative">
-        <div>
-          <Image
-            src="/sign-up.jpeg"
-            alt="Cinema venue"
-            fill
-            className="object-cover"
-          />
-        </div>
-        <div className="md:absolute inset-0 flex flex-col justify-center p-6 lg:p-12 text-black">
-          <h1 className="text-2xl lg:text-4xl font-bold mb-4 leading-snug">
-            Laundry service made easier, <br /> with great deals and
-            convenience!
-          </h1>
-          <p className="text-lg">
-            Create an account to enjoy affordable prices, special offers, &
-            priority service.
+    <div className="h-screen flex flex-col lg:flex-row bg-blue-100 text-white">
+      <div className="w-full relative md:flex md:items-center md:w-1/2 bg-blue-400">
+        <Image
+          src="/sign-in.jpeg"
+          alt="Login background"
+          layout="fill"
+          objectFit="cover"
+          className="absolute inset-0 object-cover"
+        />
+      </div>
+      <div className="lg:w-1/2 w-full flex flex-col items-center justify-center p-8 lg:p-12 bg-blue-200">
+        <div className="mb-8 text-center w-full max-w-lg">
+          <Link href={"/"}>
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+              Launderly!
+            </h1>
+          </Link>
+          <p className="text-lg text-gray-600 mx-auto">
+            Sign up to enjoy all the benefits. Create your account today!
           </p>
         </div>
-      </div>
-      <div className="w-full lg:w-1/2 bg-gray-900 flex flex-col justify-center p-6 lg:p-12 max-h-screen">
-        <div className="flex-grow overflow-y-auto">
-          <div className="mb-6">
-            <h2 className="text-2xl lg:text-3xl font-bold mb-2 text-white">
-              Customer
-            </h2>
-            <p className="text-gray-400">
-              When you register as a customer, you can browse available events,
-              purchase tickets for events, and provide feedback on the events
-              you have attended.
-            </p>
-          </div>
+        <div className="bg-white w-full max-w-lg p-8 rounded-lg shadow-lg">
+          <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">
+            Create Account
+          </h2>
+          <p className="text-gray-600 mb-6 text-center">
+            Please enter your details to create a new account.
+          </p>
           <Formik
             initialValues={initialValues}
-            validationSchema={validationSchema}
+            validationSchema={RegisterSchema}
             onSubmit={handleSubmit}
           >
             {({ isSubmitting }) => (
-              <Form className="space-y-4">
-                <div>
-                  <label htmlFor="fullName" className="block text-gray-300">
-                    Your name
+              <Form>
+                <div className="mb-6">
+                  <label
+                    htmlFor="fullName"
+                    className="block text-sm font-semibold text-gray-700 mb-2"
+                  >
+                    Full Name
                   </label>
                   <Field
                     id="fullName"
-                    type="text"
                     name="fullName"
-                    placeholder="Enter your fullName"
-                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md"
+                    type="text"
+                    placeholder="Enter your full name"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   />
                   <ErrorMessage
                     name="fullName"
@@ -84,16 +82,19 @@ export default function CustomerSignUpPage() {
                   />
                 </div>
 
-                <div>
-                  <label htmlFor="email" className="block text-gray-300">
+                <div className="mb-6">
+                  <label
+                    htmlFor="email"
+                    className="block text-sm font-semibold text-gray-700 mb-2"
+                  >
                     Email
                   </label>
                   <Field
                     id="email"
-                    type="email"
                     name="email"
+                    type="email"
                     placeholder="Enter your email"
-                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   />
                   <ErrorMessage
                     name="email"
@@ -102,16 +103,19 @@ export default function CustomerSignUpPage() {
                   />
                 </div>
 
-                <div>
-                  <label htmlFor="password" className="block text-gray-300">
+                <div className="mb-6">
+                  <label
+                    htmlFor="password"
+                    className="block text-sm font-semibold text-gray-700 mb-2"
+                  >
                     Password
                   </label>
                   <Field
                     id="password"
-                    type="password"
                     name="password"
+                    type="password"
                     placeholder="Enter your password"
-                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   />
                   <ErrorMessage
                     name="password"
@@ -120,19 +124,19 @@ export default function CustomerSignUpPage() {
                   />
                 </div>
 
-                <div>
+                <div className="mb-6">
                   <label
                     htmlFor="confirmPassword"
-                    className="block text-gray-300"
+                    className="block text-sm font-semibold text-gray-700 mb-2"
                   >
                     Confirm Password
                   </label>
                   <Field
                     id="confirmPassword"
-                    type="password"
                     name="confirmPassword"
+                    type="password"
                     placeholder="Confirm your password"
-                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   />
                   <ErrorMessage
                     name="confirmPassword"
@@ -143,7 +147,7 @@ export default function CustomerSignUpPage() {
 
                 <button
                   type="submit"
-                  className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-black text-white py-2 rounded-lg hover:bg-gray-800 transition duration-200"
                   disabled={isSubmitting || isLoading}
                 >
                   {isSubmitting || isLoading ? "Submitting..." : "Sign Up"}
@@ -151,6 +155,14 @@ export default function CustomerSignUpPage() {
               </Form>
             )}
           </Formik>
+          <div className="mt-6 text-center">
+            <p className="text-gray-600">
+              Already have an account?{" "}
+              <a href="/sign-in" className="text-blue-500 hover:underline">
+                Sign In
+              </a>
+            </p>
+          </div>
         </div>
       </div>
     </div>

@@ -68,7 +68,7 @@ export function Navbar() {
       </div>
       <div className="navbar-end">
         <button className="btn btn-ghost">
-          <Link href="/sign-up">iWantToLaundry</Link>
+          <Link href="/sign-in">iWantToLaundry</Link>
         </button>
       </div>
     </div>

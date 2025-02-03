@@ -1,12 +1,13 @@
 "use client";
+import { IApiResponse, IRequest } from "@/types/request";
+import Pagination from "../../paginationButton";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import formatDate from "@/helpers/dateFormatter";
 import { formatTime } from "@/helpers/timeFormatter";
-import { IApiResponse, IAttendance } from "@/types/attendance";
-import SortButton from "../sortingButton";
-import FilterDropdown from "../driver/history/filterButton";
-import Pagination from "../paginationButton";
+import SortButton from "../../sortingButton";
+import FilterDropdown from "./filterButton";
+import NotFound from "../../notFound";
 
 function roundDistance(distance: number): number {
   return Math.round(distance * 10) / 10;
@@ -15,7 +16,7 @@ function roundDistance(distance: number): number {
 export default function HistoryTable() {
   const driverId = 1;
   const [loading, setLoading] = useState(true);
-  const [requests, setRequests] = useState<IAttendance[]>([]);
+  const [requests, setRequests] = useState<IRequest[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [sortBy, setSortBy] = useState("createdAt");
@@ -28,7 +29,7 @@ export default function HistoryTable() {
   const fetchRequests = async (page: number, sortBy: string, order: "asc" | "desc", filter: string) => {
     try {
       setLoading(true);
-      const res = await fetch(`http://localhost:8000/api/attendance/all-history/?driverId=${driverId}&page=${page}&sortBy=${sortBy}&order=${order}&role=${filter}`, {
+      const res = await fetch(`http://localhost:8000/api/request/?driverId=${driverId}&page=${page}&sortBy=${sortBy}&order=${order}&type=${filter}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       });
@@ -66,42 +67,40 @@ export default function HistoryTable() {
   }, [sortBy, order, currentPage, driverId, filter]);
 
   return (
-    <div className="flex flex-col justify-center">
+    <div className="flex flex-col justify-center z-0 w-screen lg:w-[1000px] overflow-x-scroll">
       <div className="flex justify-end gap-3">
-        <SortButton sortBy="workHour" order={order.workHour} onSort={handleSort} />
+        <SortButton sortBy="distance" order={order.distance} onSort={handleSort} />
         <SortButton sortBy="createdAt" order={order.createdAt} onSort={handleSort} />
-        <FilterDropdown onFilterChange={handleFilterChange} option1="driver" option2="worker"/>
+        <FilterDropdown onFilterChange={handleFilterChange} option1="pickup" option2="delivery" />
       </div>
-      <div className="w-full bg-blue-200 rounded-md my-5">
-        <table className="table table-lg lg:w-[1000px] rounded-md text-lg">
+      <div className="w-full bg-blue-200 rounded-md my-5 z-10 mx-10 lg:mx-0 relative overflow-visible">
+        <table className="table table-lg w-screen overflow-x-scroll lg:w-[1000px] rounded-md text-lg">
           <thead className="border border-b-blue-600 text-center">
             <tr className="border border-b-white text-blue-600 bg-blue-400 text-lg">
+              <th>orderName</th>
               <th>Date</th>
-              <th>worker name</th>
-              <th>Email</th>
-              <th>role</th>
-              <th>clock In</th>
-              <th>clock Out</th>
-              <th>Workhour</th>
+              <th>Time</th>
+              <th>Type</th>
+              <th>Distance (km)</th>
             </tr>
           </thead>
           <tbody className="border border-white text-center text-neutral-800">
             {requests.length > 0 ? (
-              requests.map((request: IAttendance) => (
+              requests.map((request: IRequest) => (
                 <tr key={request.id} className="border border-collapse-white">
-                 <td className="p-5">{formatDate(request.createdAt)}</td> 
-                  <td>{request.user.fullName}</td>
-                  <td>{request.user.email}</td>
-                  <td>{request.user.role}</td>
-                  <td>{formatTime(new Date(request.checkIn))}</td>
-                  <td>{formatTime(new Date(request.checkOut))}</td>
-                  <td>{request.workHour}</td>
+                  {request.type == "delivery" ? <td className="p-5">{request.deliveryNumber}</td> : <td className="p-5">{request.pickupNumber}</td>}
+                  <td>{formatDate(request.createdAt)}</td>
+                  <td>{formatTime(new Date(request.updatedAt))}</td>
+                  <td>{request.type}</td>
+                  <td>{roundDistance(request.distance)}</td>
                 </tr>
               ))
             ) : (
               <tr>
                 <td colSpan={5} className="text-center py-5">
-                  No Data Available
+                  <div className="flex justify-center items-center">
+                    <NotFound text="No History data found." />
+                  </div>
                 </td>
               </tr>
             )}

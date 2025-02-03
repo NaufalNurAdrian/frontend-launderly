@@ -1,163 +1,127 @@
 "use client";
-import { ChevronLeft, ChevronRight, MapPin } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import toast from "react-hot-toast";
+import { useState, useEffect } from "react";
+import { MapPin } from "lucide-react";
 import Pagination from "../../paginationButton";
+import { IApiResponse, IRequest } from "@/types/request";
+import { toast } from "react-toastify";
+import DefaultLoading from "../../defaultLoading";
+import NotFound from "../../notFound";
+import { calculateTimeDifference } from "@/helpers/timeCounter";
+import SortButton from "../../sortingButton";
+import DeliveryButton from "../process/deliveryButton";
+import PickupButton from "../process/pickupButton";
 
-interface Irequest {
+interface IList {
   type: string;
-  // fetchUrl: string
+  driverId: number;
 }
 
-interface Request {
-  id: number;
-  type: string;
-  status: "pending" | "in-progress" | "completed";
-}
-
-const RequestList = ({ type }: Irequest) => {
+export default function RequestList({ type, driverId }: IList) {
   const [loading, setLoading] = useState(true);
-  const [requests, setRequests] = useState<Request[]>([
-    { id: 1, type: "Pickup", status: "pending" },
-    { id: 2, type: "Delivery", status: "pending" },
-  ]);
-  
+  const [requests, setRequests] = useState<IRequest[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [currentRequest, setCurrentRequest] = useState<Request | null>(null);
-  const [currentRequestId, setCurrentRequestId] = useState<number | null>(null);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [orderStatus, setOrderStatus] = useState("WAITING_FOR_PICKUP_DRIVER");
-
-  const handleButtonClick = (requestId: number, currentStatus: string) => {
-    if (currentStatus === "pending") {
-      // Ubah status jadi in-progress
-      setRequests((prevRequests) => prevRequests.map((req) => (req.id === requestId ? { ...req, status: "in-progress" } : req)));
-      setCurrentRequestId(requestId); // Tandai request yang sedang diproses
-    } else if (currentStatus === "in-progress") {
-      // Ubah status jadi completed
-      setRequests((prevRequests) => prevRequests.map((req) => (req.id === requestId ? { ...req, status: "completed" } : req)));
-      setCurrentRequestId(null); // Reset current request
-    }
-  };
-  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
-  const handleRequestAction = async (request) => {
-    if (orderStatus === "WAITING_FOR_PICKUP_DRIVER") {
-      // Jika driver sedang menunggu pickup
-      try {
-        const response = await fetch("/api/requests/take", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ requestId: request.id }),
-        });
-        if (response.ok) {
-          setOrderStatus("ON_THE_WAY_TO_CUSTOMER"); // Ubah status driver
-          setCurrentRequest(request); // Menandakan request yang diproses
-        }
-      } catch (error) {
-        console.error("Failed to take request:", error);
-      }
-    } else if (orderStatus === "ON_THE_WAY_TO_CUSTOMER") {
-      // Jika driver sedang dalam perjalanan menuju customer
-      setOrderStatus("ON_THE_WAY_TO_OUTLET"); // Update status sesuai dengan perjalanan
-    } else if (orderStatus === "ON_THE_WAY_TO_OUTLET") {
-      // Jika driver sedang menuju outlet
-      setOrderStatus("ARRIVED_AT_OUTLET"); // Ubah status setelah sampai
-    }
-  };
-
-  const handleTakeRequest = async (request: Request) => {
-  setCurrentRequest({ ...request, status: 'in-progress' });
-
-  // Update status in database atau server
-  const response = await fetch(`/api/requests/${request.id}/take`, {
-      method: 'POST',
-      body: JSON.stringify({ status: 'in-progress' }),
+  const [sortBy, setSortBy] = useState("createdAt");
+  const [order, setOrder] = useState<{ [key: string]: "asc" | "desc" }>({
+    createdAt: "desc",
+    distance: "asc",
   });
 
-    if (response.ok) {
-      toast.success('Request is now in progress');
-    } else {
-      toast.error('Failed to take request');
-    }
-  };
-
-  const handleFinishRequest = async () => {
-      if (currentRequest) {
-          const response = await fetch(`/api/requests/${currentRequest.id}/finish`, {
-        method: 'POST',
-        body: JSON.stringify({ status: 'completed' }),
+  const fetchRequests = async (page: number, sortBy: string, order: "asc" | "desc") => {
+    try {
+      setLoading(true);
+      const res = await fetch(`http://localhost:8000/api/${type}/?driverId=${driverId}&page=${page}&sortBy=${sortBy}&order=${order}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
       });
-
-      if (response.ok) {
-        setCurrentRequest(null); // Reset current request
-        toast.success('Request finished');
-      } else {
-        toast.error('Failed to finish request');
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
       }
+      const result: IApiResponse = await res.json();
+      setRequests(result.data);
+      setTotalPages(result.pagination.totalPages);
+      setCurrentPage(result.pagination.page);
+    } catch (err) {
+      toast.error("Fetch failed: " + err);
+    } finally {
+      setLoading(false);
     }
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(fetchUrl);
-        const data = await response.json();
-        setRequests(data);
-        toast.custom('There`s new request !')
-      } catch (error) {
-        console.error("Error fetching requests:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [fetchUrl]);
-
-  if (loading) return <p>Loading {type} requests...</p>;
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
-  return (
-    <div className="w-[500px] rounded-xl bg-neutral-100 border-blue-300 border py-3 px-8 grid grid-rows-auto min-h-[20rem] justify-center ">
-      <h2 className="text-xl font-bold text-blue-500">{type} Requests</h2>
-      {requests.map((request) => (
-        <div className="w-[450px] my-3 p-2 flex flex-col rounded-xl bg-white shadow-md">
-        <div className="px-2 pb-3">
-          <p className="text-blue-500 font-bold text-xl">Username</p>
-          <p className="text-sm text-gray-500 mb-1">requested since 08.10</p>
-          <div className="flex mb-2">
-            <MapPin /> Jl. NusaIndah
-          </div>
-          </div>
-          {orderStatus === "WAITING_FOR_PICKUP_DRIVER" && (
-            <button onClick={() => handleRequestAction(currentRequest)} disabled={isProcessing && currentRequest?.id !== currentRequest.id} className="py-2 px-4 rounded-xl bg-blue-500 text-white">
-              Take Request
-            </button>
-          )}
-          {orderStatus === "ON_THE_WAY_TO_CUSTOMER" && (
-            <button onClick={() => handleRequestAction(currentRequest)} className="py-2 px-4 rounded-xl bg-yellow-500">
-              On the way to customer
-            </button>
-          )}
-          {orderStatus === "ON_THE_WAY_TO_OUTLET" && (
-            <button onClick={() => handleRequestAction(currentRequest)} className="py-2 px-4 rounded-xl bg-green-500 text-white">
-              On the way to outlet
-            </button>
-          )}
-          {orderStatus === "ARRIVED_AT_OUTLET" && (
-            <button onClick={() => handleRequestAction(currentRequest)} className="py-2 px-4 rounded-xl bg-red-500">
-              Finish Request
-            </button>
-          )}
-        </div>
-      ))}
+  const handleSort = (sortBy: string, newOrder: "asc" | "desc") => {
+    setSortBy(sortBy);
+    setOrder((prevOrder) => ({
+      ...prevOrder,
+      [sortBy]: prevOrder[sortBy] === "asc" ? "desc" : "asc",
+    }));
+  };
 
-      <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+  useEffect(() => {
+    fetchRequests(currentPage, sortBy, order[sortBy]);
+  }, [sortBy, order, currentPage, type, driverId]);
+
+  const handleSuccess = () => {
+    fetchRequests(currentPage, sortBy, order[sortBy]);
+  };
+  return (
+    <div className="lg:w-[500px] rounded-xl bg-white shadow-md py-3 px-8 min-h-[30rem] flex flex-col items-center">
+      <div className="lg:w-[400px]">
+        <h2 className="text-2xl font-bold text-blue-500 mb-1 my-2">{type === "pickup" ? "Pick up" : "Delivery"} Requests</h2>
+        <div className="flex justify-between gap-3 mb-2">
+          <SortButton sortBy="distance" order={order.distance} onSort={handleSort} />
+          <SortButton sortBy="createdAt" order={order.createdAt} onSort={handleSort} />
+        </div>
+      </div>
+      <div className=" grid grid-rows-auto">
+        {loading ? (
+          <div className="flex justify-center items-center text-3xl font-bold my-20">
+            <DefaultLoading />
+          </div>
+        ) : requests.length === 0 ? (
+          <div className="flex justify-center items-center my-5">
+            <NotFound text={`No ${type} Request found.`} />
+          </div>
+        ) : (
+          <div>
+            {requests.map((request: IRequest) => (
+              <div key={request.id} className="bg-blue-400/30 mb-2 pb-3 lg:w-[400px] px-10 py-3 rounded-xl border border-blue-600">
+                <p className="text-blue-500 font-bold text-xl">{request.user.fullName || "Unknown User"}</p>
+                {type === "delivery" ? (
+                  <div>
+                    <p className="text-blue-600 text-md">{request.deliveryNumber}</p>
+                  </div>
+                ) : (
+                  <div>
+                    <p className="text-blue-600 text-md"> {request.pickupNumber}</p>
+                  </div>
+                )}
+                <p className="text-sm text-gray-500">Requested {calculateTimeDifference(request.createdAt)}</p>
+                <div className="flex items-center">
+                  <MapPin size={20} className=" text-blue-500" />
+                  {request.address.addressLine || "Unknown Address"}
+                </div>
+                <p className="text-sm text-gray-500 mb-1 mx-4">{Math.round(request.distance * 10) / 10} km from outlet</p>
+                {request.type === "delivery" ? (
+                  <div>
+                    <DeliveryButton driverId={driverId} requestId={request.id} onSuccess={handleSuccess} status={request.deliveryStatus!}/>
+                  </div>
+                ) : (
+                  <div>
+                    <PickupButton driverId={driverId} requestId={request.id} onSuccess={handleSuccess} status={request.pickupStatus!}/>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+      <div className="mt-auto">
+        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+      </div>
     </div>
   );
-};
-
-export default RequestList;
+}

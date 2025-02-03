@@ -13,6 +13,7 @@ import toast from "react-hot-toast";
 export default function Attendance() {
   const userId = 3;
   const [attendanceData, setAttendanceData] = useState<IAttendance[]>([]);
+
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);

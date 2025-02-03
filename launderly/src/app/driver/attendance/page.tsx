@@ -74,13 +74,9 @@ export default function Attendance() {
           </div>
         </div>
         {loading ? (
-          <div className="flex justify-center items-center text-3xl font-bold my-20">
-            <DefaultLoading />
-          </div>
+          <div className="flex justify-center items-center text-3xl font-bold my-20"><DefaultLoading /></div>
         ) : attendanceData.length === 0 ? (
-          <div className="flex justify-center items-center">
-            <NotFound text="No attendance data found." />
-          </div>
+          <div className="flex justify-center items-center"><NotFound text="No attendance data found." /></div>
         ) : (
           <div className="mx-10 w-[85vw]">
             {attendanceData.map((data: IAttendance, index: number) => (

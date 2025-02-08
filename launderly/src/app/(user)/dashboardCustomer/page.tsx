@@ -16,7 +16,7 @@ const CustomerDashboard: React.FC = () => {
       </div>
     );
   }
-  
+
   if (!user) {
     return (
       <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
@@ -32,7 +32,6 @@ const CustomerDashboard: React.FC = () => {
       </div>
     );
   }
-  
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">

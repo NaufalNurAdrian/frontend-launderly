@@ -56,7 +56,7 @@ const Login = () => {
           alt="Login background"
           layout="fill"
           objectFit="cover"
-          className="absolute inset-0 object-cover" 
+          className="absolute inset-0 object-cover"
         />
       </div>
       <div className="lg:w-1/2 w-full flex flex-col items-center justify-center p-8 lg:p-12 bg-blue-200">
@@ -124,6 +124,17 @@ const Login = () => {
                     className="text-red-500 text-sm mt-1"
                   />
                 </div>
+
+                {/* Forgot Password Link */}
+                <div className="mb-6 text-right">
+                  <Link
+                    href="/forgot-password"
+                    className="text-blue-500 text-sm hover:underline"
+                  >
+                    Forgot Password?
+                  </Link>
+                </div>
+
                 <button
                   type="submit"
                   className="w-full bg-black text-white py-2 rounded-lg hover:bg-gray-800 transition duration-200"
@@ -134,15 +145,17 @@ const Login = () => {
               </Form>
             )}
           </Formik>
+
           <div className="mt-6 text-center">
             <p className="text-gray-600">
               Don&apos;t have an account?{" "}
-              <a href="/sign-up" className="text-blue-500 hover:underline">
+              <Link href="/sign-up" className="text-blue-500 hover:underline">
                 Sign Up
-              </a>
-          <LoginGoogle/>
+              </Link>
             </p>
           </div>
+
+          <LoginGoogle />
         </div>
       </div>
     </div>

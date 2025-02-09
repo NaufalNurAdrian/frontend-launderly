@@ -43,7 +43,6 @@ const LoginGoogle = () => {
 
   return (
     <div>
-      <button id="login-button">Login with Email</button>
       <div id="google-login-btn"></div>
     </div>
   );

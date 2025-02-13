@@ -5,7 +5,7 @@ import { useState } from "react";
 interface filterProp {
   onFilterChange: (filter: string) => void;
   option1: string;
-  option2: string;
+  option2?: string;
 }
 export default function FilterDropdown({ onFilterChange, option1, option2 }: filterProp) {
   const [selectedFilter, setSelectedFilter] = useState<string>("");

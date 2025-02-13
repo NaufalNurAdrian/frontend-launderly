@@ -2,7 +2,7 @@
 import { useEffect, useRef } from "react";
 import NotificationItem from "./notificationItem";
 import { INotificationDetail } from "@/types/notification";
-import NotFound from "../notFound";
+import NotFound from "./notFound";
 import { X } from "lucide-react";
 
 interface NotificationModalProps {
@@ -10,17 +10,10 @@ interface NotificationModalProps {
   onClose: () => void;
   notifications: INotificationDetail[];
   onMarkAsRead: (notificationId: number) => void;
-    onMarkAllAsRead: () => void;
+  onMarkAllAsRead: () => void;
 }
 
-export default function NotificationModal({
-  isOpen,
-  onClose,
-  notifications,
-  onMarkAsRead,
-  onMarkAllAsRead,
-}:
-NotificationModalProps) {
+export default function NotificationModal({ isOpen, onClose, notifications, onMarkAsRead, onMarkAllAsRead }: NotificationModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -42,7 +35,9 @@ NotificationModalProps) {
     <div ref={modalRef} className="fixed top-0 overflow-auto right-0 h-full w-80 bg-white border-l border-gray-200 shadow-lg z-[1000]">
       <div className="p-4 border-b border-gray-200 flex justify-between">
         <h3 className="font-semibold text-lg">Notifications</h3>
-        <button onClick={onClose}><X/></button>
+        <button onClick={onClose}>
+          <X />
+        </button>
       </div>
       <div className="divide-y divide-gray-200">
         {notifications.length == 0 ? (
@@ -58,13 +53,10 @@ NotificationModalProps) {
         )}
       </div>
       <div className="p-4 border-t border-gray-200">
-        <button
-            onClick={onMarkAllAsRead}
-          className="w-full text-sm text-center text-blue-500 hover:text-blue-700"
-        >
+        <button onClick={onMarkAllAsRead} className="w-full text-sm text-center text-blue-500 hover:text-blue-700">
           Mark all as read
         </button>
       </div>
-      </div>
+    </div>
   );
 }

@@ -9,7 +9,6 @@ import toast from "react-hot-toast";
 import NotificationModal from "../notificationModal";
 
 export default function Sidebar() {
-
   const pathname = usePathname();
   const router = useRouter();
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
@@ -17,12 +16,11 @@ export default function Sidebar() {
   const [unreadCount, setUnreadCount] = useState(0);
   const modalRef = useRef<HTMLDivElement>(null);
   const token = localStorage.getItem("token")
-
   const navItems = [
-    { name: "Attendance", path: "/driver/attendance", icon: <CalendarCheck size={30} /> },
-    { name: "Notifications", path: "/driver/notifications", icon: <Bell size={30} /> },
-    { name: "Requests", path: "/driver/requests", icon: <FileText size={30} /> },
-    { name: "History", path: "/driver/history", icon: <FolderClock size={30} /> },
+    { name: "Attendance", path: "/worker/attendance", icon: <CalendarCheck size={30} /> },
+    { name: "Notifications", path: "/worker/notifications", icon: <Bell size={30} /> },
+    { name: "Requests", path: "/worker/requests", icon: <FileText size={30} /> },
+    { name: "History", path: "/worker/history", icon: <FolderClock size={30} /> },
   ];
 
   const toggleNotificationModal = () => {
@@ -34,7 +32,7 @@ export default function Sidebar() {
       const response = await fetch(`http://localhost:8000/api/notification/?notificationId=${notificationId}`, {
         method: "PATCH",
         headers: {
-           "Content-Type": "application/json",
+            'Authorization': `Bearer ${token}`, "Content-Type": "application/json",
         },
       });
 
@@ -52,10 +50,10 @@ export default function Sidebar() {
 
   const handleMarkAllAsRead = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/api/notification/mark-all/`, {
+      const response = await fetch(`http://localhost:8000/api/notification/mark-all/?userId=`, {
         method: "PATCH",
         headers: {
-          'Authorization': `Bearer ${token}`,"Content-Type": "application/json",
+            'Authorization': `Bearer ${token}`, "Content-Type": "application/json",
         },
       });
 
@@ -77,7 +75,7 @@ export default function Sidebar() {
       try {
         const res = await fetch(`http://localhost:8000/api/notification/`, {
           method: "GET",
-          headers: { 'Authorization': `Bearer ${token}`,"Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json" },
         });
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);

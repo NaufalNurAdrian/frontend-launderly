@@ -2,8 +2,8 @@
 import { useState, useEffect } from "react";
 import { MapPin } from "lucide-react";
 import Pagination from "../../paginationButton";
-import { IApiResponse, IRequest } from "@/types/request";
-import { toast } from "react-toastify";
+import { IApiResponse, IRequest } from "@/types/driver";
+import { toast } from "react-hot-toast";
 import DefaultLoading from "../../defaultLoading";
 import NotFound from "../../notFound";
 import { calculateTimeDifference } from "@/helpers/timeCounter";
@@ -13,10 +13,9 @@ import PickupButton from "../process/pickupButton";
 
 interface IList {
   type: string;
-  driverId: number;
 }
 
-export default function RequestList({ type, driverId }: IList) {
+export default function RequestList({ type}: IList) {
   const [loading, setLoading] = useState(true);
   const [requests, setRequests] = useState<IRequest[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -28,11 +27,20 @@ export default function RequestList({ type, driverId }: IList) {
   });
 
   const fetchRequests = async (page: number, sortBy: string, order: "asc" | "desc") => {
+
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      console.error("Token tidak ditemukan. Redirect ke halaman login...");
+      window.location.href = "/login";
+      return;
+    } 
+
     try {
       setLoading(true);
-      const res = await fetch(`http://localhost:8000/api/${type}/?driverId=${driverId}&page=${page}&sortBy=${sortBy}&order=${order}`, {
+      const res = await fetch(`http://localhost:8000/api/${type}/?page=${page}&sortBy=${sortBy}&order=${order}`, {
         method: "GET",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
       });
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
@@ -62,21 +70,21 @@ export default function RequestList({ type, driverId }: IList) {
 
   useEffect(() => {
     fetchRequests(currentPage, sortBy, order[sortBy]);
-  }, [sortBy, order, currentPage, type, driverId]);
+  }, [sortBy, order, currentPage, type]);
 
   const handleSuccess = () => {
     fetchRequests(currentPage, sortBy, order[sortBy]);
   };
   return (
     <div className="lg:w-[500px] rounded-xl bg-white shadow-md py-3 px-8 min-h-[30rem] flex flex-col items-center">
-      <div className="lg:w-[400px]">
+      <div className="lg:w-[400px] ">
         <h2 className="text-2xl font-bold text-blue-500 mb-1 my-2">{type === "pickup" ? "Pick up" : "Delivery"} Requests</h2>
         <div className="flex justify-between gap-3 mb-2">
-          <SortButton sortBy="distance" order={order.distance} onSort={handleSort} />
-          <SortButton sortBy="createdAt" order={order.createdAt} onSort={handleSort} />
+          <SortButton sortBy="distance" label="Sort by Distance" order={order.distance} onSort={handleSort} />
+          <SortButton sortBy="createdAt" label="Sort by Date" order={order.createdAt} onSort={handleSort} />
         </div>
       </div>
-      <div className=" grid grid-rows-auto">
+      <div className=" grid grid-rows-auto w-max justify-center">
         {loading ? (
           <div className="flex justify-center items-center text-3xl font-bold my-20">
             <DefaultLoading />
@@ -88,7 +96,7 @@ export default function RequestList({ type, driverId }: IList) {
         ) : (
           <div>
             {requests.map((request: IRequest) => (
-              <div key={request.id} className="bg-blue-400/30 mb-2 pb-3 lg:w-[400px] px-10 py-3 rounded-xl border border-blue-600">
+              <div key={request.id} className="bg-blue-400/30 mb-2 lg:w-[400px] w-[330px] px-8 lg:px-10 py-3 rounded-xl border border-blue-600">
                 <p className="text-blue-500 font-bold text-xl">{request.user.fullName || "Unknown User"}</p>
                 {type === "delivery" ? (
                   <div>
@@ -105,13 +113,13 @@ export default function RequestList({ type, driverId }: IList) {
                   {request.address.addressLine || "Unknown Address"}
                 </div>
                 <p className="text-sm text-gray-500 mb-1 mx-4">{Math.round(request.distance * 10) / 10} km from outlet</p>
-                {request.type === "delivery" ? (
+                {type === "delivery" ? (
                   <div>
-                    <DeliveryButton driverId={driverId} requestId={request.id} onSuccess={handleSuccess} status={request.deliveryStatus!}/>
+                    <DeliveryButton requestId={request.id} onSuccess={handleSuccess} status={request.deliveryStatus!} />
                   </div>
                 ) : (
                   <div>
-                    <PickupButton driverId={driverId} requestId={request.id} onSuccess={handleSuccess} status={request.pickupStatus!}/>
+                    <PickupButton requestId={request.id} onSuccess={handleSuccess} status={request.pickupStatus!} />
                   </div>
                 )}
               </div>

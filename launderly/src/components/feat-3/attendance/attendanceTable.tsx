@@ -10,7 +10,7 @@ interface IAttendance{
 
 export default function Table({date, workHour, checkIn, checkOut}: IAttendance){
     return(
-        <div className=" flex w-full justify-between h-[130px] border-2 my-7">
+        <div className=" flex w-full justify-between h-[130px] border-2 my-4">
             <div className="flex p-2 flex-col">
             <p className="px-2 rounded-full max-sm:text-sm text-blue-600">
                 {formatDate(date)}

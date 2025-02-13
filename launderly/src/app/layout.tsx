@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { ToastContainer } from "react-toastify";
 import "./globals.css";
+import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
   title: "launderly",
@@ -16,7 +18,15 @@ export default function RootLayout({
       <body
         className="font-sans"
       >
+        <Toaster/>
         {children}
+        <ToastContainer
+            draggable
+            closeOnClick
+            autoClose={5000}
+            theme="dark"
+            position="bottom-right"
+          />
       </body>
     </html>
   );

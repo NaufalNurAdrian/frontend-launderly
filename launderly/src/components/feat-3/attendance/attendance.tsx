@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 interface IProfile {
-  token: string
+  token: string;
   id: number;
   name: string;
   role: string;
@@ -17,10 +17,11 @@ export default function WorkerAttendance({ token, id, name, role, profile }: IPr
     const fetchData = async (url: string) => {
       const response = await fetch(url, {
         headers: {
-          'Authorization': `Bearer ${token}`,"Content-Type": "application/json"
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
       });
-  
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message);
@@ -73,7 +74,7 @@ export default function WorkerAttendance({ token, id, name, role, profile }: IPr
       const response = await fetch("http://localhost:8000/api/attendance/check-out", {
         body: JSON.stringify({ userId: id }),
         method: "PATCH",
-        headers: { Authorization: `Bearer ${token}`,　"Content-Type": "application/json" },
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
       });
       if (!response.ok) {
         toast.error("You are not checked in");

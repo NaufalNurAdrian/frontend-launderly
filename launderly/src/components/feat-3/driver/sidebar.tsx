@@ -9,7 +9,6 @@ import toast from "react-hot-toast";
 import NotificationModal from "../notificationModal";
 
 export default function Sidebar() {
-
   const pathname = usePathname();
   const router = useRouter();
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
@@ -136,7 +135,6 @@ export default function Sidebar() {
       </div>
 
       <NotificationModal isOpen={isNotificationOpen} onClose={() => setIsNotificationOpen(false)} notifications={notifications} onMarkAsRead={handleMarkAsRead} onMarkAllAsRead={handleMarkAllAsRead} />
-
       <div className="flex flex-col gap-5 items-center justify-center font-bold">
         <div>
           <IoLogOutOutline />

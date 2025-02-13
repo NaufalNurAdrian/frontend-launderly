@@ -14,7 +14,6 @@ import PickupButton from "../process/pickupButton";
 interface IList {
   type: string;
 }
-
 export default function RequestList({ type}: IList) {
   const [loading, setLoading] = useState(true);
   const [requests, setRequests] = useState<IRequest[]>([]);
@@ -41,6 +40,7 @@ export default function RequestList({ type}: IList) {
       const res = await fetch(`http://localhost:8000/api/${type}/?page=${page}&sortBy=${sortBy}&order=${order}`, {
         method: "GET",
         headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+
       });
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
@@ -85,6 +85,7 @@ export default function RequestList({ type}: IList) {
         </div>
       </div>
       <div className=" grid grid-rows-auto w-max justify-center">
+
         {loading ? (
           <div className="flex justify-center items-center text-3xl font-bold my-20">
             <DefaultLoading />

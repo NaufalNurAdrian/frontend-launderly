@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ToastContainer } from "react-toastify";
+import Script from "next/script";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
 
@@ -15,18 +16,22 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className="font-sans"
-      >
-        <Toaster/>
+      <head>
+        <Script
+          src="https://accounts.google.com/gsi/client"
+          strategy="beforeInteractive"
+        />
+      </head>
+      <body className="font-sans">
+        <Toaster />
         {children}
         <ToastContainer
-            draggable
-            closeOnClick
-            autoClose={5000}
-            theme="dark"
-            position="bottom-right"
-          />
+          draggable
+          closeOnClick
+          autoClose={5000}
+          theme="dark"
+          position="bottom-right"
+        />
       </body>
     </html>
   );

@@ -1,32 +1,55 @@
 "use client";
 
+import { loginUser } from "@/api/auth";
+import useSession from "@/hooks/useSession";
+import { LoginSchema } from "@/libs/schema";
+import { LoginValues } from "@/types/auth";
+import axios from "axios";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { RegisterSchema } from "@/libs/schema";
-import { registerUser } from "@/api/auth";
 import Link from "next/link";
-import { FormValues, initialValues } from "@/types/auth";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
+import LoginGoogle from "./loginGoggle";
 
-export default function CustomerSignUpPage() {
-  const [isLoading, setIsLoading] = useState(false);
+const Login = () => {
+  const initialValues: LoginValues = {
+    email: "",
+    password: "",
+  };
+
+  const { setIsAuth, setUser } = useSession();
   const router = useRouter();
 
-  const handleSubmit = async (values: FormValues) => {
+  const handleLogin = async (values: LoginValues, { setSubmitting }: any) => {
     try {
-      setIsLoading(true);
-      const response = await registerUser(values);
-      router.push("/"); // redirect after success
-    } catch (err) {
-      // Handle error here
+      const { customer, token, message } = await loginUser(values);
+
+      localStorage.setItem("token", token);
+
+      setIsAuth(true);
+      setUser(customer);
+
+      toast.success(message || "Login successful!");
+
+      router.push("/dashboardCustomer");
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        const errorMessage =
+          err.response?.data?.message ||
+          err.message ||
+          "An error occurred during login.";
+        toast.error(errorMessage);
+      } else {
+        toast.error("An unexpected error occurred.");
+      }
     } finally {
-      setIsLoading(false);
+      setSubmitting(false);
     }
   };
 
   return (
-    <div className="h-screen flex flex-col lg:flex-row bg-blue-100 text-white">
+    <div className="h-[100vh] flex flex-col lg:flex-row bg-blue-100 text-white">
       <div className="w-full relative md:flex md:items-center md:w-1/2 bg-blue-400">
         <Image
           src="/sign-in.jpeg"
@@ -44,44 +67,23 @@ export default function CustomerSignUpPage() {
             </h1>
           </Link>
           <p className="text-lg text-gray-600 mx-auto">
-            Sign up to enjoy all the benefits. Create your account today!
+            Log in to enjoy all the benefits. Enter your email and password.
           </p>
         </div>
         <div className="bg-white w-full max-w-lg p-8 rounded-lg shadow-lg">
           <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">
-            Create Account
+            Welcome Back!
           </h2>
           <p className="text-gray-600 mb-6 text-center">
-            Please enter your details to create a new account.
+            Please enter your email and password to log in.
           </p>
           <Formik
             initialValues={initialValues}
-            validationSchema={RegisterSchema}
-            onSubmit={handleSubmit}
+            validationSchema={LoginSchema}
+            onSubmit={handleLogin}
           >
             {({ isSubmitting }) => (
               <Form>
-                <div className="mb-6">
-                  <label
-                    htmlFor="fullName"
-                    className="block text-sm font-semibold text-gray-700 mb-2"
-                  >
-                    Full Name
-                  </label>
-                  <Field
-                    id="fullName"
-                    name="fullName"
-                    type="text"
-                    placeholder="Enter your full name"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                  />
-                  <ErrorMessage
-                    name="fullName"
-                    component="div"
-                    className="text-red-500 text-sm mt-1"
-                  />
-                </div>
-
                 <div className="mb-6">
                   <label
                     htmlFor="email"
@@ -92,7 +94,7 @@ export default function CustomerSignUpPage() {
                   <Field
                     id="email"
                     name="email"
-                    type="email"
+                    type="text"
                     placeholder="Enter your email"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   />
@@ -102,7 +104,6 @@ export default function CustomerSignUpPage() {
                     className="text-red-500 text-sm mt-1"
                   />
                 </div>
-
                 <div className="mb-6">
                   <label
                     htmlFor="password"
@@ -124,47 +125,41 @@ export default function CustomerSignUpPage() {
                   />
                 </div>
 
-                <div className="mb-6">
-                  <label
-                    htmlFor="confirmPassword"
-                    className="block text-sm font-semibold text-gray-700 mb-2"
+                {/* Forgot Password Link */}
+                <div className="mb-6 text-right">
+                  <Link
+                    href="/forgot-password"
+                    className="text-blue-500 text-sm hover:underline"
                   >
-                    Confirm Password
-                  </label>
-                  <Field
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    type="password"
-                    placeholder="Confirm your password"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                  />
-                  <ErrorMessage
-                    name="confirmPassword"
-                    component="div"
-                    className="text-red-500 text-sm mt-1"
-                  />
+                    Forgot Password?
+                  </Link>
                 </div>
 
                 <button
                   type="submit"
                   className="w-full bg-black text-white py-2 rounded-lg hover:bg-gray-800 transition duration-200"
-                  disabled={isSubmitting || isLoading}
+                  disabled={isSubmitting}
                 >
-                  {isSubmitting || isLoading ? "Submitting..." : "Sign Up"}
+                  {isSubmitting ? "Signing In..." : "Sign In"}
                 </button>
               </Form>
             )}
           </Formik>
+
           <div className="mt-6 text-center">
             <p className="text-gray-600">
-              Already have an account?{" "}
-              <a href="/sign-in" className="text-blue-500 hover:underline">
-                Sign In
-              </a>
+              Don&apos;t have an account?{" "}
+              <Link href="/sign-up" className="text-blue-500 hover:underline">
+                Sign Up
+              </Link>
             </p>
           </div>
+
+          <LoginGoogle />
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default Login;

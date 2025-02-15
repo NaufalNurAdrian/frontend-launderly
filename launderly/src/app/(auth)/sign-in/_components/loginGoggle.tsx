@@ -23,22 +23,30 @@ const LoginGoogle = () => {
       console.error("Google Login Error:", error);
     }
   };
-  
+
 
   useEffect(() => {
-    if (typeof window !== "undefined" && window.google) {
-      console.log("Google SDK Loaded:", window.google);
+    const script = document.createElement("script");
+    script.src = "https://accounts.google.com/gsi/client?hl=en";
+    script.async = true;
+    script.defer = true;
+    document.body.appendChild(script);
 
-      window.google.accounts.id.initialize({
-        client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
-        callback: handleGoogleLogin,
-      });
+    script.onload = () => {
+      if (window.google) {
+        console.log("Google SDK Loaded:", window.google);
 
-      window.google.accounts.id.renderButton(
-        document.getElementById("google-login-btn")!,
-        { theme: "outline", size: "large" }
-      );
-    }
+        window.google.accounts.id.initialize({
+          client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
+          callback: handleGoogleLogin,
+        });
+
+        window.google.accounts.id.renderButton(
+          document.getElementById("google-login-btn")!,
+          { theme: "outline", size: "large" }
+        );
+      }
+    };
   }, []);
 
   return (

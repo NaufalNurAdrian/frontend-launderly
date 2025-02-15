@@ -12,6 +12,7 @@ import {
   Receipt,
   UserCircle,
   LogOut,
+  House,
 } from "lucide-react";
 import { IUser } from "@/types/user";
 import { deleteCookie } from "@/libs/action";
@@ -46,17 +47,22 @@ const CustomerSidebar = () => {
     {
       icon: <Calendar size={24} />,
       text: "My Laundry",
-      href: "/ticketCustomer",
+      href: "/myLaundry",
     },
     {
       icon: <Receipt size={24} />,
       text: "Payment",
-      href: "/transaksiCustomer",
+      href: "/myPayment",
     },
     {
       icon: <UserCircle size={24} />,
       text: "My Profile",
       href: "/profileCustomer",
+    },
+    {
+      icon: <House size={24} />,
+      text: "My Address",
+      href: "/address",
     },
   ];
 

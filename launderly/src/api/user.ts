@@ -53,9 +53,16 @@ export async function editAvatar(avatarFile: File) {
     const formData = new FormData();
     formData.append("avatar", avatarFile);
 
-    const response = await axios.patch(`${base_url}/user/edit-avatar`, formData, {
-      headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" },
-    });
+    const response = await axios.patch(
+      `${base_url}/user/edit-avatar`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
 
     toast.success("Avatar updated successfully!");
     return response.data;
@@ -107,9 +114,14 @@ export async function verifyEmail(verificationCode: string) {
 // Request Forget Password
 export async function requestForgetPassword(email: string) {
   try {
-    const response = await axios.post(`${base_url}/user/request-forget-password`, { email });
+    const response = await axios.post(
+      `${base_url}/user/request-forget-password`,
+      { email }
+    );
 
-    toast.success(response.data.message || "If the email exists, a reset link will be sent.");
+    toast.success(
+      response.data.message || "If the email exists, a reset link will be sent."
+    );
     return response.data;
   } catch (error) {
     toast.error("Failed to request password reset. Please try again.");
@@ -119,13 +131,20 @@ export async function requestForgetPassword(email: string) {
 }
 
 // Confirm Forget Password
-export async function confirmForgetPassword(token: string, newPassword: string, confirmPassword: string) {
+export async function confirmForgetPassword(
+  token: string,
+  newPassword: string,
+  confirmPassword: string
+) {
   try {
-    const response = await axios.post(`${base_url}/user/confirm-forget-password`, {
-      token,
-      newPassword,
-      confirmPassword,
-    });
+    const response = await axios.post(
+      `${base_url}/user/confirm-forget-password`,
+      {
+        token,
+        newPassword,
+        confirmPassword,
+      }
+    );
 
     toast.success("Password has been reset successfully!");
     return response.data;

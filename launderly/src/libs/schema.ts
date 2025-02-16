@@ -30,7 +30,15 @@ export const ResetPasswordSchema = Yup.object().shape({
     .required("Confirm password is required"),
 });
 
-
 export const ForgotPasswordSchema = Yup.object().shape({
   email: Yup.string().email("Invalid email").required("Email is required"),
 });
+
+export const AddressSchema = Yup.object().shape({
+  street: Yup.string().required("Alamat jalan wajib diisi"),
+  city: Yup.string().required("Kota wajib diisi"),
+});
+
+export const RequestOrderSchema = Yup.object().shape({
+  addressId: Yup.number().required("Wajib diisi")
+})

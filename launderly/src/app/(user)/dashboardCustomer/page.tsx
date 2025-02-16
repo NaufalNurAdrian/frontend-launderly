@@ -56,13 +56,19 @@ const CustomerDashboard: React.FC = () => {
             </p>
             <div className="flex flex-wrap gap-4 mt-8">
               <Link
-                href="/ticketCustomer"
+                href="/myLaundry"
                 className="flex-1 lg:flex-none text-center bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-8 py-3 rounded-xl text-sm lg:text-base font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
               >
-                My Laundry
+                Laundry
               </Link>
               <Link
-                href="/transaksiCustomer"
+                href="/address"
+                className="flex-1 lg:flex-none text-center bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white px-8 py-3 rounded-xl text-sm lg:text-base font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
+              >
+                My Address
+              </Link>
+              <Link
+                href="/myPayment"
                 className="flex-1 lg:flex-none text-center bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-8 py-3 rounded-xl text-sm lg:text-base font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
               >
                 Payment

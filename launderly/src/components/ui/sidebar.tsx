@@ -12,17 +12,33 @@ import {
   Receipt,
   UserCircle,
   LogOut,
+  House,
 } from "lucide-react";
 import { IUser } from "@/types/user";
 import { deleteCookie } from "@/libs/action";
 import useSession from "@/hooks/useSession";
 
 const CustomerSidebar = () => {
-  const [isClient, setIsClient] = useState(false)
-  const { user } = useSession(); 
+  const [isClient, setIsClient] = useState(false);
+  const { user } = useSession();
   const router = useRouter();
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setIsCollapsed(true); // Tutup sidebar di mobile
+      } else {
+        setIsCollapsed(false); // Buka sidebar di desktop
+      }
+    };
+
+    handleResize(); // Panggil saat pertama kali render
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     setIsClient(true); // Set state saat sudah di client-side
@@ -46,17 +62,22 @@ const CustomerSidebar = () => {
     {
       icon: <Calendar size={24} />,
       text: "My Laundry",
-      href: "/ticketCustomer",
+      href: "/myLaundry",
     },
     {
       icon: <Receipt size={24} />,
       text: "Payment",
-      href: "/transaksiCustomer",
+      href: "/myPayment",
     },
     {
       icon: <UserCircle size={24} />,
       text: "My Profile",
       href: "/profileCustomer",
+    },
+    {
+      icon: <House size={24} />,
+      text: "My Address",
+      href: "/address",
     },
   ];
 
@@ -70,7 +91,7 @@ const CustomerSidebar = () => {
         } bg-white shadow-lg transition-all duration-300 relative flex flex-col`}
       >
         <div className="flex items-center p-4 border-b">
-          <Image src="/logo.gif" alt="Logo" width={32} height={32} />
+          <Image src="/services1.gif" alt="Logo" width={32} height={32} />
           {!isCollapsed && (
             <Link href="/" className="ml-3 text-xl font-bold text-gray-800">
               Launderly

@@ -76,7 +76,7 @@ const CustomerSidebar = () => {
         } bg-white shadow-lg transition-all duration-300 relative flex flex-col`}
       >
         <div className="flex items-center p-4 border-b">
-          <Image src="/logo.gif" alt="Logo" width={32} height={32} />
+          <Image src="/services1.gif" alt="Logo" width={32} height={32} />
           {!isCollapsed && (
             <Link href="/" className="ml-3 text-xl font-bold text-gray-800">
               Launderly

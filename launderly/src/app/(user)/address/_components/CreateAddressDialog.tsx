@@ -45,24 +45,21 @@ const CreateAddressDialog: React.FC<CreateAddressDialogProps> = ({
   });
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      if ("geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            setUserLocation({
-              lat: position.coords.latitude,
-              lng: position.coords.longitude,
-            });
-          },
-          (error) => {
-            console.error("Error getting location: ", error);
-          }
-        );
-      }
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserLocation({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          });
+        },
+        (error) => {
+          console.error("Error getting location: ", error);
+        }
+      );
     }
   }, []);
 
-  // Component to capture map click events
   const LocationMarker = ({
     setFieldValue,
   }: {
@@ -82,8 +79,40 @@ const CreateAddressDialog: React.FC<CreateAddressDialogProps> = ({
       />
     );
   };
+  const handleUseCurrentLocation = (setFieldValue: any) => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setFieldValue("latitude", position.coords.latitude);
+          setFieldValue("longitude", position.coords.longitude);
+          setUserLocation({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          });
+          toast.success("Lokasi berhasil diperoleh!");
+        },
+        (error) => {
+          switch (error.code) {
+            case error.PERMISSION_DENIED:
+              toast.error("Akses lokasi ditolak. Izinkan lokasi di browser.");
+              break;
+            case error.POSITION_UNAVAILABLE:
+              toast.error("Informasi lokasi tidak tersedia.");
+              break;
+            case error.TIMEOUT:
+              toast.error("Permintaan lokasi melebihi batas waktu.");
+              break;
+            default:
+              toast.error("Terjadi kesalahan saat mendapatkan lokasi.");
+          }
+          console.error("Error getting location: ", error);
+        }
+      );
+    } else {
+      toast.error("Geolocation tidak didukung di perangkat ini.");
+    }
+  };
 
-  // Form submission function
   const handleSubmit = async (
     values: AddressFormValues,
     { setSubmitting, resetForm }: FormikHelpers<AddressFormValues>
@@ -146,7 +175,6 @@ const CreateAddressDialog: React.FC<CreateAddressDialogProps> = ({
         >
           {({ isSubmitting, setFieldValue, values }) => (
             <Form className="space-y-4 mt-4">
-              {/* Street Address */}
               <div>
                 <label className="block text-sm font-medium">
                   Street Address <span className="text-red-500">*</span>
@@ -164,7 +192,6 @@ const CreateAddressDialog: React.FC<CreateAddressDialogProps> = ({
                 />
               </div>
 
-              {/* City */}
               <div>
                 <label className="block text-sm font-medium">
                   City <span className="text-red-500">*</span>
@@ -182,7 +209,6 @@ const CreateAddressDialog: React.FC<CreateAddressDialogProps> = ({
                 />
               </div>
 
-              {/* Map Location Selection */}
               <div>
                 <label className="block text-sm font-medium">
                   Select Location
@@ -201,7 +227,14 @@ const CreateAddressDialog: React.FC<CreateAddressDialogProps> = ({
                 </MapContainer>
               </div>
 
-              {/* Latitude & Longitude */}
+              <Button
+                type="button"
+                className="w-full mt-2 bg-blue-500 text-white"
+                onClick={() => handleUseCurrentLocation(setFieldValue)}
+              >
+                Gunakan Lokasi Anda Saat Ini
+              </Button>
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium">Latitude</label>
@@ -223,7 +256,6 @@ const CreateAddressDialog: React.FC<CreateAddressDialogProps> = ({
                 </div>
               </div>
 
-              {/* Submit & Cancel Buttons */}
               <div className="flex justify-end mt-6 space-x-4">
                 <Button
                   type="button"
@@ -232,11 +264,7 @@ const CreateAddressDialog: React.FC<CreateAddressDialogProps> = ({
                 >
                   Cancel
                 </Button>
-                <Button
-                  type="submit"
-                  disabled={isSubmitting}
-                  variant="primary" 
-                >
+                <Button type="submit" disabled={isSubmitting} variant="primary">
                   {isSubmitting ? "Submitting..." : "Submit"}
                 </Button>
               </div>

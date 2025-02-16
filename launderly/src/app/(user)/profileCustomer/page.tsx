@@ -13,6 +13,9 @@ const ProfileCustomer: React.FC = () => {
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [showResetPasswordModal, setShowResetPasswordModal] = useState(false);
 
+  console.log("User state in ProfileCustomer:", user);
+
+
   const editAvatar = async (file: File) => {
     if (!file || !user) return;
 
@@ -76,8 +79,8 @@ const ProfileCustomer: React.FC = () => {
                 <Image
                   src={user?.avatar || "/user.png"}
                   alt="User Avatar"
-                  width={112} // 24 * 4 (karena Tailwind w-24 = 6rem = 96px)
-                  height={112} // Sama dengan width
+                  width={112}
+                  height={112}
                   className="w-full h-full rounded-full border-4 border-white shadow-lg object-cover"
                 />
               </div>
@@ -86,47 +89,67 @@ const ProfileCustomer: React.FC = () => {
                 {user?.fullName}
               </h2>
               <p className="text-gray-500 text-sm">{user?.email}</p>
-              <div className="mt-4">
-                <label
-                  htmlFor="avatar"
-                  className={`py-2 px-4 rounded-md cursor-pointer ${
-                    isUploading
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-blue-500 hover:bg-blue-600 text-white"
-                  }`}
-                >
-                  {isUploading ? "Uploading..." : "Edit Avatar"}
-                </label>
-                <input
-                  id="avatar"
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  disabled={isUploading}
-                  onChange={(e) => {
-                    if (e.target.files && e.target.files[0]) {
-                      editAvatar(e.target.files[0]);
-                    }
-                  }}
-                />
-              </div>
-            </div>
-            <div className="mt-8 space-y-6">
-              <div>
-                <label className="block text-gray-600 text-sm mb-2">
-                  Reset Password
-                </label>
-                <button
-                  className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
-                  onClick={() => setShowResetPasswordModal(true)}
-                >
-                  Reset Password
-                </button>
-              </div>
+
+              {/* TAMPILAN KHUSUS LOGIN DENGAN EMAIL */}
+              {user?.authProvider === "email" && (
+                <>
+                  <div className="mt-4">
+                    <label
+                      htmlFor="avatar"
+                      className={`py-2 px-4 rounded-md cursor-pointer ${
+                        isUploading
+                          ? "bg-gray-400 cursor-not-allowed"
+                          : "bg-blue-500 hover:bg-blue-600 text-white"
+                      }`}
+                    >
+                      {isUploading ? "Uploading..." : "Edit Avatar"}
+                    </label>
+                    <input
+                      id="avatar"
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      disabled={isUploading}
+                      onChange={(e) => {
+                        if (e.target.files && e.target.files[0]) {
+                          editAvatar(e.target.files[0]);
+                        }
+                      }}
+                    />
+                  </div>
+
+                  <div className="mt-8 space-y-6">
+                    <div>
+                      <label className="block text-gray-600 text-sm mb-2">
+                        Reset Password
+                      </label>
+                      <button
+                        className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+                        onClick={() => setShowResetPasswordModal(true)}
+                      >
+                        Reset Password
+                      </button>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* TAMPILAN KHUSUS LOGIN DENGAN GOOGLE */}
+              {user?.authProvider === "google" && (
+                <div className="mt-6 text-center">
+                  <p className="text-gray-500 text-sm">
+                    Anda login menggunakan akun Google.
+                  </p>
+                  <p className="text-gray-500 text-sm">
+                    Untuk mengubah informasi akun, silakan lakukan di Google.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>
       </main>
+
       {showResetPasswordModal && (
         <ResetPasswordForm onClose={() => setShowResetPasswordModal(false)} />
       )}

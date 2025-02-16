@@ -15,6 +15,7 @@ import CreateAddressDialog from "./_components/CreateAddressDialog";
 import CustomerSidebar from "@/components/ui/sidebar";
 import UpdateAddressDialog from "./_components/UpdateAddressDialog";
 import DeleteAddressDialog from "./_components/DeleteAddressDialog";
+import { Home } from "lucide-react";
 
 interface UserResult {
   fullname: string;
@@ -56,36 +57,39 @@ const AddressPage = () => {
   const refreshAddress = () => fetchUserAddress();
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen bg-gray-50">
+      {/* Sidebar */}
       <CustomerSidebar />
-      <div className="flex-1 p-1 md:p-6 space-y-6">
-        {/* Judul */}
-        <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-800">My Address</h1>
-          <h1 className="text-base font-bold text-gray-600 mx-8 mt-2">
-            On this address user can see and create also edit the address
-          </h1>
+
+      {/* Konten Utama */}
+      <div className="flex-1 p-4 md:p-8 space-y-6 flex flex-col items-center">
+        {/* Header */}
+        <div className="text-center justify-center ">
+          <h1 className="text-3xl font-bold text-gray-800">My Address🏠</h1>
+          <p className="text-gray-600 text-base mt-2">
+            View, create, and edit your address here.
+          </p>
         </div>
 
-        <>
-          {/* Filter, Pencarian, dan Tombol Buat Pengguna */}
-          <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
-            <CreateAddressDialog onAddressCreated={refreshAddress} />
-            <div className="max-w-xs w-full sm:w-auto"></div>
-          </div>
+        {/* Filter, Pencarian, dan Tombol Buat Alamat */}
+        <div className="w-full max-w-[800px] flex flex-col sm:flex-row justify-between items-center gap-4">
+          <CreateAddressDialog onAddressCreated={refreshAddress} />
+        </div>
 
-          {/* Tabel Alamat */}
-          <div className="overflow-x-auto shadow rounded-md border border-gray-200">
-            <Table className="min-w-full">
+        {/* Tabel Alamat */}
+        <div className="w-full max-w-[800px] flex justify-center">
+          <div className="overflow-x-auto shadow-md rounded-lg border border-gray-200 bg-white w-full">
+            <Table className="w-full">
               <TableHeader>
-                <TableRow className="bg-gray-100 text-sm">
-                  <TableHead className="text-center">No.</TableHead>
-                  <TableHead>Alamat</TableHead>
-                  <TableHead>Kota</TableHead>
-                  <TableHead>Edit</TableHead>
-                  <TableHead>Delte</TableHead>
+                <TableRow className="bg-gray-100 text-sm text-gray-700">
+                  <TableHead className="text-center w-16">No.</TableHead>
+                  <TableHead>Address</TableHead>
+                  <TableHead>City</TableHead>
+                  <TableHead className="text-center">Edit</TableHead>
+                  <TableHead className="text-center">Delete</TableHead>
                 </TableRow>
               </TableHeader>
+
               <TableBody>
                 {addresses.length > 0 ? (
                   addresses.map((address, index) => (
@@ -96,13 +100,13 @@ const AddressPage = () => {
                       <TableCell className="text-center">{index + 1}</TableCell>
                       <TableCell>{address.addressLine}</TableCell>
                       <TableCell>{address.city}</TableCell>
-                      <TableCell>
+                      <TableCell className="text-center">
                         <UpdateAddressDialog
                           address={address}
                           onAddressUpdated={refreshAddress}
                         />
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="text-center">
                         <DeleteAddressDialog
                           addressId={address.id}
                           addressName={address.addressLine}
@@ -113,15 +117,18 @@ const AddressPage = () => {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={4} className="text-center py-4">
-                      Tidak ada alamat yang tersedia.
+                    <TableCell
+                      colSpan={5}
+                      className="text-center py-6 text-gray-500"
+                    >
+                      No addresses available.
                     </TableCell>
                   </TableRow>
                 )}
               </TableBody>
             </Table>
           </div>
-        </>
+        </div>
       </div>
     </div>
   );

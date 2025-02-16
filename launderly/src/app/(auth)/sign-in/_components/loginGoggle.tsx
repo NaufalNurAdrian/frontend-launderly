@@ -10,8 +10,8 @@ const LoginGoogle = () => {
   const handleGoogleLogin = async (response: any) => {
     console.log("Google Login Success:", response);
     try {
-      const data = await loginWithGoogle(response.credential);
-
+      const data = await loginWithGoogle(response.credential); 
+      
       if (data.token) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.data));
@@ -23,6 +23,7 @@ const LoginGoogle = () => {
       console.error("Google Login Error:", error);
     }
   };
+
 
   useEffect(() => {
     const script = document.createElement("script");

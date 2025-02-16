@@ -5,7 +5,7 @@ import "./globals.css";
 import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
-  title: "launderly",
+  title: "Launderly App",
   description: "A laundry service",
 };
 

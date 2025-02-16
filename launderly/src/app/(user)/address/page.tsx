@@ -35,26 +35,25 @@ interface AddressResult {
 const AddressPage = () => {
   const { user } = useSession();
   const [addresses, setAddresses] = useState<AddressResult[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  async function fetchUserAddress() {
+  const fetchUserAddress = async () => {
+    setLoading(true);
+    setError(null);
     try {
       const data = await getUserAddresses();
-      console.log("Data address dari API:", data);
-      if (data.addresses) {
-        setAddresses(data.addresses);
-      } else {
-        setAddresses([]);
-      }
-    } catch (error) {
-      console.error("Error fetching address:", error);
+      setAddresses(data.addresses || []);
+    } catch (err) {
+      setError("Failed to fetch addresses. Please try again later.");
+    } finally {
+      setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
     fetchUserAddress();
   }, []);
-
-  const refreshAddress = () => fetchUserAddress();
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -62,40 +61,47 @@ const AddressPage = () => {
       <CustomerSidebar />
 
       {/* Konten Utama */}
-      <div className="flex-1 p-4 md:p-8 space-y-6 flex flex-col items-center">
+      <div className="flex-1 p-4 md:p-8 flex flex-col items-center gap-6">
         {/* Header */}
-        <div className="text-center justify-center ">
-          <h1 className="text-3xl font-bold text-gray-800">My Address🏠</h1>
-          <p className="text-gray-600 text-base mt-2">
+        <div className="text-center">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 flex items-center gap-2">
+            My Address <span>🏠</span>
+          </h1>
+          <p className="text-gray-600 text-sm md:text-base mt-2">
             View, create, and edit your address here.
           </p>
         </div>
-
-        {/* Filter, Pencarian, dan Tombol Buat Alamat */}
-        <div className="w-full max-w-[800px] flex flex-col sm:flex-row justify-between items-center gap-4">
-          <CreateAddressDialog onAddressCreated={refreshAddress} />
+        
+        {/* Create Address Button */}
+        <div className="w-full max-w-[800px] flex justify-end">
+          <CreateAddressDialog onAddressCreated={fetchUserAddress} />
         </div>
 
         {/* Tabel Alamat */}
-        <div className="w-full max-w-[800px] flex justify-center">
-          <div className="overflow-x-auto shadow-md rounded-lg border border-gray-200 bg-white w-full">
-            <Table className="w-full">
-              <TableHeader>
-                <TableRow className="bg-gray-100 text-sm text-gray-700">
-                  <TableHead className="text-center w-16">No.</TableHead>
-                  <TableHead>Address</TableHead>
-                  <TableHead>City</TableHead>
-                  <TableHead className="text-center">Edit</TableHead>
-                  <TableHead className="text-center">Delete</TableHead>
-                </TableRow>
-              </TableHeader>
-
-              <TableBody>
-                {addresses.length > 0 ? (
-                  addresses.map((address, index) => (
+        <div className="w-full max-w-[800px]">
+          <div className="overflow-x-auto shadow-md rounded-lg border border-gray-200 bg-white">
+            {loading ? (
+              <p className="text-center py-6 text-gray-500">
+                Loading addresses...
+              </p>
+            ) : error ? (
+              <p className="text-center py-6 text-red-500">{error}</p>
+            ) : addresses.length > 0 ? (
+              <Table className="w-full">
+                <TableHeader>
+                  <TableRow className="bg-gray-100 text-xs md:text-sm text-gray-700">
+                    <TableHead className="text-center w-16">No.</TableHead>
+                    <TableHead>Address</TableHead>
+                    <TableHead>City</TableHead>
+                    <TableHead className="text-center">Edit</TableHead>
+                    <TableHead className="text-center">Delete</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {addresses.map((address, index) => (
                     <TableRow
                       key={address.id}
-                      className="hover:bg-gray-50 text-sm"
+                      className="hover:bg-gray-50 text-xs md:text-sm"
                     >
                       <TableCell className="text-center">{index + 1}</TableCell>
                       <TableCell>{address.addressLine}</TableCell>
@@ -103,30 +109,25 @@ const AddressPage = () => {
                       <TableCell className="text-center">
                         <UpdateAddressDialog
                           address={address}
-                          onAddressUpdated={refreshAddress}
+                          onAddressUpdated={fetchUserAddress}
                         />
                       </TableCell>
                       <TableCell className="text-center">
                         <DeleteAddressDialog
                           addressId={address.id}
                           addressName={address.addressLine}
-                          onAddressDeleted={refreshAddress}
+                          onAddressDeleted={fetchUserAddress}
                         />
                       </TableCell>
                     </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell
-                      colSpan={5}
-                      className="text-center py-6 text-gray-500"
-                    >
-                      No addresses available.
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <p className="text-center py-6 text-gray-500">
+                No addresses available.
+              </p>
+            )}
           </div>
         </div>
       </div>

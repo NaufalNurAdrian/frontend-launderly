@@ -10,10 +10,10 @@ export default function Home() {
   return (
     <div className="bg-white w-full h-auto">
       <Navbar/>
-      <Hero/>
       <About/>
       <WhyUs/>
       <LaundryServices/>
+      <Hero/>
       <Footer/>
     </div>
   );

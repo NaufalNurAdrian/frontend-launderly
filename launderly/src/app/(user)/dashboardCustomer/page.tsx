@@ -59,7 +59,7 @@ const CustomerDashboard: React.FC = () => {
                 href="/myLaundry"
                 className="flex-1 lg:flex-none text-center bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-8 py-3 rounded-xl text-sm lg:text-base font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
               >
-                My Laundry
+                Laundry
               </Link>
               <Link
                 href="/address"

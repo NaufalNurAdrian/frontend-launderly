@@ -38,3 +38,7 @@ export const AddressSchema = Yup.object().shape({
   street: Yup.string().required("Alamat jalan wajib diisi"),
   city: Yup.string().required("Kota wajib diisi"),
 });
+
+export const RequestOrderSchema = Yup.object().shape({
+  addressId: Yup.number().required("Wajib diisi")
+})

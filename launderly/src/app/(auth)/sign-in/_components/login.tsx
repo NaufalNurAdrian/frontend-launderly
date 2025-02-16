@@ -60,16 +60,6 @@ const Login = () => {
         />
       </div>
       <div className="lg:w-1/2 w-full flex flex-col items-center justify-center p-8 lg:p-12 bg-blue-200">
-        <div className="mb-8 text-center w-full max-w-lg">
-          <Link href={"/"}>
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              Launderly!
-            </h1>
-          </Link>
-          <p className="text-lg text-gray-600 mx-auto">
-            Log in to enjoy all the benefits. Enter your email and password.
-          </p>
-        </div>
         <div className="bg-white w-full max-w-lg p-8 rounded-lg shadow-lg">
           <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">
             Welcome Back!
@@ -126,10 +116,16 @@ const Login = () => {
                 </div>
 
                 {/* Forgot Password Link */}
-                <div className="mb-6 text-right">
+                <div className="mb-6 flex justify-between text-sm">
+                  <Link
+                    href="/"
+                    className="text-blue-900 hover:underline"
+                  >
+                    Back Home
+                  </Link>
                   <Link
                     href="/forgot-password"
-                    className="text-blue-500 text-sm hover:underline"
+                    className="text-blue-500 hover:underline"
                   >
                     Forgot Password?
                   </Link>

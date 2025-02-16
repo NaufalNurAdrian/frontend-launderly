@@ -16,6 +16,7 @@ import { toast } from "react-toastify";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { customIcon } from "@/components/feat-1/customIcon";
+import { Edit2 } from "lucide-react";
 
 interface AddressFormValues {
   street: string;
@@ -90,7 +91,7 @@ const UpdateAddressDialog: React.FC<UpdateAddressDialogProps> = ({ address, onAd
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
-        <Button className="px-6 py-2 rounded-lg shadow bg-blue-500 text-white">Edit Address</Button>
+        <Button ><Edit2/></Button>
       </DialogTrigger>
       <DialogContent className="w-[400px] md:w-[600px]">
         <DialogHeader>

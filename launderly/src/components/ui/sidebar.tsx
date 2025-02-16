@@ -19,11 +19,26 @@ import { deleteCookie } from "@/libs/action";
 import useSession from "@/hooks/useSession";
 
 const CustomerSidebar = () => {
-  const [isClient, setIsClient] = useState(false)
-  const { user } = useSession(); 
+  const [isClient, setIsClient] = useState(false);
+  const { user } = useSession();
   const router = useRouter();
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setIsCollapsed(true); // Tutup sidebar di mobile
+      } else {
+        setIsCollapsed(false); // Buka sidebar di desktop
+      }
+    };
+
+    handleResize(); // Panggil saat pertama kali render
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     setIsClient(true); // Set state saat sudah di client-side

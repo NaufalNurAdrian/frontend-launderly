@@ -23,7 +23,7 @@ export default function BypassModal({ isOpen, onClose, onSubmit }: ModalProps) {
 
   return (
     <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-[400px]">
+      <div className="bg-white p-6 rounded-lg shadow-lg w-[400px] mx-1">
         <h2 className="text-xl font-semibold mb-4">Enter Bypass Notes</h2>
         <textarea
           value={bypassNotes}

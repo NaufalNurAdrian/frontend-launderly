@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 export interface IUser {
   id: number;
   fullName: string;
@@ -33,4 +34,10 @@ export interface IApiResponse {
     pageSize: number;
     totalPages: number;
   };
+=======
+export interface IRequestOrderForm {
+  addressId: number;
+  latitude?: number;
+  longitude?: number;
+>>>>>>> 226747a8671504625a2e6f456aff6202199bf680
 }

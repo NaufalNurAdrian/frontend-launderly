@@ -24,7 +24,6 @@ export default function AttendanceTable({date, workHour, role, checkIn, checkOut
         <div>
          <div className="w-full bg-blue-300 my-5 ">
   <table className="table table-lg w-[1000px]">
-    {/* head */}
     <thead className="border border-b-blue-600">
       <tr className="border border-b-white text-blue-600 bg-blue-400">
         <th>Id</th>
@@ -37,7 +36,6 @@ export default function AttendanceTable({date, workHour, role, checkIn, checkOut
       </tr>
     </thead>
     <tbody className="border border-white text-center">
-      {/* row 1 */}
       <tr className="border border-collapse-white">
         <td className="p-5">{id}</td>
         <td>{date}</td>

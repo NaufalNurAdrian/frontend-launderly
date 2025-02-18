@@ -1,37 +1,37 @@
 "use client";
+import { useToken } from "@/hooks/useToken";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 interface ProcessOrderButtonProps {
   orderId: number;
-  workerId: number;
 }
 
-export default function ProcessOrderButton({ orderId, workerId }: ProcessOrderButtonProps) {
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL_BE;
+export default function ProcessOrderButton({ orderId }: ProcessOrderButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-  const token = localStorage.getItem("token");
+  const token = useToken()
+
   const handleProcessOrder = async () => {
     setIsLoading(true);
     setError(null);
-
     try {
-      const response = await fetch(`http://localhost:8000/api/order/create/${orderId}?workerId=${workerId}`, {
+      const response = await fetch(`${BASE_URL}/order/create/${orderId}`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
       });
 
       if (!response.ok) {
-        throw new Error("Gagal memproses pesanan");
+        throw new Error("Error Processing");
       }
 
       const data = await response.json();
-      console.log("Pesanan berhasil diproses:", data);
-
       router.push(`/worker/requests/${orderId}`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Terjadi kesalahan");
+      setError(err instanceof Error ? err.message : "Error");
     } finally {
       setIsLoading(false);
     }

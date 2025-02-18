@@ -7,9 +7,9 @@ import { IApiResponse, IOrder } from "@/types/worker";
 import DefaultLoading from "../defaultLoading";
 import NotFound from "../notFound";
 import SortButton from "../sortingButton";
-import FilterDropdown from "../driver/history/filterButton";
 import Pagination from "../paginationButton";
 
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL_BE;
 export default function OrderMobileHistoryTable() {
   const [loading, setLoading] = useState(true);
   const [requests, setRequests] = useState<IOrder[]>([]);
@@ -32,13 +32,10 @@ export default function OrderMobileHistoryTable() {
 
     try {
       setLoading(true);
-      const res = await fetch(
-        `http://localhost:8000/api/order/history/?&page=${page}&sortBy=${sortBy}&order=${order}&type=${filter}`,
-        {
-          method: "GET",
-          headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-        }
-      );
+      const res = await fetch(`${base_url}/order/history/?&page=${page}&sortBy=${sortBy}&order=${order}`, {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      });
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
@@ -76,21 +73,28 @@ export default function OrderMobileHistoryTable() {
   }, [sortBy, order, currentPage, filter, token]);
 
   if (loading) {
-    return <div className="text-center items-center py-5"><DefaultLoading/></div>;
+    return (
+      <div className="text-center items-center py-5">
+        <DefaultLoading />
+      </div>
+    );
   }
 
   if (requests.length === 0 && !loading) {
-    return <div className="text-center py-5">\<NotFound text="not history found"/></div>;
+    return (
+      <div className="text-center py-5">
+        \<NotFound text="not history found" />
+      </div>
+    );
   }
 
   return (
     <div className="p-4">
       <div className="flex flex-col gap-3 mb-4">
         <span className="flex justify-between mx-2">
-        <SortButton sortBy="distance" label="Sort By Distance" order={order.distance} onSort={handleSort} />
-        <SortButton sortBy="createdAt" label="Sort By Date" order={order.createdAt} onSort={handleSort} />
+          <SortButton sortBy="distance" label="Sort By Distance" order={order.distance} onSort={handleSort} />
+          <SortButton sortBy="createdAt" label="Sort By Date" order={order.createdAt} onSort={handleSort} />
         </span>
-        <FilterDropdown onFilterChange={handleFilterChange} option1="pickup" option2="delivery" />
       </div>
 
       <div className="space-y-4">

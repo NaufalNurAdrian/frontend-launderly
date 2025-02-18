@@ -1,16 +1,29 @@
+import Link from "next/link";
+
 export function About() {
   return (
-    <div id="About" className="bg-cyan-100 py-16 px-6 md:px-12 lg:px-24">
-      <div className="container mx-auto text-center">
-        <h2 className="text-3xl font-semibold text-gray-800 mb-8">
-          About Launderly
-        </h2>
-        <p className="text-lg text-gray-600 mb-12">
-          Launderly is a laundry service that takes care of all your laundry
-          needs, from washing, ironing, to packing, all while you relax at home.
-          We make laundry easier and more convenient for you, with the quality
-          you can trust.
-        </p>
+    <div
+      className="hero min-h-screen"
+      style={{
+        backgroundImage: "url('/carousel2.jpeg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      <div className="hero-overlay bg-black bg-opacity-80"></div>
+      <div className="hero-content text-white text-center">
+        <div className="max-w-lg">
+          <h1 className="mb-5 text-5xl font-bold">
+            Effortless Laundry, Delivered to You
+          </h1>
+          <p className="mb-5 text-lg">
+            No more laundry day stress! With Launderly, we'll pick up, wash, and
+            deliver your clothes fresh and clean—straight to your doorstep.
+          </p>
+          <Link href={"/sign-in"}>
+            <button className="btn btn-primary">Order Now</button>
+          </Link>
+        </div>
       </div>
     </div>
   );

@@ -8,13 +8,11 @@ export default function ProcessPage() {
   const orderId = params.orderId;
 
   return (
-    <div className="relative w-screen h-screen flex justify-center items-center">
-      <div className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-70"
-        style={{ backgroundImage: "url('/carousel1.jpeg')" }}>
-      </div>
+    <div className="relative w-full min-h-screen flex justify-center items-center bg-gray-100">
+      <div className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-70" style={{ backgroundImage: "url('/carousel1.jpeg')" }}></div>
 
-      <div className="relative bg-opacity-90 p-10 rounded-lg shadow-lg z-10">
-        <CompleteOrder orderId={Number(orderId)} workerId={12} />
+      <div className="relative p-6 sm:p-10 md:p-12 lg:p-14 xl:p-16 bg-opacity-90 rounded-lg shadow-lg z-10 w-full max-w-4xl mx-4">
+        <CompleteOrder orderId={Number(orderId)} />
       </div>
     </div>
   );

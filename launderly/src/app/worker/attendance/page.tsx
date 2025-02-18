@@ -8,12 +8,12 @@ import SortButton from "@/components/feat-3/sortingButton";
 import { IApiResponse, IAttendance } from "@/types/attendance";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
-import Sidebar from "@/components/feat-3/worker/WorkerSidebar";
-import Navbar from "@/components/feat-3/worker/workerNavbar";
+import Sidebar from "@/components/feat-3/sidebar";
+import Navbar from "@/components/feat-3/navbar";
+import { useToken } from "@/hooks/useToken";
 
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL_BE;
 export default function Attendance() {
-  const router = useRouter();
   const [attendanceData, setAttendanceData] = useState<IAttendance[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -23,15 +23,14 @@ export default function Attendance() {
     createdAt: "desc",
     workHour: "asc",
   });
-  const token = localStorage.getItem("token");
-  if (!token) {
-    toast.error("Unatuhorize!");
-    router.push("/login");
-  }
+  const token = useToken();
+
   const getData = async (page: number, sortBy: string, order: "asc" | "desc") => {
+    if (!token) return;
+
     try {
       setLoading(true);
-      const res = await fetch(`http://localhost:8000/api/attendance/history/?page=${page}?&sortBy=${sortBy}&order=${order}`, {
+      const res = await fetch(`${BASE_URL}/attendance/history/?page=${page}&sortBy=${sortBy}&order=${order}`, {
         method: "GET",
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
       });
@@ -62,23 +61,23 @@ export default function Attendance() {
   };
 
   useEffect(() => {
-    getData(currentPage, sortBy, order[sortBy]);
-  }, [currentPage, sortBy, order[sortBy]]);
-
+    if (token) {
+      getData(currentPage, sortBy, order[sortBy]);
+    }
+  }, [token, currentPage, sortBy, order[sortBy]]);
   return (
     <div className="flex bg-white min-h-screen py-3">
       <div>
         <span className="hidden lg:block">
-          {" "}
-          <Sidebar />
+          <Sidebar role="worker" />
         </span>
         <span className="max-md:block lg:hidden">
-          <Navbar />
+          <Navbar role="worker" />
         </span>
       </div>
       <div className="flex w-screen flex-col items-center mt-10">
         <div className="w-[85vw] flex justify-end mx-10 my-5">
-          <WorkerAttendance name="Username" role="Worker" token={token!} id={12} profile="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" />
+          <WorkerAttendance token={token!} />
         </div>
         <div className="flex w-[85vw] flex-col gap-2 lg:flex-row justify-between mx-10">
           <h1 className="text-blue-500 text-2xl font-bold">Your Attendance Log: </h1>

@@ -86,8 +86,7 @@ const CreateRequestOrderDialog: React.FC<CreateRequestOrderDialogProps> = ({
     setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void
   ) => {
     const addressId = parseInt(event.target.value);
-    const selected =
-      addresses.find((addr) => addr.id === addressId) || null;
+    const selected = addresses.find((addr) => addr.id === addressId) || null;
     setSelectedAddress(selected);
     setSelectedOutlet(null);
     setFieldValue("addressId", selected ? selected.id : 0);

@@ -15,7 +15,7 @@ export function Navbar() {
   };
 
   return (
-    <div className="navbar bg-cyan-400 sticky top-0 z-50">
+    <div className="navbar bg-cyan-500 sticky top-0 z-50 md:px-44 text-black">
       <div className="navbar-start">
         <div className="dropdown">
           <div
@@ -26,7 +26,7 @@ export function Navbar() {
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
+              className="h-6 w-6"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -35,7 +35,7 @@ export function Navbar() {
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth="2"
-                d="M4 6h16M4 12h16M4 18h7"
+                d="M4 6h16M4 12h16M4 18h16"
               />
             </svg>
           </div>
@@ -45,13 +45,8 @@ export function Navbar() {
               className="menu menu-sm dropdown-content bg-cyan-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
             >
               <li>
-                <Link href="#About" onClick={closeDropdown}>
-                  About us
-                </Link>
-              </li>
-              <li>
-                <Link href="#WhyUs" onClick={closeDropdown}>
-                  Why Launderly?
+                <Link href="#WhoWeAre" onClick={closeDropdown}>
+                  Who We Are
                 </Link>
               </li>
               <li>
@@ -59,16 +54,21 @@ export function Navbar() {
                   Our Services
                 </Link>
               </li>
+              <li>
+                <Link href="#Quotes" onClick={closeDropdown}>
+                  Quotes?
+                </Link>
+              </li>
             </ul>
           )}
         </div>
       </div>
       <div className="navbar-center">
-        <a className="btn btn-ghost text-xl">Launderly</a>
+        <a className="btn btn-ghost text-4xl">Launderly</a>
       </div>
       <div className="navbar-end">
-        <button className="btn btn-primary">
-          <Link href="/sign-in">Order Now!</Link>
+        <button className="btn">
+          <Link href="/sign-in">Sign in</Link>
         </button>
       </div>
     </div>

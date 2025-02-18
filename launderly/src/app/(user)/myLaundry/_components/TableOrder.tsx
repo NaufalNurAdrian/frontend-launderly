@@ -10,7 +10,7 @@ import {
   TableRow,
 } from "@/components/feat-1/table";
 import useSession from "@/hooks/useSession";
-import { getUserOrders } from "@/api/order"; 
+import { getUserOrders } from "@/api/order";
 import { PickupStatus } from "@/types/request";
 
 interface OrderResult {
@@ -19,7 +19,7 @@ interface OrderResult {
   orderStatus: string;
   weight: number;
   laundryPrice: string;
-  createdAt: string
+  createdAt: string;
 }
 
 const OrderPage = () => {
@@ -46,67 +46,62 @@ const OrderPage = () => {
   }, []);
 
   return (
-      <div className="flex flex-col items-center gap-6 w-full">
-        {/* Header */}
-        <div className="text-center">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 flex items-center gap-2">
-            My Orders <span>🧺</span>
-          </h1>
-        </div>
+    <div className="flex flex-col items-center gap-6 w-full px-4">
+      {/* Header */}
+      <div className="text-center">
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-800 flex items-center gap-2">
+          My Orders <span>🧺</span>
+        </h1>
+      </div>
 
-        {/* Tabel Orders */}
-        <div className="w-full max-w-[800px]">
-          <div className="overflow-x-auto shadow-md rounded-lg border border-gray-200 bg-white">
-            {loading ? (
-              <p className="text-center py-6 text-gray-500">
-                Loading orders...
-              </p>
-            ) : error ? (
-              <p className="text-center py-6 text-red-500">{error}</p>
-            ) : orders.length > 0 ? (
-              <Table className="w-full">
-                <TableHeader>
-                  <TableRow className="bg-gray-100 text-xs md:text-sm text-gray-700">
-                    <TableHead className="text-center w-16">No.</TableHead>
-                    <TableHead>Order Number</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Weight</TableHead>
-                    <TableHead>Total Price</TableHead>
-                    <TableHead>Order Date</TableHead>
-                    <TableHead className="text-center">Details</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {orders.map((order, index) => (
-                    <TableRow
-                      key={order.id}
-                      className="hover:bg-gray-50 text-xs md:text-sm"
-                    >
-                      <TableCell className="text-center">{index + 1}</TableCell>
-                      <TableCell>{order.orderNumber}</TableCell>
-                      <TableCell>{PickupStatus(order.orderStatus)}</TableCell>
-                      <TableCell>{order.weight} kg</TableCell>
-                      <TableCell>{order.laundryPrice}</TableCell>
-                      <TableCell>
-                        {new Date(order.createdAt).toLocaleDateString()}
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <button className="text-blue-500 hover:underline">
-                          View Details
-                        </button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            ) : (
-              <p className="text-center py-6 text-gray-500">
-                No orders available.
-              </p>
-            )}
-          </div>
+      {/* Tabel Orders - Responsif */}
+      <div className="w-full max-w-[900px] overflow-x-auto">
+        <div className="shadow-md rounded-lg border border-gray-200 bg-white overflow-hidden">
+          {loading ? (
+            <p className="text-center py-6 text-gray-500">Loading orders...</p>
+          ) : error ? (
+            <p className="text-center py-6 text-red-500">{error}</p>
+          ) : orders.length > 0 ? (
+            <table className="w-full min-w-[700px]">
+              <thead>
+                <tr className="bg-blue-100 text-xs md:text-sm text-gray-700">
+                  <th className="text-center w-12 px-3 py-2">No.</th>
+                  <th className="px-3 py-2 text-left">Order Number</th>
+                  <th className="px-3 py-2 text-left">Status</th>
+                  <th className="px-3 py-2 text-left">Weight</th>
+                  <th className="px-3 py-2 text-left">Total Price</th>
+                  <th className="px-3 py-2 text-left">Order Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {orders.map((order, index) => (
+                  <tr
+                    key={order.id}
+                    className="hover:bg-gray-50 text-xs md:text-sm border-t"
+                  >
+                    <td className="text-center px-3 py-2">{index + 1}</td>
+                    <td className="px-3 py-2">{order.orderNumber}</td>
+                    <td className="px-3 py-2">
+                      {PickupStatus(order.orderStatus)}
+                    </td>
+                    <td className="px-3 py-2">{order.weight} kg</td>
+                    <td className="px-3 py-2">${order.laundryPrice}</td>
+                    <td className="px-3 py-2">
+                      {new Date(order.createdAt).toLocaleDateString()}
+                    </td>
+
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p className="text-center py-6 text-gray-500">
+              No orders available.
+            </p>
+          )}
         </div>
       </div>
+    </div>
   );
 };
 

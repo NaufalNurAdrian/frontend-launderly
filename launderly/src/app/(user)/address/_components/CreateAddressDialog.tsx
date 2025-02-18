@@ -96,7 +96,6 @@ const CreateAddressDialog: React.FC<CreateAddressDialogProps> = ({
             lat: position.coords.latitude,
             lng: position.coords.longitude,
           };
-          
           setFieldValue("latitude", position.coords.latitude);
           setFieldValue("longitude", position.coords.longitude);
           setUserLocation({
@@ -190,7 +189,6 @@ const CreateAddressDialog: React.FC<CreateAddressDialogProps> = ({
         >
           {({ isSubmitting, setFieldValue, values }) => (
             <Form className="space-y-4 mt-4">
-              {/* Street Address */}
               <div>
                 <label className="block text-sm font-medium">
                   Street Address <span className="text-red-500">*</span>
@@ -208,7 +206,6 @@ const CreateAddressDialog: React.FC<CreateAddressDialogProps> = ({
                 />
               </div>
 
-              {/* City */}
               <div>
                 <label className="block text-sm font-medium">
                   City <span className="text-red-500">*</span>
@@ -225,7 +222,7 @@ const CreateAddressDialog: React.FC<CreateAddressDialogProps> = ({
                   className="text-red-500 text-sm mt-1"
                 />
               </div>
-
+              
               {/* Map */}
               <div>
                 <label className="block text-sm font-medium">

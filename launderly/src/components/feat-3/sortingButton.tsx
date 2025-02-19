@@ -16,7 +16,7 @@ export default function SortButton({ sortBy, order, onSort, label }: SortButtonP
   };
 
   return (
-    <button onClick={handleClick} className="flex justify-center items-center px-4 py-2 max-w-[180px] mx-1 text-center bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+    <button onClick={handleClick} className="flex justify-center items-center px-4 py-2 max-w-[200px] mx-1 text-center bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
       <span className="mr-2">{label}</span>
       {order === "asc" ? <ArrowUp size={16} /> : <ArrowDown size={16} />}
     </button>

@@ -8,12 +8,8 @@ import NotificationModal from "./notificationModal";
 import LogoutButton from "./logoutButton";
 import { useToken } from "@/hooks/useToken";
 
-interface NavbarProps {
-  role: "worker" | "driver";
-}
-
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL_BE;
-export default function Navbar({ role }: NavbarProps) {
+export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
@@ -23,10 +19,10 @@ export default function Navbar({ role }: NavbarProps) {
   const token = useToken();
 
   const navItems = [
-    { name: "Attendance", path: `/${role}/attendance`, icon: <CalendarCheck size={24} /> },
-    { name: "Notifications", path: `/${role}/notifications`, icon: <Bell size={24} /> },
-    { name: "Requests", path: `/${role}/requests`, icon: <FileText size={24} /> },
-    { name: "History", path: `/${role}/history`, icon: <FolderClock size={24} /> },
+    { name: "Attendance", path: `/attendance`, icon: <CalendarCheck size={24} /> },
+    { name: "Notifications", path: `/notifications`, icon: <Bell size={24} /> },
+    { name: "Requests", path: `/requests`, icon: <FileText size={24} /> },
+    { name: "History", path: `/history`, icon: <FolderClock size={24} /> },
   ];
 
   const toggleNotificationModal = () => {

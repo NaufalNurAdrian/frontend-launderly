@@ -29,10 +29,9 @@ export default function OrderMobileHistoryTable() {
 
   const fetchRequests = async (page: number, sortBy: string, order: "asc" | "desc", filter: string) => {
     if (!token) return;
-
     try {
       setLoading(true);
-      const res = await fetch(`${base_url}/order/history/?&page=${page}&sortBy=${sortBy}&order=${order}`, {
+      const res = await fetch(`${BASE_URL}/order/history/?&page=${page}&sortBy=${sortBy}&order=${order}&pageSize=5`, {
         method: "GET",
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
       });
@@ -83,7 +82,7 @@ export default function OrderMobileHistoryTable() {
   if (requests.length === 0 && !loading) {
     return (
       <div className="text-center py-5">
-        \<NotFound text="not history found" />
+        <NotFound text="No History Data Found." />
       </div>
     );
   }

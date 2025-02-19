@@ -5,7 +5,7 @@ interface IAttendance {
   date: string;
   workHour: number;
   checkIn: Date;
-  checkOut: Date;
+  checkOut: Date | null;
 }
 
 export default function Table({ date, workHour, checkIn, checkOut }: IAttendance) {
@@ -23,7 +23,7 @@ export default function Table({ date, workHour, checkIn, checkOut }: IAttendance
       <div className="flex flex-col p-2 justify-center items-center mx-2 lg:mx-10 gap-1">
         <p className="text-neutral-400">In & Out :</p>
         <h1 className="font-bold text-sm lg:text-xl">
-          {formatTime(checkIn)} <span className="font-normal">•••</span> {formatTime(checkOut)}
+          {formatTime(checkIn)} <span className="font-normal">•••</span> {checkOut ? formatTime(checkOut) : "..."}
         </h1>
       </div>
     </div>

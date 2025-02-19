@@ -103,7 +103,7 @@ export default function OrderProcessingPage() {
       error: (err) => err.message,
     });
     handleCloseModal();
-    router.push("/worker/requests");
+    router.push("/requests");
   };
 
   if (error) {
@@ -111,7 +111,7 @@ export default function OrderProcessingPage() {
   }
 
   return (
-    <div className="p-6 bg-white rounded-lg w-full sm:w-[500px] lg:w-[600px] lg:mx-auto mx-3 gap-5 flex flex-col items-center">
+    <div className="p-6 bg-white rounded-lg max-w-[500px] lg:w-[600px] lg:mx-auto mx-3 gap-5 flex flex-col items-center">
       <h1 className="text-2xl font-bold text-blue-500">Processing Order #{orderId}</h1>
 
       <form onSubmit={formik.handleSubmit} className="space-y-4 w-full">
@@ -141,7 +141,7 @@ export default function OrderProcessingPage() {
           <button
             type="submit"
             onClick={() => {
-              router.push(`/worker/process/${orderId}`);
+              router.push(`/process/${orderId}`);
             }}
             className={`w-full sm:w-auto px-4 py-2 rounded-lg ${formik.values.items.every((item) => item.workerQuantity === item.quantity) ? "bg-blue-500 text-white" : "bg-gray-300 text-gray-500 cursor-not-allowed"}`}
             disabled={!formik.values.items.every((item) => item.workerQuantity === item.quantity)}

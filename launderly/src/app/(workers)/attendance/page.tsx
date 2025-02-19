@@ -11,6 +11,7 @@ import toast from "react-hot-toast";
 import Sidebar from "@/components/feat-3/sidebar";
 import Navbar from "@/components/feat-3/navbar";
 import { useToken } from "@/hooks/useToken";
+import { useRole } from "@/hooks/useRole";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL_BE;
 export default function Attendance() {
@@ -24,6 +25,7 @@ export default function Attendance() {
     workHour: "asc",
   });
   const token = useToken();
+  const role = useRole();
 
   const getData = async (page: number, sortBy: string, order: "asc" | "desc") => {
     if (!token) return;
@@ -69,10 +71,10 @@ export default function Attendance() {
     <div className="flex bg-white min-h-screen py-3">
       <div>
         <span className="hidden lg:block">
-          <Sidebar role="driver" />
+          <Sidebar />
         </span>
         <span className="max-md:block lg:hidden">
-          <Navbar role="driver" />
+          <Navbar />
         </span>
       </div>
       <div className="flex w-screen flex-col items-center mt-10">
@@ -97,7 +99,7 @@ export default function Attendance() {
         ) : (
           <div className="mx-10 w-[85vw]">
             {attendanceData.map((data: IAttendance, index: number) => (
-              <Table key={index} date={data.createdAt} checkIn={new Date(data.checkIn)} checkOut={new Date(data.checkOut)} workHour={data.workHour} />
+              <Table key={index} date={data.createdAt} checkIn={new Date(data.checkIn)} checkOut={data.checkOut  == null ? null : new Date(data.checkOut)} workHour={data.workHour} />
             ))}
             <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
           </div>

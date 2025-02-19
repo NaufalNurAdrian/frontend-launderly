@@ -8,12 +8,8 @@ import NotificationModal from "./notificationModal";
 import LogoutButton from "./logoutButton";
 import { useToken } from "@/hooks/useToken";
 
-interface SidebarProps {
-  role: "worker" | "driver";
-}
-
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL_BE;
-export default function Sidebar({ role }: SidebarProps) {
+export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
@@ -23,10 +19,10 @@ export default function Sidebar({ role }: SidebarProps) {
   const token = useToken();
 
   const navItems = [
-    { name: "Attendance", path: `/${role}/attendance`, icon: <CalendarCheck size={30} /> },
-    { name: "Notifications", path: `/${role}/notifications`, icon: <Bell size={30} /> },
-    { name: "Requests", path: `/${role}/requests`, icon: <FileText size={30} /> },
-    { name: "History", path: `/${role}/history`, icon: <FolderClock size={30} /> },
+    { name: "Attendance", path: `/attendance`, icon: <CalendarCheck size={30} /> },
+    { name: "Notifications", path: `/notifications`, icon: <Bell size={30} /> },
+    { name: "Requests", path: `/requests`, icon: <FileText size={30} /> },
+    { name: "History", path: `/history`, icon: <FolderClock size={30} /> },
   ];
 
   const toggleNotificationModal = () => {

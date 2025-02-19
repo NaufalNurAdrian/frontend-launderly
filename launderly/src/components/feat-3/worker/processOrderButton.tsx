@@ -1,9 +1,7 @@
 "use client";
 import { useToken } from "@/hooks/useToken";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
-
+import {useState } from "react";
 interface ProcessOrderButtonProps {
   orderId: number;
 }
@@ -29,7 +27,7 @@ export default function ProcessOrderButton({ orderId }: ProcessOrderButtonProps)
       }
 
       const data = await response.json();
-      router.push(`/worker/requests/${orderId}`);
+      router.push(`/requests/${orderId}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error");
     } finally {

@@ -15,7 +15,7 @@ interface IList {
 }
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL_BE;
-export default function RequestList({ type }: IList) {
+export default function DriverRequestLists({ type }: IList) {
   const [loading, setLoading] = useState(true);
   const [requests, setRequests] = useState<IRequest[]>([]);
   const [currentPage, setCurrentPage] = useState(1);

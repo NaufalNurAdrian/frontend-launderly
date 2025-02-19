@@ -40,7 +40,7 @@ export default function CompleteOrder({ orderId }: CompleteOrderProps) {
       error: "Error!",
     });
 
-    router.push("/worker/requests");
+    router.push("/requests");
   };
 
   return (

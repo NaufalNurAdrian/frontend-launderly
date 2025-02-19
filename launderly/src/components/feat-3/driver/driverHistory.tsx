@@ -28,9 +28,10 @@ export default function HistoryTable() {
   });
   const [filter, setFilter] = useState<string>("");
   const fetchRequests = async (page: number, sortBy: string, order: "asc" | "desc", filter: string) => {
+    if (!token) return;
     try {
       setLoading(true);
-      const res = await fetch(`${BASE_URL}/request/?&page=${page}&sortBy=${sortBy}&order=${order}&type=${filter}`, {
+      const res = await fetch(`${BASE_URL}/request/?page=${page}&sortBy=${sortBy}&order=${order}&type=${filter}&pageSize=7`, {
         method: "GET",
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
       });
@@ -48,7 +49,7 @@ export default function HistoryTable() {
     }
   };
 
-  const handleFilterChange = (selectedFilter: any) => {
+  const handleFilterChange = (selectedFilter: string) => {
     setFilter(selectedFilter);
   };
 
@@ -64,8 +65,10 @@ export default function HistoryTable() {
     }));
   };
   useEffect(() => {
-    fetchRequests(currentPage, sortBy, order[sortBy], filter);
-  }, [sortBy, order, currentPage, filter]);
+    if (token) {
+      fetchRequests(currentPage, sortBy, order[sortBy], filter);
+    }
+  }, [sortBy, order, currentPage, filter, token]);
 
   return (
     <div className="flex flex-col justify-center z-0 w-screen lg:w-[1000px] overflow-x-scroll">
@@ -100,7 +103,7 @@ export default function HistoryTable() {
               <tr>
                 <td colSpan={5} className="text-center py-5">
                   <div className="flex justify-center items-center">
-                    <NotFound text="No History data found." />
+                    <NotFound text="No History Data Found." />
                   </div>
                 </td>
               </tr>

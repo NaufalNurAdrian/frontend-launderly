@@ -12,7 +12,7 @@ import ProcessOrderButton from "./processOrderButton";
 import { useToken } from "@/hooks/useToken";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL_BE;
-export default function RequestList() {
+export default function WorkerRequestLists() {
   const [loading, setLoading] = useState(true);
   const [requests, setRequests] = useState<IOrder[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -75,10 +75,10 @@ export default function RequestList() {
   };
 
   return (
-    <div className="max-w-[500px] mb-20 lg:w-[800px] rounded-xl bg-white shadow-md py-3 px-4 lg:px-8 min-h-[30rem] flex flex-col items-center">
-      <div className="max-w-[500px] lg:max-w-[700px]">
+    <div className="max-w-[500px] mb-20 lg:w-[800px] rounded-xl bg-white shadow-md py-5 px-8 min-h-[30rem] flex flex-col items-center ">
+      <div className="flex flex-col w-full lg:justify-normal justify-center ">
         <h2 className="text-xl lg:text-2xl font-bold text-blue-500 mb-2 lg:mb-4 text-center lg:text-left">Order Requests</h2>
-        <div className="flex flex-row justify-between gap-3 mb-2">
+        <div className="flex flex-col lg:flex-row justify-between gap-3 mb-3">
           <SortButton sortBy="createdAt" label="Sort By Date" order={order.createdAt} onSort={handleSort} />
           <SortButton sortBy="weight" label="Sort By Weight" order={order.weight} onSort={handleSort} />
         </div>
@@ -105,7 +105,7 @@ export default function RequestList() {
                   <Shirt size={16} className="text-blue-500" />
                   <span className="ml-2 text-sm lg:text-md">{request.weight || "Unknown Weight"} Kg</span>
                 </div>
-                <div className="mt-3">
+                <div className="lg:mt-3 mt-1">
                   <ProcessOrderButton orderId={request.id} />
                 </div>
               </div>

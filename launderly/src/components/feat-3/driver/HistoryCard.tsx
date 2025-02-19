@@ -31,10 +31,9 @@ export default function MobileHistoryTable() {
 
   const fetchRequests = async (page: number, sortBy: string, order: "asc" | "desc", filter: string) => {
     if (!token) return;
-
     try {
       setLoading(true);
-      const res = await fetch(`${BASE_URL}/request/?&page=${page}&sortBy=${sortBy}&order=${order}&type=${filter}`, {
+      const res = await fetch(`${BASE_URL}/request/?page=${page}&sortBy=${sortBy}&order=${order}&type=${filter}&pageSize=5`, {
         method: "GET",
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
       });
@@ -85,13 +84,13 @@ export default function MobileHistoryTable() {
   if (requests.length === 0 && !loading) {
     return (
       <div className="text-center py-5">
-        <NotFound text="not history found" />
+        <NotFound text="No History Data Found." />
       </div>
     );
   }
 
   return (
-    <div className="p-4">
+    <div className="p-4 mb-10">
       <div className="flex flex-col gap-3 mb-4">
         <span className="flex justify-between mx-1">
           <SortButton sortBy="distance" label="Sort By Distance" order={order.distance} onSort={handleSort} />

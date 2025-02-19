@@ -24,9 +24,10 @@ export default function OrderHistoryTable() {
 
   const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL_BE;
   const fetchRequests = async (page: number, sortBy: string, order: "asc" | "desc", filter: string) => {
+    if (!token) return;
     try {
       setLoading(true);
-      const res = await fetch(`${BASE_URL}/order/history/?&page=${page}&sortBy=${sortBy}&order=${order}&type=${filter}`, {
+      const res = await fetch(`${BASE_URL}/order/history/?&page=${page}&sortBy=${sortBy}&order=${order}&type=${filter}&pageSize=7`, {
         method: "GET",
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
       });
@@ -61,8 +62,10 @@ export default function OrderHistoryTable() {
   };
 
   useEffect(() => {
-    fetchRequests(currentPage, sortBy, order[sortBy], filter);
-  }, [sortBy, order, currentPage, filter]);
+    if (token) {
+      fetchRequests(currentPage, sortBy, order[sortBy], filter);
+    }
+  }, [sortBy, order, currentPage, filter, token]);
 
   return (
     <div className="flex flex-col justify-center z-0 w-screen h-full lg:w-[1000px] overflow-x-auto">
@@ -106,7 +109,7 @@ export default function OrderHistoryTable() {
                 <tr>
                   <td colSpan={5} className="text-center py-5">
                     <div className="flex justify-center items-center">
-                      <NotFound text="No History data found." />
+                      <NotFound text="No History Data Found." />
                     </div>
                   </td>
                 </tr>

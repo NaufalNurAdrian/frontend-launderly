@@ -123,7 +123,7 @@ const Login = () => {
 
                 {/* Forgot Password Link */}
                 <div className="mb-6 flex justify-between text-sm">
-                  <Link href="/" className="hover:underline">
+                  <Link href="/" className=" text-fuchsia-600 hover:underline">
                     <div className="flex">
                       <ArrowBigLeftDash />
                       Back Home

@@ -28,6 +28,16 @@ export async function getUserAddresses() {
   }
 }
 
+export async function getOutletAddress() {
+  try {
+    const response = await axios.get(`${BASE_URL}/address/outlet`, {});
+    return response;
+  } catch (error) {
+    console.error("Error Fetching address:", error);
+    throw error;
+  }
+}
+
 export async function createUserAddress(payload: Partial<IAddress>) {
   try {
     const token = localStorage.getItem("token");

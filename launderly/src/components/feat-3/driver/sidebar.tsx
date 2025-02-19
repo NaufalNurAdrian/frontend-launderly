@@ -6,16 +6,16 @@ import { usePathname, useRouter } from "next/navigation";
 import { IoLogOutOutline } from "react-icons/io5";
 import { IApiResponse, INotificationDetail } from "@/types/notification";
 import toast from "react-hot-toast";
-import NotificationModal from "./notificationModal";
+import NotificationModal from "../notificationModal";
 
 export default function Sidebar() {
-  const id = 1;
   const pathname = usePathname();
   const router = useRouter();
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [notifications, setNotifications] = useState<INotificationDetail[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const modalRef = useRef<HTMLDivElement>(null);
+  const token = localStorage.getItem("token")
 
   const navItems = [
     { name: "Attendance", path: "/driver/attendance", icon: <CalendarCheck size={30} /> },
@@ -33,7 +33,7 @@ export default function Sidebar() {
       const response = await fetch(`http://localhost:8000/api/notification/?notificationId=${notificationId}`, {
         method: "PATCH",
         headers: {
-          "Content-Type": "application/json",
+           "Content-Type": "application/json",
         },
       });
 
@@ -51,10 +51,10 @@ export default function Sidebar() {
 
   const handleMarkAllAsRead = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/api/notification/mark-all/?userId=${id}`, {
+      const response = await fetch(`http://localhost:8000/api/notification/mark-all/`, {
         method: "PATCH",
         headers: {
-          "Content-Type": "application/json",
+          'Authorization': `Bearer ${token}`,"Content-Type": "application/json",
         },
       });
 
@@ -74,9 +74,9 @@ export default function Sidebar() {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const res = await fetch(`http://localhost:8000/api/notification/?userId=${id}`, {
+        const res = await fetch(`http://localhost:8000/api/notification/`, {
           method: "GET",
-          headers: { "Content-Type": "application/json" },
+          headers: { 'Authorization': `Bearer ${token}`,"Content-Type": "application/json" },
         });
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
@@ -92,7 +92,7 @@ export default function Sidebar() {
     if (isNotificationOpen) {
       fetchNotifications();
     }
-  }, [isNotificationOpen] );
+  }, [isNotificationOpen]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -134,14 +134,7 @@ export default function Sidebar() {
         ))}
       </div>
 
-      <NotificationModal
-        isOpen={isNotificationOpen}
-        onClose={() => setIsNotificationOpen(false)}
-        notifications={notifications}
-        onMarkAsRead={handleMarkAsRead}
-        onMarkAllAsRead={handleMarkAllAsRead}
-      />
-
+      <NotificationModal isOpen={isNotificationOpen} onClose={() => setIsNotificationOpen(false)} notifications={notifications} onMarkAsRead={handleMarkAsRead} onMarkAllAsRead={handleMarkAllAsRead} />
       <div className="flex flex-col gap-5 items-center justify-center font-bold">
         <div>
           <IoLogOutOutline />

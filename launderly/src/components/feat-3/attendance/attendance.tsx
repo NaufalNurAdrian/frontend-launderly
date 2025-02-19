@@ -5,40 +5,49 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 interface IProfile {
+  token: string;
   id: number;
   name: string;
   role: string;
   profile: string;
 }
-export default function WorkerAttendance({ id, name, role, profile }: IProfile) {
+export default function WorkerAttendance({ token, id, name, role, profile }: IProfile) {
   const [attendanceStatus, setAttendanceStatus] = useState<string>("INACTIVE");
   const fetchAttendanceStatus = async () => {
     const fetchData = async (url: string) => {
-      const response = await fetch(url);
+      const response = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to fetch data");
+        throw new Error(errorData.message);
       }
       return await response.json();
     };
-  
+
     try {
-      const baseUrl = `http://localhost:8000/api/attendance/history/${id}`;
+      const baseUrl = `http://localhost:8000/api/attendance/history/`;
       const initialData = await fetchData(baseUrl);
-  
+
+      console.log("Initial Data:", initialData);
+
       if (initialData.data.length === 0) {
         setAttendanceStatus("INACTIVE");
         return;
       }
-  
+
       const lastPage = initialData.pagination.totalPages;
       const lastPageData = await fetchData(`${baseUrl}?page=${lastPage}`);
-  
+
       const lastAttendance = lastPageData.data[lastPageData.data.length - 1].attendanceStatus;
       setAttendanceStatus(lastAttendance);
+      console.log(lastAttendance);
     } catch (error: any) {
       toast.error(error.message || "Failed to fetch attendance status");
-      setAttendanceStatus("INACTIVE");
     }
   };
   const handleCheckIn = async () => {
@@ -46,7 +55,7 @@ export default function WorkerAttendance({ id, name, role, profile }: IProfile) 
       const response = await fetch("http://localhost:8000/api/attendance/check-in", {
         body: JSON.stringify({ userId: id }),
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
       });
       if (!response.ok) {
         toast.error("You are already checked in");
@@ -57,7 +66,7 @@ export default function WorkerAttendance({ id, name, role, profile }: IProfile) 
         toast.success("Check-in successful! Let`s work");
       }
     } catch (error) {
-      toast.error("Failed to Check-in");
+      toast.error("error");
     }
   };
   const handleCheckOut = async () => {
@@ -65,7 +74,7 @@ export default function WorkerAttendance({ id, name, role, profile }: IProfile) 
       const response = await fetch("http://localhost:8000/api/attendance/check-out", {
         body: JSON.stringify({ userId: id }),
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
       });
       if (!response.ok) {
         toast.error("You are not checked in");

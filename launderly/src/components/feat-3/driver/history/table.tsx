@@ -1,5 +1,5 @@
 "use client";
-import { IApiResponse, IRequest } from "@/types/request";
+import { IApiResponse, IRequest } from "@/types/driver";
 import Pagination from "../../paginationButton";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -14,7 +14,6 @@ function roundDistance(distance: number): number {
 }
 
 export default function HistoryTable() {
-  const driverId = 1;
   const [loading, setLoading] = useState(true);
   const [requests, setRequests] = useState<IRequest[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -25,13 +24,13 @@ export default function HistoryTable() {
     distance: "asc",
   });
   const [filter, setFilter] = useState<string>("");
-
+  const token = localStorage.getItem('token')
   const fetchRequests = async (page: number, sortBy: string, order: "asc" | "desc", filter: string) => {
     try {
       setLoading(true);
-      const res = await fetch(`http://localhost:8000/api/request/?driverId=${driverId}&page=${page}&sortBy=${sortBy}&order=${order}&type=${filter}`, {
+      const res = await fetch(`http://localhost:8000/api/request/?&page=${page}&sortBy=${sortBy}&order=${order}&type=${filter}`, {
         method: "GET",
-        headers: { "Content-Type": "application/json" },
+        headers: {  "Authorization": `Bearer ${token}`,"Content-Type": "application/json" },
       });
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
@@ -64,13 +63,13 @@ export default function HistoryTable() {
   };
   useEffect(() => {
     fetchRequests(currentPage, sortBy, order[sortBy], filter);
-  }, [sortBy, order, currentPage, driverId, filter]);
+  }, [sortBy, order, currentPage, filter]);
 
   return (
     <div className="flex flex-col justify-center z-0 w-screen lg:w-[1000px] overflow-x-scroll">
       <div className="flex justify-end gap-3">
-        <SortButton sortBy="distance" order={order.distance} onSort={handleSort} />
-        <SortButton sortBy="createdAt" order={order.createdAt} onSort={handleSort} />
+        <SortButton sortBy="distance" label="Sort By Distance" order={order.distance} onSort={handleSort} />
+        <SortButton sortBy="createdAt" label="Sort By Date" order={order.createdAt} onSort={handleSort} />
         <FilterDropdown onFilterChange={handleFilterChange} option1="pickup" option2="delivery" />
       </div>
       <div className="w-full bg-blue-200 rounded-md my-5 z-10 mx-10 lg:mx-0 relative overflow-visible">

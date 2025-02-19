@@ -3,26 +3,32 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 
 interface PickupButtonProps {
-  driverId: number;
   requestId: number;
-  status: string; 
+  status: string;
   onSuccess: () => void;
 }
 
-export default function PickupButton({ driverId, requestId, status, onSuccess }: PickupButtonProps) {
+export default function PickupButton({ requestId, status, onSuccess }: PickupButtonProps) {
   const [loading, setLoading] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false)
-
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const handlePickup = async () => {
-      if (loading || isProcessing) return; 
-      setLoading(true);
-      setIsProcessing(true); 
-      
+    if (loading || isProcessing) return; 
+    setLoading(true);
+    setIsProcessing(true);
+
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      console.error("Token tidak ditemukan. Redirect ke halaman login...");
+      window.location.href = "/login";
+      return;
+    }
     try {
       const response = await fetch("http://localhost:8000/api/request", {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ driverId, requestId, type: "pickup" }),
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ requestId, type: "pickup" }),
       });
 
       if (!response.ok) {
@@ -30,11 +36,12 @@ export default function PickupButton({ driverId, requestId, status, onSuccess }:
       }
 
       toast.success("Pickup proceed");
-      onSuccess(); 
+      onSuccess();
     } catch (error: any) {
       toast.error("Failed to update pickup status: " + error.message);
     } finally {
       setLoading(false);
+      setIsProcessing(false)
     }
   };
 
@@ -43,25 +50,36 @@ export default function PickupButton({ driverId, requestId, status, onSuccess }:
       case "WAITING_FOR_DRIVER":
         return "Process Pickup";
       case "ON_THE_WAY_TO_CUSTOMER":
-        return "On the Way to Customer";
+        return "Back to Outlet";
       case "ON_THE_WAY_TO_OUTLET":
-        return "On the Way to Outlet";
+        return "Finish order";
       case "RECEIVED_BY_OUTLET":
-        return "Finish Order";
+        return;
       default:
         return "Process Pickup";
     }
   };
-
+  const getButtonStyle = () => {
+    switch (status) {
+      case "WAITING_FOR_DRIVER":
+        return "bg-blue-500 hover:bg-blue-600";
+      case "ON_THE_WAY_TO_CUSTOMER":
+        return "bg-green-500 hover:bg-green-600";
+      case "ON_THE_WAY_TO_OUTLET":
+        return "bg-green-500 hover:bg-green-600";
+      case "RECEIVED_BY_OUTLET":
+        return "bg-green-500 hover:bg-green-600";
+      default:
+        return "bg-gray-500 hover:bg-gray-600";
+    }
+  };
   return (
-    <button
-      onClick={handlePickup}
-      disabled={loading || isProcessing} 
-      className={`px-4 py-2 w-full rounded-lg ${
-        loading || isProcessing ? "bg-blue-300" : "bg-blue-500 hover:bg-blue-600"
-      } text-white`}
-    >
-      {loading ? "Processing..." : getButtonText()}
-    </button>
+    <div>
+      <button onClick={handlePickup} disabled={loading || isProcessing} className={`px-4 py-2 w-full rounded-lg ${getButtonStyle()}${loading || isProcessing ? "bg-blue-300 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600"} text-white`}>
+        {loading ? "Processing..." : getButtonText()}
+      </button>
+      {error && <p className="text-red-500 mt-2">{error}</p>}
+    </div>
   );
 }
+

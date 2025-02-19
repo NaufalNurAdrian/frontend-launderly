@@ -2,71 +2,38 @@ import Image from "next/image";
 
 export function WhyUs() {
   return (
-    <div id="WhyUs" className="bg-cyan-100 py-16 px-6 md:px-12 lg:px-24">
-      <div className="container mx-auto text-center">
-        <h2 className="text-3xl font-semibold text-gray-800 mb-12">Why us?</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {/* PickUp Service */}
-          <div className="bg-white p-6 rounded-lg shadow-lg transition transform hover:scale-105">
-            <div className="relative w-full h-48 mb-4">
-              <Image
-                src="/why1.gif"
-                alt="Washing Service"
-                layout="fill"
-                objectFit="cover"
-                className="rounded-lg"
-              />
-            </div>
-            <h3 className="text-2xl font-bold text-gray-700 mb-4">
-              PickUp Service
-            </h3>
-            <p className="text-lg text-gray-600">
-              Check if there's an outlet near your location! If so, enjoy our
-              pick-up service, and relax at home while we handle your laundry.
-            </p>
-          </div>
-
-          {/* Laundry Service */}
-          <div className="bg-white p-6 rounded-lg shadow-lg transition transform hover:scale-105">
-          <div className="relative w-full h-48 mb-4">
-              <Image
-                src="/services1.gif"
-                alt="Washing Service"
-                layout="fill"
-                objectFit="cover"
-                className="rounded-lg"
-              />
-            </div>
-            <h3 className="text-2xl font-bold text-gray-700 mb-4">
-              Laundry Service
-            </h3>
-            <p className="text-lg text-gray-600">
-              Our services include washing, ironing, and packing—leaving your
-              clothes fresh and ready for use!
-            </p>
-          </div>
-
-          {/* Affordable Prices */}
-          <div className="bg-white p-6 rounded-lg shadow-lg transition transform hover:scale-105">
-          <div className="relative w-full h-48 mb-4">
-              <Image
-                src="/wyh2.jpeg"
-                alt="Washing Service"
-                layout="fill"
-                objectFit="cover"
-                className="rounded-lg"
-              />
-            </div>
-            <h3 className="text-2xl font-bold text-gray-700 mb-4">
-              Affordable Prices
-            </h3>
-            <p className="text-lg text-gray-600">
-              Enjoy high-quality laundry services at affordable prices, ensuring
-              great value for your money.
-            </p>
+    <section id="WhoWeAre" className="bg-[#7CF5FF] py-16 md:py-0 md:px-48 text-black">
+      <div className="mx-auto flex flex-col md:flex-row md:gap-10 items-center justify-between px-4 md:h-screen">
+        {/* Bagian kiri: Foto */}
+        <div className="md:w-1/2  w-full">
+          {/* Gambar pertama */}
+          <div className="relative w-full h-[200px] md:h-[700px]">
+            <Image
+              src="/us1.jpeg"
+              alt="Fashion 1"
+              layout="fill"
+              objectFit="cover"
+              className="rounded"
+            />
           </div>
         </div>
+
+        {/* Bagian kanan: Teks */}
+        <div className="md:w-1/2 text-center md:text-start mb-8 md:mb-0 mt-4">
+          <h1 className="text-4xl md:text-7xl font-bold mb-4">Who We Are</h1>
+          <p className="md:text-xl mb-6">
+            We are a trusted and professional laundry service dedicated to
+            making your life easier. With our premium washing and ironing
+            services, we ensure your clothes are fresh, clean, and neatly
+            pressed every time.
+          </p>
+          <p className="md:text-xl mb-6">
+            Plus, enjoy affordable delivery fees! If you're within 5km of our
+            location, the delivery fee is only 5K, making it more convenient
+            than ever to get your laundry done without leaving home.
+          </p>
+        </div>
       </div>
-    </div>
+    </section>
   );
 }

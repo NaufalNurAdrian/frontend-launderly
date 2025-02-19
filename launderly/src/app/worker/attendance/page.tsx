@@ -5,15 +5,16 @@ import DefaultLoading from "@/components/feat-3/defaultLoading";
 import NotFound from "@/components/feat-3/notFound";
 import Pagination from "@/components/feat-3/paginationButton";
 import SortButton from "@/components/feat-3/sortingButton";
-import Sidebar from "@/components/feat-3/worker/sidebar";
 import { IApiResponse, IAttendance } from "@/types/attendance";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import Sidebar from "@/components/feat-3/worker/WorkerSidebar";
+import Navbar from "@/components/feat-3/worker/workerNavbar";
 
 export default function Attendance() {
-  const userId = 3;
+  const router = useRouter();
   const [attendanceData, setAttendanceData] = useState<IAttendance[]>([]);
-
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -22,13 +23,17 @@ export default function Attendance() {
     createdAt: "desc",
     workHour: "asc",
   });
-
+  const token = localStorage.getItem("token");
+  if (!token) {
+    toast.error("Unatuhorize!");
+    router.push("/login");
+  }
   const getData = async (page: number, sortBy: string, order: "asc" | "desc") => {
     try {
       setLoading(true);
-      const res = await fetch(`http://localhost:8000/api/attendance/history/${userId}?page=${page}?&sortBy=${sortBy}&order=${order}`, {
+      const res = await fetch(`http://localhost:8000/api/attendance/history/?page=${page}?&sortBy=${sortBy}&order=${order}`, {
         method: "GET",
-        headers: { "Content-Type": "application/json" },
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
       });
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
@@ -62,16 +67,24 @@ export default function Attendance() {
 
   return (
     <div className="flex bg-white min-h-screen py-3">
-      <Sidebar />
-      <div className="ml-28 mt-10">
+      <div>
+        <span className="hidden lg:block">
+          {" "}
+          <Sidebar />
+        </span>
+        <span className="max-md:block lg:hidden">
+          <Navbar />
+        </span>
+      </div>
+      <div className="flex w-screen flex-col items-center mt-10">
         <div className="w-[85vw] flex justify-end mx-10 my-5">
-          <WorkerAttendance name="Username" role="Worker" id={userId} profile="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" />
+          <WorkerAttendance name="Username" role="Worker" token={token!} id={12} profile="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" />
         </div>
-        <div className="flex flex-col gap-2 lg:flex-row justify-between mx-10">
+        <div className="flex w-[85vw] flex-col gap-2 lg:flex-row justify-between mx-10">
           <h1 className="text-blue-500 text-2xl font-bold">Your Attendance Log: </h1>
           <div className="flex gap-2">
-            <SortButton sortBy="workHour" order={order.workHour} onSort={handleSort} />
-            <SortButton sortBy="createdAt" order={order.createdAt} onSort={handleSort} />
+            <SortButton sortBy="workHour" label="Sort By Work Hour" order={order.workHour} onSort={handleSort} />
+            <SortButton sortBy="createdAt" label="Sort By Date" order={order.createdAt} onSort={handleSort} />
           </div>
         </div>
         {loading ? (
@@ -83,7 +96,7 @@ export default function Attendance() {
             <NotFound text="No attendance data found." />
           </div>
         ) : (
-          <div className="mx-10">
+          <div className="mx-10 w-[85vw]">
             {attendanceData.map((data: IAttendance, index: number) => (
               <Table key={index} date={data.createdAt} checkIn={new Date(data.checkIn)} checkOut={new Date(data.checkOut)} workHour={data.workHour} />
             ))}

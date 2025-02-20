@@ -20,7 +20,7 @@ export default function DriverRequestLists({ type }: IList) {
   const [requests, setRequests] = useState<IRequest[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [sortBy, setSortBy] = useState("createdAt");
+  const [sortBy, setSortBy] = useState("updatedAt");
   const [order, setOrder] = useState<{ [key: string]: "asc" | "desc" }>({
     createdAt: "desc",
     distance: "asc",
@@ -75,10 +75,10 @@ export default function DriverRequestLists({ type }: IList) {
     fetchRequests(currentPage, sortBy, order[sortBy]);
   };
   return (
-    <div className=" max-w-[500px] mb-20 lg:max-w-[700px] rounded-xl bg-white shadow-md py-3 px-4 lg:px-8 min-h-[30rem] flex flex-col items-center">
+    <div className=" max-w-[500px] max-sm:mr-8 mb-20 lg:max-w-[700px] rounded-xl bg-white shadow-md py-3 px-4 lg:px-8 min-h-[30rem] flex flex-col items-center">
       <div className=" max-w-[500px]">
-        <h2 className="text-xl lg:text-2xl font-bold text-blue-500 mb-1 my-2">{type === "pickup" ? "Pick up" : "Delivery"} Requests</h2>
-        <div className="flex flex-row justify-between gap-3 mb-2">
+        <h2 className="text-xl lg:text-2xl font-bold text-blue-500 mb-2 my-2">{type === "pickup" ? "Pick up" : "Delivery"} Requests</h2>
+        <div className="flex justify-between gap-3 mb-2">
           <SortButton sortBy="distance" label="Sort by Distance" order={order.distance} onSort={handleSort} />
           <SortButton sortBy="createdAt" label="Sort by Date" order={order.createdAt} onSort={handleSort} />
         </div>

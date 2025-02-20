@@ -70,15 +70,11 @@ export default function WorkerRequestLists() {
     fetchRequests(currentPage, sortBy, order[sortBy]);
   }, [sortBy, order, currentPage, fetchRequests]);
 
-  const handleSuccess = () => {
-    fetchRequests(currentPage, sortBy, order[sortBy]);
-  };
-
   return (
-    <div className="max-w-[500px] mb-20 lg:w-[800px] rounded-xl bg-white shadow-md py-5 px-8 min-h-[30rem] flex flex-col items-center ">
-      <div className="flex flex-col w-full lg:justify-normal justify-center ">
-        <h2 className="text-xl lg:text-2xl font-bold text-blue-500 mb-2 lg:mb-4 text-center lg:text-left">Order Requests</h2>
-        <div className="flex flex-col lg:flex-row justify-between gap-3 mb-3">
+    <div className="max-w-[500px] mb-20 lg:w-[800px] rounded-xl bg-white shadow-md py-3 px-4 lg:px-8 min-h-[30rem] flex flex-col items-center ">
+      <div className="max-w-[500px] lg:flex lg:flex-col lg:w-[600px] lg:px-10">
+        <h2 className="text-xl lg:text-2xl font-bold text-blue-500 mb-2 my-2 text-center lg:text-left">Order Requests</h2>
+        <div className="flex justify-between gap-3 mb-2">
           <SortButton sortBy="createdAt" label="Sort By Date" order={order.createdAt} onSort={handleSort} />
           <SortButton sortBy="weight" label="Sort By Weight" order={order.weight} onSort={handleSort} />
         </div>
@@ -114,7 +110,7 @@ export default function WorkerRequestLists() {
         )}
       </div>
 
-      <div className="mt-8 mb-10 w-full flex justify-center">
+      <div className=" w-full flex justify-center mt-auto">
         <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
       </div>
     </div>

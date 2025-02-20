@@ -68,7 +68,7 @@ export default function Attendance() {
     }
   }, [token, currentPage, sortBy, order[sortBy]]);
   return (
-    <div className="flex bg-white min-h-screen py-3">
+    <div className="flex bg-white min-h-screen lg:py-3">
       <div>
         <span className="hidden lg:block">
           <Sidebar />
@@ -77,7 +77,7 @@ export default function Attendance() {
           <Navbar />
         </span>
       </div>
-      <div className="flex w-screen flex-col items-center mt-10">
+      <div className="flex w-screen flex-col items-center lg:mt-10">
         <div className="w-[85vw] flex justify-end mx-10 my-5">
           <WorkerAttendance token={token!} />
         </div>
@@ -93,7 +93,7 @@ export default function Attendance() {
             <DefaultLoading />
           </div>
         ) : attendanceData.length === 0 ? (
-          <div className="flex justify-center items-center">
+          <div className="flex justify-center items-center my-10 max-sm:my-20 max-sm:mx-5">
             <NotFound text="No attendance data found." />
           </div>
         ) : (

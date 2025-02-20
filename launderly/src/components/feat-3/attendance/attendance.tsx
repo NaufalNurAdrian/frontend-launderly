@@ -1,18 +1,35 @@
 "use client";
 import formatDate from "@/helpers/dateFormatter";
+import { IUser } from "@/types/user";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
-interface IProfile {
-  token: string;
-  id: number;
-  name: string;
-  role: string;
-  profile: string;
-}
-export default function WorkerAttendance({ token, id, name, role, profile }: IProfile) {
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL_BE;
+export default function WorkerAttendance({ token }: { token: string }) {
   const [attendanceStatus, setAttendanceStatus] = useState<string>("INACTIVE");
+  const [profile, setProfile] = useState<IUser | null>(null);
+
+  const fetchProfile = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/user/profile`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch profile");
+      }
+
+      const data = await response.json();
+      setProfile(data.user);
+    } catch (error) {
+      toast.error("Failed to fetch profile");
+    }
+  };
+
   const fetchAttendanceStatus = async () => {
     const fetchData = async (url: string) => {
       const response = await fetch(url, {
@@ -30,7 +47,7 @@ export default function WorkerAttendance({ token, id, name, role, profile }: IPr
     };
 
     try {
-      const baseUrl = `http://localhost:8000/api/attendance/history/`;
+      const baseUrl = `${BASE_URL}/attendance/history/`;
       const initialData = await fetchData(baseUrl);
 
       console.log("Initial Data:", initialData);
@@ -52,8 +69,7 @@ export default function WorkerAttendance({ token, id, name, role, profile }: IPr
   };
   const handleCheckIn = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/attendance/check-in", {
-        body: JSON.stringify({ userId: id }),
+      const response = await fetch(`${BASE_URL}/attendance/check-in`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
       });
@@ -71,8 +87,7 @@ export default function WorkerAttendance({ token, id, name, role, profile }: IPr
   };
   const handleCheckOut = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/attendance/check-out", {
-        body: JSON.stringify({ userId: id }),
+      const response = await fetch(`${BASE_URL}/attendance/check-out`, {
         method: "PATCH",
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
       });
@@ -90,14 +105,21 @@ export default function WorkerAttendance({ token, id, name, role, profile }: IPr
   };
   useEffect(() => {
     fetchAttendanceStatus();
-  }, [attendanceStatus]);
+    fetchProfile();
+    console.log(profile);
+  }, [token, attendanceStatus]);
   return (
     <div className="flex bg-neutral-100 lg:py-8 p-3 lg:px-10 rounded-xl justify-evenly items-center shadow-md lg:mx-2">
       <div className="flex flex-col justify-center items-start h-full w-full">
-        <p className="text-white border-blue-600 w-max bg-blue-400 px-2 rounded-xl mb-1">{formatDate(new Date().toISOString())}</p>
-        <h1>id: {id}</h1>
-        <h1>name: {name}</h1>
-        <h1>{role}</h1>
+        <p className="text-white border-blue-600 w-full bg-blue-400 px-2 rounded-xl mb-1">{formatDate(new Date().toISOString())}</p>
+        <div className="grid grid-cols-[50px_auto] gap-1">
+          <span className="font-semibold">ID </span>
+          <span>: {profile?.id}</span>
+          <span className="font-semibold">Name </span>
+          <span>: {profile?.fullName}</span>
+          <span className="font-semibold">Role </span>
+          <span>: {profile?.role === "WORKER" ? profile.employee?.station.toLowerCase() : profile?.role.toLowerCase()}</span>
+        </div>
         <button
           onClick={() => {
             if (attendanceStatus == "INACTIVE") {
@@ -111,8 +133,8 @@ export default function WorkerAttendance({ token, id, name, role, profile }: IPr
           {attendanceStatus == "INACTIVE" ? "Check In" : "Check Out"}
         </button>
       </div>
-      <div className="lg:w-[150px] lg:h-[100px] bg-black rounded-full overflow-hidden">
-        <Image src={profile} alt="profile" width={500} height={600} />
+      <div className="w-[150px] h-[100px] bg-black rounded-full overflow-hidden">
+        <Image src={profile?.avatar ? profile.avatar : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"} alt="profile" width={500} height={600} />
       </div>
     </div>
   );

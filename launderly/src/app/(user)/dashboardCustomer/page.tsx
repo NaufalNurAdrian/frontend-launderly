@@ -70,32 +70,26 @@ const CustomerDashboard: React.FC = () => {
               </Link>
               <Link
                 href="/address"
-                className="dashboard-btn bg-teal-500 hover:bg-teal-600"
+                className="flex-1 lg:flex-none text-center bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white px-8 py-3 rounded-xl text-sm lg:text-base font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
               >
                 My Address
               </Link>
               <Link
                 href="/myPayment"
-                className="dashboard-btn bg-blue-500 hover:bg-blue-600"
+                className="flex-1 lg:flex-none text-center bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-8 py-3 rounded-xl text-sm lg:text-base font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
               >
                 Payment
               </Link>
               <Link
                 href="/profileCustomer"
-                className="dashboard-btn bg-green-500 hover:bg-green-600"
+                className="flex-1 lg:flex-none text-center bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-8 py-3 rounded-xl text-sm lg:text-base font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
               >
                 My Profile
               </Link>
             </div>
           </div>
-
-          {/* Bagian Kanan - Avatar & Background */}
-          <div className="relative flex items-center justify-center p-6 lg:p-12 bg-gradient-to-br from-blue-100 to-blue-200 w-full lg:w-1/2">
-            {/* Bubble Effect */}
-            <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-48 h-48 lg:w-72 lg:h-72 bg-blue-300 rounded-full blur-3xl opacity-30"></div>
-            <div className="absolute left-0 bottom-10 w-24 h-24 bg-blue-300 rounded-full blur-2xl opacity-20"></div>
-
-            {/* Avatar */}
+          <div className="relative flex items-center justify-center p-6 lg:p-12 bg-gradient-to-br from-blue-50 to-blue-100 w-full lg:w-1/2">
+            <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-48 h-48 lg:w-72 lg:h-72 bg-blue-200 rounded-full blur-3xl opacity-50"></div>
             <div className="relative z-10 w-32 h-32 lg:w-64 lg:h-64 rounded-full overflow-hidden ring-4 ring-white shadow-2xl transform hover:scale-105 transition-transform duration-300">
               <Image
                 src={user.avatar || "/user.png"}

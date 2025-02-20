@@ -1,6 +1,19 @@
+
+"use client"
+
+import { useState } from "react";
 import Image from "next/image";
 
 export function Hero() {
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const images = [
+    { src: "/carousel1.jpeg", text: "Why us?" },
+    { src: "/carousel2.jpeg", text: "We'll Pick Up Your Laundry, So You Don’t Have To!" },
+    { src: "/carousel3.gif", text: "We Deliver the Best Service, Just for You!" },
+    { src: "/carousel4.jpeg", text: "So Just Relax with a cup of tea while we deliver your freshly cleaned laundry to your doorstep!" },
+  ];
+
   return (
     <section className="bg-[#00CCDD] py-16 md:py-0 md:px-48 text-black">
       <div className="mx-auto flex flex-col md:flex-row items-center justify-between px-4 md:h-screen">

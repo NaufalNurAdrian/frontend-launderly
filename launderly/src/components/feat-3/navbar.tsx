@@ -1,27 +1,28 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { Bell, CalendarCheck, FileText, FolderClock } from "lucide-react";
-import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { IoLogOutOutline } from "react-icons/io5";
 import { IApiResponse, INotificationDetail } from "@/types/notification";
 import toast from "react-hot-toast";
-import NotificationModal from "../notificationModal";
+import NotificationModal from "./notificationModal";
+import LogoutButton from "./logoutButton";
+import { useToken } from "@/hooks/useToken";
 
-export default function Sidebar() {
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL_BE;
+export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [notifications, setNotifications] = useState<INotificationDetail[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const modalRef = useRef<HTMLDivElement>(null);
-  const token = localStorage.getItem("token")
+  const token = useToken();
 
   const navItems = [
-    { name: "Attendance", path: "/driver/attendance", icon: <CalendarCheck size={30} /> },
-    { name: "Notifications", path: "/driver/notifications", icon: <Bell size={30} /> },
-    { name: "Requests", path: "/driver/requests", icon: <FileText size={30} /> },
-    { name: "History", path: "/driver/history", icon: <FolderClock size={30} /> },
+    { name: "Attendance", path: `/attendance`, icon: <CalendarCheck size={24} /> },
+    { name: "Notifications", path: `/notifications`, icon: <Bell size={24} /> },
+    { name: "Requests", path: `/requests`, icon: <FileText size={24} /> },
+    { name: "History", path: `/history`, icon: <FolderClock size={24} /> },
   ];
 
   const toggleNotificationModal = () => {
@@ -30,10 +31,11 @@ export default function Sidebar() {
 
   const handleMarkAsRead = async (notificationId: number) => {
     try {
-      const response = await fetch(`http://localhost:8000/api/notification/?notificationId=${notificationId}`, {
+      const response = await fetch(`${BASE_URL}/notification/?notificationId=${notificationId}`, {
         method: "PATCH",
         headers: {
-           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
       });
 
@@ -51,10 +53,11 @@ export default function Sidebar() {
 
   const handleMarkAllAsRead = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/api/notification/mark-all/`, {
+      const response = await fetch(`${BASE_URL}/notification/mark-all/`, {
         method: "PATCH",
         headers: {
-          'Authorization': `Bearer ${token}`,"Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
       });
 
@@ -71,10 +74,11 @@ export default function Sidebar() {
       console.error("Error marking all notifications as read:", error);
     }
   };
+
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const res = await fetch(`http://localhost:8000/api/notification/`, {
+        const res = await fetch(`${BASE_URL}/notification/`, {
           method: "GET",
           headers: { 'Authorization': `Bearer ${token}`,"Content-Type": "application/json" },
         });
@@ -108,38 +112,41 @@ export default function Sidebar() {
   }, []);
 
   return (
-    <div className="bg-[#F9F9F9] min-w-[90px] h-screen fixed flex flex-col justify-between items-center z-50 gap-2 text-[#1678F2] text-[28px] py-10">
-      <div className="mt-48 flex flex-col gap-8 justify-between h-[100px] items-center">
-        {navItems.map((item) => (
-          <div
-            key={item.path}
-            onClick={
-              item.name === "Notifications"
-                ? toggleNotificationModal
-                : () => {
-                    router.push(item.path);
-                  }
-            }
-            className={`p-1 rounded-xl ${pathname === item.path ? "bg-[#1678F2] text-white hover:bg-[#1678F0]" : "hover:bg-blue-300 cursor-pointer"}`}
-          >
-            {item.name === "Notifications" ? (
-              <div className="relative">
-                {item.icon}
-                {unreadCount > 0 && <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5">{unreadCount}</span>}
+    <>
+      <div className="fixed bottom-0 left-0 w-full bg-[#F9F9F9] shadow-lg sm:hidden z-50">
+        <div className="flex justify-between items-center py-2 px-4 max-w-full">
+          <div className="flex justify-around items-center flex-1">
+            {navItems.map((item) => (
+              <div
+                key={item.path}
+                onClick={
+                  item.name === "Notifications"
+                    ? toggleNotificationModal
+                    : () => {
+                        router.push(item.path);
+                      }
+                }
+                className={`p-2 rounded-lg ${pathname === item.path ? "bg-[#1678F2] text-white" : "text-[#1678F2] hover:bg-blue-100"} cursor-pointer`}
+              >
+                {item.name === "Notifications" ? (
+                  <div className="relative">
+                    {item.icon}
+                    {unreadCount > 0 && <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5">{unreadCount}</span>}
+                  </div>
+                ) : (
+                  item.icon
+                )}
               </div>
-            ) : (
-              item.icon
-            )}
+            ))}
           </div>
-        ))}
+
+          <div className="ml-4">
+            <LogoutButton />
+          </div>
+        </div>
       </div>
 
       <NotificationModal isOpen={isNotificationOpen} onClose={() => setIsNotificationOpen(false)} notifications={notifications} onMarkAsRead={handleMarkAsRead} onMarkAllAsRead={handleMarkAllAsRead} />
-      <div className="flex flex-col gap-5 items-center justify-center font-bold">
-        <div>
-          <IoLogOutOutline />
-        </div>
-      </div>
-    </div>
+    </>
   );
 }

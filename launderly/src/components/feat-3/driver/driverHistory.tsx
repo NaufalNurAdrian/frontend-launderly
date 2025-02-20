@@ -1,19 +1,22 @@
 "use client";
 import { IApiResponse, IRequest } from "@/types/driver";
-import Pagination from "../../paginationButton";
+import Pagination from "../paginationButton";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import formatDate from "@/helpers/dateFormatter";
 import { formatTime } from "@/helpers/timeFormatter";
-import SortButton from "../../sortingButton";
-import FilterDropdown from "./filterButton";
-import NotFound from "../../notFound";
+import SortButton from "../sortingButton";
+import FilterDropdown from "../filterButton";
+import NotFound from "../notFound";
+import { useToken } from "@/hooks/useToken";
 
 function roundDistance(distance: number): number {
   return Math.round(distance * 10) / 10;
 }
 
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL_BE;
 export default function HistoryTable() {
+  const token = useToken();
   const [loading, setLoading] = useState(true);
   const [requests, setRequests] = useState<IRequest[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -24,13 +27,13 @@ export default function HistoryTable() {
     distance: "asc",
   });
   const [filter, setFilter] = useState<string>("");
-  const token = localStorage.getItem('token')
   const fetchRequests = async (page: number, sortBy: string, order: "asc" | "desc", filter: string) => {
+    if (!token) return;
     try {
       setLoading(true);
-      const res = await fetch(`http://localhost:8000/api/request/?&page=${page}&sortBy=${sortBy}&order=${order}&type=${filter}`, {
+      const res = await fetch(`${BASE_URL}/request/?page=${page}&sortBy=${sortBy}&order=${order}&type=${filter}&pageSize=7`, {
         method: "GET",
-        headers: {  "Authorization": `Bearer ${token}`,"Content-Type": "application/json" },
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
       });
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
@@ -46,7 +49,7 @@ export default function HistoryTable() {
     }
   };
 
-  const handleFilterChange = (selectedFilter: any) => {
+  const handleFilterChange = (selectedFilter: string) => {
     setFilter(selectedFilter);
   };
 
@@ -62,8 +65,10 @@ export default function HistoryTable() {
     }));
   };
   useEffect(() => {
-    fetchRequests(currentPage, sortBy, order[sortBy], filter);
-  }, [sortBy, order, currentPage, filter]);
+    if (token) {
+      fetchRequests(currentPage, sortBy, order[sortBy], filter);
+    }
+  }, [sortBy, order, currentPage, filter, token]);
 
   return (
     <div className="flex flex-col justify-center z-0 w-screen lg:w-[1000px] overflow-x-scroll">
@@ -98,7 +103,7 @@ export default function HistoryTable() {
               <tr>
                 <td colSpan={5} className="text-center py-5">
                   <div className="flex justify-center items-center">
-                    <NotFound text="No History data found." />
+                    <NotFound text="No History Data Found." />
                   </div>
                 </td>
               </tr>

@@ -34,22 +34,14 @@ export default function NotificationModal({ isOpen, onClose, notifications, onMa
   return (
     <div ref={modalRef} className="fixed top-0 overflow-auto right-0 h-full w-80 bg-white border-l border-gray-200 shadow-lg z-[1000]">
       <div className="p-4 border-b border-gray-200 flex justify-between">
-<<<<<<< HEAD
         <h3 className="font-semibold text-lg text-blue-500">Notifications</h3>
-=======
-        <h3 className="font-semibold text-lg">Notifications</h3>
->>>>>>> d4581cef50b9f61bdd749d47118aa9da896f65ac
         <button onClick={onClose}>
           <X />
         </button>
       </div>
       <div className="divide-y divide-gray-200">
         {notifications.length == 0 ? (
-<<<<<<< HEAD
           <div className="flex justify-center items-center lg:mx-4 z-50 my-3">
-=======
-          <div className="flex justify-center items-center mx-4 z-50 my-8">
->>>>>>> d4581cef50b9f61bdd749d47118aa9da896f65ac
             <NotFound text="No Notification found." />
           </div>
         ) : (

@@ -1,19 +1,11 @@
 "use client";
 import { useState, useEffect } from "react";
 import { MapPin } from "lucide-react";
-<<<<<<< HEAD:launderly/src/components/feat-3/driver/requestsLists.tsx
 import Pagination from "../paginationButton";
 import { IApiResponse, IRequest } from "@/types/driver";
 import { toast } from "react-hot-toast";
 import DefaultLoading from "../defaultLoading";
 import NotFound from "../notFound";
-=======
-import Pagination from "../../paginationButton";
-import { IApiResponse, IRequest } from "@/types/driver";
-import { toast } from "react-hot-toast";
-import DefaultLoading from "../../defaultLoading";
-import NotFound from "../../notFound";
->>>>>>> d4581cef50b9f61bdd749d47118aa9da896f65ac:launderly/src/components/feat-3/driver/requests/requestsLists.tsx
 import { calculateTimeDifference } from "@/helpers/timeCounter";
 import SortButton from "../sortingButton";
 import RequestButton from "./processButton";

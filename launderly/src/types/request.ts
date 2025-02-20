@@ -1,43 +1,17 @@
-<<<<<<< HEAD
-export interface IUser {
-  id: number;
-  fullName: string;
-  email: string;
-  password: string;
-  isVerify: boolean;
-  role: string;
-  avatar: string | null;
-  createdAt: string;
-  isDelete: boolean;
-}
-
-export interface IRequest {
-  id: number;
-  type: "delivery" | "pickup";
-  deliveryNumber?: string;
-  pickupNumber?: string;
-  deliveryStatus?: string;
-  pickupStatus?: string;
-  address: { addressLine: string };
-  createdAt: string;
-  updatedAt: string;
-  distance: number;
-  userId: number;
-  user: IUser;
-}
-
-export interface IApiResponse {
-  data: IRequest[];
-  pagination: {
-    total: number;
-    page: number;
-    pageSize: number;
-    totalPages: number;
-  };
-=======
 export interface IRequestOrderForm {
-  addressId: number;
-  latitude?: number;
-  longitude?: number;
->>>>>>> 226747a8671504625a2e6f456aff6202199bf680
+  userId: number;
+  userAddressId: number;
+  outletId: number;
+  distance: number;
 }
+
+export const PickupStatus = (status: string): string => {
+  const mapping: Record<string, string> = {
+    WAITING_FOR_DRIVER: "Waiting For Driver",
+    ON_THE_WAY_TO_CUSTOMER: "Driver On The Way to Customer",
+    ON_THE_WAY_TO_OUTLET: "Drive On The Way to Outlet",
+    RECEIVED_BY_OUTLET: "Received By Outlet",
+  };
+
+  return mapping[status] || status;
+};

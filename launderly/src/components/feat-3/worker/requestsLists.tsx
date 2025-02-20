@@ -74,6 +74,7 @@ export default function WorkerRequestLists() {
     <div className="max-w-[500px] mb-20 lg:w-[800px] rounded-xl bg-white shadow-md py-3 px-4 lg:px-8 min-h-[30rem] flex flex-col items-center ">
       <div className="max-w-[500px] lg:flex lg:flex-col lg:w-[600px] lg:px-10">
         <h2 className="text-xl lg:text-2xl font-bold text-blue-500 mb-2 my-2 text-center lg:text-left">Order Requests</h2>
+
         <div className="flex justify-between gap-3 mb-2">
           <SortButton sortBy="createdAt" label="Sort By Date" order={order.createdAt} onSort={handleSort} />
           <SortButton sortBy="weight" label="Sort By Weight" order={order.weight} onSort={handleSort} />

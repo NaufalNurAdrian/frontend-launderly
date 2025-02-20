@@ -2,9 +2,9 @@ import Image from "next/image";
 
 export function LaundryServices() {
   return (
-    <div id="Services" className=" bg-cyan-100 py-16 px-6 md:px-12 lg:px-24">
+    <div id="Services" className=" bg-[#7CF5FF] px-6 md:px-48 ">
       <div className="container mx-auto text-center">
-        <h2 className="text-3xl font-semibold text-gray-800 mb-12">
+        <h2 className="text-4xl md:text-7xl font-bold mb-4">
           Our Services
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -48,23 +48,23 @@ export function LaundryServices() {
             </p>
           </div>
 
-          {/* Packing Service */}
+          {/* Pickup Service */}
           <div className="bg-white p-6 rounded-lg shadow-lg transition transform hover:scale-105">
             <div className="relative w-full h-48 mb-4">
               <Image
-                src="/services3.gif" 
-                alt="Packing Service"
+                src="/why1.gif"
+                alt="Washing Service"
                 layout="fill"
                 objectFit="cover"
                 className="rounded-lg"
               />
             </div>
             <h3 className="text-2xl font-bold text-gray-700 mb-4">
-              Packing Service
+              PickUp Service
             </h3>
             <p className="text-lg text-gray-600">
-              We also offer expert packing services, ensuring your clothes are
-              neatly packed and ready for delivery.
+              Check if there's an outlet near your location! If so, enjoy our
+              pick-up service, and relax at home while we handle your laundry.
             </p>
           </div>
         </div>

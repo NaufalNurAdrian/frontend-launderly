@@ -8,9 +8,4 @@ export interface IUser {
   createdAt: string;
   isDelete: boolean;
   authProvider: "email" | "google";
-  employee : IEmployee
-}
-
-export interface IEmployee {
-  station: string
 }

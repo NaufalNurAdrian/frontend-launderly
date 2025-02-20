@@ -1,24 +1,22 @@
 "use client";
 import formatDate from "@/helpers/dateFormatter";
 import { formatTime } from "@/helpers/timeFormatter";
+import SortButton from "../../sortingButton";
 import { useEffect, useState } from "react";
+import { IApiResponse, IRequest } from "@/types/driver";
 import toast from "react-hot-toast";
-import { IApiResponse, IOrder } from "@/types/worker";
-import DefaultLoading from "../defaultLoading";
-import NotFound from "../notFound";
-import SortButton from "../sortingButton";
-<<<<<<< HEAD
-import Pagination from "../paginationButton";
+import Pagination from "../../paginationButton";
+import NotFound from "../../notFound";
+import DefaultLoading from "../../defaultLoading";
+import FilterTabs from "./filterTab";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL_BE;
-=======
-import FilterDropdown from "../driver/history/filterButton";
-import Pagination from "../paginationButton";
+function roundDistance(distance: number): number {
+  return Math.round(distance * 10) / 10;
+}
 
->>>>>>> d4581cef50b9f61bdd749d47118aa9da896f65ac
-export default function OrderMobileHistoryTable() {
+export default function MobileHistoryTable() {
   const [loading, setLoading] = useState(true);
-  const [requests, setRequests] = useState<IOrder[]>([]);
+  const [requests, setRequests] = useState<IRequest[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [sortBy, setSortBy] = useState("createdAt");
@@ -35,25 +33,13 @@ export default function OrderMobileHistoryTable() {
 
   const fetchRequests = async (page: number, sortBy: string, order: "asc" | "desc", filter: string) => {
     if (!token) return;
-<<<<<<< HEAD
-    try {
-      setLoading(true);
-      const res = await fetch(`${BASE_URL}/order/history/?&page=${page}&sortBy=${sortBy}&order=${order}&pageSize=5`, {
-        method: "GET",
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-      });
-=======
 
     try {
       setLoading(true);
-      const res = await fetch(
-        `http://localhost:8000/api/order/history/?&page=${page}&sortBy=${sortBy}&order=${order}&type=${filter}`,
-        {
-          method: "GET",
-          headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-        }
-      );
->>>>>>> d4581cef50b9f61bdd749d47118aa9da896f65ac
+      const res = await fetch(`http://localhost:8000/api/request/?&page=${page}&sortBy=${sortBy}&order=${order}&type=${filter}`, {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      });
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
@@ -91,7 +77,6 @@ export default function OrderMobileHistoryTable() {
   }, [sortBy, order, currentPage, filter, token]);
 
   if (loading) {
-<<<<<<< HEAD
     return (
       <div className="text-center items-center py-5">
         <DefaultLoading />
@@ -102,50 +87,36 @@ export default function OrderMobileHistoryTable() {
   if (requests.length === 0 && !loading) {
     return (
       <div className="text-center py-5">
-        <NotFound text="No History Data Found." />
+        \<NotFound text="not history found" />
       </div>
     );
-=======
-    return <div className="text-center items-center py-5"><DefaultLoading/></div>;
-  }
-
-  if (requests.length === 0 && !loading) {
-    return <div className="text-center py-5">\<NotFound text="not history found"/></div>;
->>>>>>> d4581cef50b9f61bdd749d47118aa9da896f65ac
   }
 
   return (
     <div className="p-4">
       <div className="flex flex-col gap-3 mb-4">
-        <span className="flex justify-between mx-2">
-<<<<<<< HEAD
-          <SortButton sortBy="distance" label="Sort By Distance" order={order.distance} onSort={handleSort} />
-          <SortButton sortBy="createdAt" label="Sort By Date" order={order.createdAt} onSort={handleSort} />
-        </span>
-=======
+      <span className="flex justify-between mx-1">
         <SortButton sortBy="distance" label="Sort By Distance" order={order.distance} onSort={handleSort} />
         <SortButton sortBy="createdAt" label="Sort By Date" order={order.createdAt} onSort={handleSort} />
-        </span>
-        <FilterDropdown onFilterChange={handleFilterChange} option1="pickup" option2="delivery" />
->>>>>>> d4581cef50b9f61bdd749d47118aa9da896f65ac
+      </span>
+        <FilterTabs onFilterChange={handleFilterChange} option1="pickup" option2="delivery" />
       </div>
 
       <div className="space-y-4">
         {requests.map((request) => (
-          <div key={request.id} className="flex w-full justify-between h-[100px] border-2 p-4 py-2 rounded-lg shadow-sm">
+          <div key={request.deliveryNumber} className="flex w-full justify-between h-[100px] border-2 p-4 py-2 rounded-lg shadow-sm">
             <div className="flex flex-col">
               <p className="text-sm text-blue-600 bg-blue-300 px-2 rounded-full">
                 {formatDate(request.updatedAt)} : {formatTime(new Date(request.updatedAt))}
               </p>
               <div className="mt-2">
-                <h1 className="text-lg text-blue-500 font-bold">{request.orderNumber}</h1>
-                <h1 className="text-sm">{request.weight} kg</h1>
+                {request.type == "delivery" ? <h1 className="text-lg text-blue-500 font-bold">{request.deliveryNumber}</h1> : <h1 className="text-lg text-blue-500 font-bold">{request.pickupNumber}</h1>}
+                <h1 className="text-sm">{roundDistance(request.distance)} km from outlet</h1>
               </div>
             </div>
 
             <div className="flex flex-col justify-center items-center">
-              <h1 className="font-medium text-sm">income: </h1>
-              <h1 className="font-semibold text-sm text-blue-400">{request.laundryPrice}</h1>
+              <h1 className="font-semibold text-sm">{request.type}</h1>
             </div>
           </div>
         ))}
@@ -156,8 +127,4 @@ export default function OrderMobileHistoryTable() {
       </div>
     </div>
   );
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> d4581cef50b9f61bdd749d47118aa9da896f65ac

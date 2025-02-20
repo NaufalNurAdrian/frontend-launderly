@@ -34,30 +34,37 @@ const CustomerDashboard: React.FC = () => {
   }
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="flex min-h-screen bg-gradient-to-br from-blue-50 to-blue-100">
       <CustomerSidebar />
       <main className="flex-1 flex flex-col lg:flex-row lg:items-center lg:justify-center p-4 lg:p-8 mt-12 lg:mt-0 overflow-hidden min-h-screen">
-        <div className="max-w-7xl mx-auto bg-white rounded-2xl shadow-lg overflow-hidden flex flex-col lg:flex-row w-full lg:w-auto">
+        <div className="max-w-7xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col lg:flex-row w-full lg:w-auto">
+          {/* Bagian Kiri - Info User */}
           <div className="flex flex-col justify-center p-6 lg:p-12 w-full lg:w-1/2 space-y-6">
-            <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-100 to-blue-50 px-4 py-2 rounded-full">
-              <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
+            <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-200 to-blue-100 px-4 py-2 rounded-full">
+              <Image
+                src="/services1.gif"
+                alt="Laundry Icon"
+                width={24}
+                height={24}
+              />
               <p className="text-blue-800 font-medium">Welcome back!</p>
             </div>
             <h1 className="text-3xl lg:text-5xl font-bold text-gray-900 tracking-tight">
               Hello, {user.fullName}! 👋
             </h1>
             <p className="text-base lg:text-lg text-gray-600 leading-relaxed">
-              Ready to laundry? You can manage your{" "}
+              Ready to do your laundry? Easily manage your{" "}
               <span className="text-red-500 font-semibold">Laundry</span>, check
-              your <span className="text-blue-500 font-semibold">Payment</span>,
-              and update your{" "}
+              your <span className="text-blue-500 font-semibold">Payments</span>
+              , and update your{" "}
               <span className="text-green-500 font-semibold">Profile</span>{" "}
-              here.
+              effortlessly.
             </p>
+            {/* Tombol Navigasi */}
             <div className="flex flex-wrap gap-4 mt-8">
               <Link
                 href="/myLaundry"
-                className="flex-1 lg:flex-none text-center bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-8 py-3 rounded-xl text-sm lg:text-base font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
+                className="dashboard-btn bg-red-500 hover:bg-red-600"
               >
                 Laundry
               </Link>

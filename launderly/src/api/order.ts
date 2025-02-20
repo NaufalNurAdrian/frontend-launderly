@@ -15,7 +15,7 @@ function getToken() {
   return token;
 }
 
-export async function getUserOrder() {
+export async function getUserRequestOrder() {
   try {
     const token = getToken();
     const response = await axios.get(`${BASE_URL}/pickupOrder`, {
@@ -27,20 +27,43 @@ export async function getUserOrder() {
     throw error;
   }
 }
-export async function createRequestOrder(orderData:IRequestOrderForm) {
-    try {
-      const token = getToken();
-      const response = await axios.post(
-        `${BASE_URL}/pickupOrder`, 
-        orderData,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      return response.data;
-    } catch (error) {
-      console.error("Error creating request order:", error);
-      throw error;
-    }
+
+export async function getUserOrders(userId: number) {
+  try {
+    const token = getToken();
+    const response = await axios.get(`${BASE_URL}/pickupOrder/${userId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data
+  } catch (error) {
+    console.error("Error fetching user orders:", error);
+    throw error;
   }
-  
+}
+
+export async function getOutletNearby(latitude: number, longitude: number) {
+  try {
+    const token = getToken();
+    const response = await axios.get(`${BASE_URL}/pickupOrder/nearby-outlet`, {
+      params: { latitude, longitude },
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error Fetching nearby outlets:", error);
+    throw error;
+  }
+}
+
+export async function createRequestOrder(orderData: IRequestOrderForm) {
+  try {
+    const token = getToken();
+    const response = await axios.post(`${BASE_URL}/pickupOrder`, orderData, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error creating request order:", error);
+    throw error;
+  }
+}

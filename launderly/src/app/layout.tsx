@@ -17,12 +17,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        {/* Google Font: Poppins */}
+        <link
+          href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
+          rel="stylesheet"
+        />
         <Script
           src="https://accounts.google.com/gsi/client"
           strategy="beforeInteractive"
         />
       </head>
-      <body className="font-sans">
+      <body className="font-poppins">
         <Toaster />
         {children}
         <ToastContainer

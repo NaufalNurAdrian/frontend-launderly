@@ -8,10 +8,10 @@ import SortButton from "@/components/feat-3/sortingButton";
 import { IApiResponse, IAttendance } from "@/types/attendance";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import Sidebar from "@/components/feat-3/sidebar";
 import Navbar from "@/components/feat-3/navbar";
 import { useToken } from "@/hooks/useToken";
 import { useRole } from "@/hooks/useRole";
+import WorkerSidebar from "@/components/feat-3/workerSidebar";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL_BE;
 export default function Attendance() {
@@ -71,17 +71,17 @@ export default function Attendance() {
     <div className="flex bg-white min-h-screen lg:py-3">
       <div>
         <span className="hidden lg:block">
-          <Sidebar />
+          <WorkerSidebar/>
         </span>
         <span className="max-md:block lg:hidden">
           <Navbar />
         </span>
       </div>
-      <div className="flex w-screen flex-col items-center lg:mt-10">
-        <div className="w-[85vw] flex justify-end mx-10 my-5">
+      <div className="flex w-full flex-col items-center lg:mt-10">
+        <div className=" flex justify-end mx-10 my-5">
           <WorkerAttendance token={token!} />
         </div>
-        <div className="flex w-[85vw] flex-col gap-2 lg:flex-row justify-between mx-10">
+        <div className="flex  flex-col max-md:gap-2 lg:gap-5 lg:flex-row justify-between mx-10">
           <h1 className="text-blue-500 text-2xl font-bold">Your Attendance Log: </h1>
           <div className="flex gap-2">
             <SortButton sortBy="workHour" label="Sort By Work Hour" order={order.workHour} onSort={handleSort} />
@@ -97,7 +97,7 @@ export default function Attendance() {
             <NotFound text="No attendance data found." />
           </div>
         ) : (
-          <div className="mx-10 w-[85vw]">
+          <div className="w-full lg:px-10 px-5">
             {attendanceData.map((data: IAttendance, index: number) => (
               <Table key={index} date={data.createdAt} checkIn={new Date(data.checkIn)} checkOut={data.checkOut  == null ? null : new Date(data.checkOut)} workHour={data.workHour} />
             ))}

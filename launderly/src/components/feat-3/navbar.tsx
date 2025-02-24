@@ -7,6 +7,10 @@ import toast from "react-hot-toast";
 import NotificationModal from "./notificationModal";
 import LogoutButton from "./logoutButton";
 import { useToken } from "@/hooks/useToken";
+import Image from "next/image";
+import useSession from "@/hooks/useSession";
+import { IUser } from "@/types/user";
+import Link from "next/link";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL_BE;
 export default function Navbar() {
@@ -17,12 +21,14 @@ export default function Navbar() {
   const [unreadCount, setUnreadCount] = useState(0);
   const modalRef = useRef<HTMLDivElement>(null);
   const token = useToken();
+  const { user } = useSession();
 
+  const worker = user as IUser;
   const navItems = [
-    { name: "Attendance", path: `/attendance`, icon: <CalendarCheck size={24} /> },
-    { name: "Notifications", path: `/notifications`, icon: <Bell size={24} /> },
-    { name: "Requests", path: `/requests`, icon: <FileText size={24} /> },
-    { name: "History", path: `/history`, icon: <FolderClock size={24} /> },
+    { name: "Attendance", path: `/attendance`, icon: <CalendarCheck size={20} /> },
+    { name: "Notifications", path: `/notifications`, icon: <Bell size={20} /> },
+    { name: "Requests", path: `/requests`, icon: <FileText size={20} /> },
+    { name: "History", path: `/history`, icon: <FolderClock size={20} /> },
   ];
 
   const toggleNotificationModal = () => {
@@ -80,7 +86,7 @@ export default function Navbar() {
       try {
         const res = await fetch(`${BASE_URL}/notification/`, {
           method: "GET",
-          headers: { 'Authorization': `Bearer ${token}`,"Content-Type": "application/json" },
+          headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
         });
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
@@ -138,10 +144,9 @@ export default function Navbar() {
                 )}
               </div>
             ))}
-          </div>
-
-          <div className="ml-4">
-            <LogoutButton />
+            <Link href="/profile">
+            <Image src={worker?.avatar || "/user.png"} alt="Profile" width={32} height={32} className="rounded-full" />
+            </Link>
           </div>
         </div>
       </div>

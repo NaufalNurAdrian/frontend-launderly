@@ -1,7 +1,7 @@
 "use client";
-import { IoLogOutOutline } from "react-icons/io5";
 import { useRouter } from "next/navigation";
 import { deleteCookie } from "@/libs/action";
+import { LogOut } from "lucide-react";
 
 export default function LogoutButton() {
   const router = useRouter();
@@ -13,8 +13,8 @@ export default function LogoutButton() {
   };
 
   return (
-    <button onClick={onLogout} className="text-[#1678F2] hover:text-red-500 transition">
-      <IoLogOutOutline size={30} />
+    <button onClick={onLogout} className="text-red-500  hover:text-red-500 transition">
+      <LogOut size={20} />
     </button>
   );
 }

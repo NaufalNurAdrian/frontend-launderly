@@ -90,7 +90,7 @@ export default function OrderMobileHistoryTable() {
   return (
     <div className="p-4">
       <div className="flex flex-col gap-3 mb-4">
-        <span className="flex justify-between mx-2">
+        <span className="flex justify-between gap-3 mx-1">
           <SortButton sortBy="distance" label="Sort By Distance" order={order.distance} onSort={handleSort} />
           <SortButton sortBy="createdAt" label="Sort By Date" order={order.createdAt} onSort={handleSort} />
         </span>

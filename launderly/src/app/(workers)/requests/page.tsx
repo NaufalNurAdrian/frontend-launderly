@@ -9,6 +9,8 @@ import { Swiper as SwiperType } from "swiper";
 import "swiper/css";
 import { useRef, useState } from "react";
 import SwiperButton from "@/components/feat-3/swipperButton";
+import WorkerSidebar from "@/components/feat-3/workerSidebar";
+
 
 export default function RequestsPage() {
   const role = useRole();
@@ -19,7 +21,7 @@ export default function RequestsPage() {
     <div className="flex bg-neutral-200 w-full min-h-screen">
       <div>
         <span className="hidden lg:block">
-          <Sidebar />
+          <WorkerSidebar />
         </span>
         <span className="max-md:block lg:hidden">
           <Navbar />

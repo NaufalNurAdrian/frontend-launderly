@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import LoginGoogle from "./loginGoggle";
 import { ArrowBigLeftDash } from "lucide-react";
+import { useRole } from "@/hooks/useRole";
 
 const Login = () => {
   const initialValues: LoginValues = {
@@ -32,8 +33,14 @@ const Login = () => {
       setUser(customer);
 
       toast.success(message || "Login successful!");
-
-      router.push("/dashboardCustomer");
+      const role = useRole(); 
+      if (role === "WORKER" || role === "DRIVER") {
+        router.push("/attendance");
+      } else if (role === "CUSTOMER") {
+        router.push("/dashboardCustomer");
+      } else {
+        router.push("/");
+      }
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
         const errorMessage =

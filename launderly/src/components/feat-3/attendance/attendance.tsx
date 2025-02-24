@@ -134,7 +134,7 @@ export default function WorkerAttendance({ token }: { token: string }) {
         </button>
       </div>
       <div className="w-[150px] h-[100px] bg-black rounded-full overflow-hidden">
-        <Image src={profile?.avatar ? profile.avatar : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"} alt="profile" width={500} height={600} />
+       <Image src={profile?.avatar || "/user.png"} alt="Profile" width={600} height={600} className="rounded-full" />
       </div>
     </div>
   );

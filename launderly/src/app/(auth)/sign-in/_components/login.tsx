@@ -71,7 +71,6 @@ const Login = () => {
           <p className="text-gray-600 mb-6 text-center">
             Please enter your email and password to log in.
           </p>
-
           <Formik
             initialValues={initialValues}
             validationSchema={LoginSchema}
@@ -99,7 +98,6 @@ const Login = () => {
                     className="text-red-500 text-sm mt-1"
                   />
                 </div>
-
                 <div className="mb-6">
                   <label
                     htmlFor="password"

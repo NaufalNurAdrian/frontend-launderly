@@ -1,4 +1,28 @@
 "use client";
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+import { useToken } from "@/hooks/useToken";
+import { useRouter } from "next/navigation";
+import {useState } from "react";
+interface ProcessOrderButtonProps {
+  orderId: number;
+}
+
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL_BE;
+export default function ProcessOrderButton({ orderId }: ProcessOrderButtonProps) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+  const token = useToken()
+
+  const handleProcessOrder = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(`${BASE_URL}/order/create/${orderId}`, {
+=======
+>>>>>>> ea41255c277fa321e8825de19f6805bcd436b3d3
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -18,11 +42,27 @@ export default function ProcessOrderButton({ orderId, workerId }: ProcessOrderBu
 
     try {
       const response = await fetch(`http://localhost:8000/api/order/create/${orderId}?workerId=${workerId}`, {
+<<<<<<< HEAD
+=======
+>>>>>>> d4581cef50b9f61bdd749d47118aa9da896f65ac
+>>>>>>> ea41255c277fa321e8825de19f6805bcd436b3d3
         method: "POST",
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
       });
 
       if (!response.ok) {
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+        throw new Error("Error Processing");
+      }
+
+      const data = await response.json();
+      router.push(`/requests/${orderId}`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Error");
+=======
+>>>>>>> ea41255c277fa321e8825de19f6805bcd436b3d3
         throw new Error("Gagal memproses pesanan");
       }
 
@@ -32,6 +72,10 @@ export default function ProcessOrderButton({ orderId, workerId }: ProcessOrderBu
       router.push(`/worker/requests/${orderId}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Terjadi kesalahan");
+<<<<<<< HEAD
+=======
+>>>>>>> d4581cef50b9f61bdd749d47118aa9da896f65ac
+>>>>>>> ea41255c277fa321e8825de19f6805bcd436b3d3
     } finally {
       setIsLoading(false);
     }

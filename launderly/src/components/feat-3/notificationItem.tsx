@@ -9,12 +9,17 @@ interface NotificationItemProps {
 
 export default function NotificationItem({ notification, onMarkAsRead }: NotificationItemProps) {
   return (
+<<<<<<< HEAD
     <div className="p-4 hover:bg-gray-50 cursor-pointer fixed z-50">
+=======
+    <div className="p-4 hover:bg-gray-50 cursor-pointer z-50">
+>>>>>>> ea41255c277fa321e8825de19f6805bcd436b3d3
       <div className="flex justify-between gap-16 items-center">
         <div>
           <p className="font-medium text-[15px]">{notification.notification.title}</p>
           <p className="text-sm text-gray-600">{notification.notification.description}</p>
         </div>
+<<<<<<< HEAD
         <span className="text-xs text-gray-500">
           {new Date(notification.createdAt).toLocaleTimeString()}
         </span>
@@ -24,9 +29,19 @@ export default function NotificationItem({ notification, onMarkAsRead }: Notific
           onClick={() => onMarkAsRead(notification.id)}
           className="mt-2 text-sm text-blue-500 hover:text-blue-700"
         >
+=======
+        <span className="text-xs text-gray-500">{new Date(notification.createdAt).toLocaleTimeString()}</span>
+      </div>
+      {!notification.isRead && (
+        <button onClick={() => onMarkAsRead(notification.id)} className="mt-2 text-sm text-blue-500 hover:text-blue-700">
+>>>>>>> ea41255c277fa321e8825de19f6805bcd436b3d3
           Mark as read
         </button>
       )}
     </div>
   );
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> ea41255c277fa321e8825de19f6805bcd436b3d3

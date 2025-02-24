@@ -23,7 +23,7 @@ interface OrderResult {
   createdAt: string;
 }
 
-const OrderPage = () => {
+const PaymentPage = () => {
   const { user } = useSession();
   const [orders, setOrders] = useState<OrderResult[]>([]);
   const [loading, setLoading] = useState(true);
@@ -106,4 +106,4 @@ const OrderPage = () => {
   );
 };
 
-export default OrderPage;
+export default PaymentPage;

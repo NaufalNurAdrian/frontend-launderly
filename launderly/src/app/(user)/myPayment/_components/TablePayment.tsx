@@ -1,109 +1,130 @@
 "use client";
+import { useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
 
-import React, { useEffect, useState } from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/feat-1/table";
-import useSession from "@/hooks/useSession";
-import { getUserOrders } from "@/api/order";
-import { PickupStatus } from "@/types/request";
-import { toTitleCase } from "@/helpers/toTitleCase";
-
-interface OrderResult {
+// 🟢 Define TypeScript Interfaces
+export interface Payment {
   id: number;
-  orderNumber: string;
-  orderStatus: string;
-  weight: number;
-  laundryPrice: string;
+  invoiceNumber: string;
+  paymentStatus: "PENDING" | "SUCCESSED" | "CANCELLED" | "DENIED" | "EXPIRED";
+  paymentMethode: string;
   createdAt: string;
 }
 
-const PaymentPage = () => {
-  const { user } = useSession();
-  const [orders, setOrders] = useState<OrderResult[]>([]);
-  const [loading, setLoading] = useState(true);
+export interface CreatePaymentBody {
+  orderId: number;
+  amount: number;
+}
+
+export interface UpdatePaymentBody {
+  order_id: string;
+  transaction_status: string;
+  fraud_status: string;
+  payment_type: string;
+  currency: string;
+  status_code: number;
+  signature_key: string;
+}
+
+// 🟢 Mock API Calls (Gantilah dengan API asli)
+const getPaymentById = async (userId: number): Promise<Payment[]> => {
+  return [
+    {
+      id: 1,
+      invoiceNumber: "INV-123",
+      paymentStatus: "PENDING",
+      paymentMethode: "Credit Card",
+      createdAt: "2024-02-25T12:00:00Z",
+    },
+  ];
+};
+
+const createPayment = async (data: CreatePaymentBody) => {
+  console.log("Creating payment with:", data);
+  return { success: true };
+};
+
+const updatePayment = async (data: UpdatePaymentBody) => {
+  console.log("Updating payment with:", data);
+  return { success: true };
+};
+
+// 🟢 Main Component
+const TablePayment = ({ user }: { user: { id: number } }) => {
+  const [payments, setPayments] = useState<Payment[]>([]);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchUserOrders = async () => {
+  // Fetch Payments
+  const fetchUserPayments = async () => {
+    if (!user?.id) return;
+
     setLoading(true);
     setError(null);
+
     try {
-      const response = await getUserOrders(user?.id!);
-      setOrders(response.data || []);
+      const response = await getPaymentById(user.id);
+      setPayments(response); 
     } catch (err) {
-      setError("Failed to fetch orders. Please try again later.");
+      setError("Failed to fetch payments. Please try again later.");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchUserOrders();
+    fetchUserPayments();
   }, []);
 
+  // Create Payment
+  const handleCreatePayment = async () => {
+    try {
+      await createPayment({ orderId: 123, amount: 50000 }); 
+      toast.success("Payment created successfully!");
+      fetchUserPayments();
+    } catch (err) {
+      toast.error("Failed to create payment.");
+    }
+  };
+
+
   return (
-    <div className="flex flex-col items-center gap-6 w-full px-4">
-      {/* Header */}
-      <div className="text-center">
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-800 flex items-center gap-2">
-          My Orders <span>🧺</span>
-        </h1>
-      </div>
+    <div>
+      <h2 className="text-xl font-bold">Payment Table</h2>
 
-      {/* Tabel Orders - Responsif */}
-      <div className="w-full max-w-[900px] overflow-x-auto">
-        <div className="shadow-md rounded-lg border border-gray-200 bg-white overflow-hidden">
-          {loading ? (
-            <p className="text-center py-6 text-gray-500">Loading orders...</p>
-          ) : error ? (
-            <p className="text-center py-6 text-red-500">{error}</p>
-          ) : orders.length > 0 ? (
-            <table className="w-full min-w-[700px]">
-              <thead>
-                <tr className="bg-blue-100 text-xs md:text-sm text-gray-700">
-                  <th className="text-center w-12 px-3 py-2">No.</th>
-                  <th className="px-3 py-2 text-left">Order Number</th>
-                  <th className="px-3 py-2 text-left">Status</th>
-                  <th className="px-3 py-2 text-left">Weight</th>
-                  <th className="px-3 py-2 text-left">Total Price</th>
-                  <th className="px-3 py-2 text-left">Order Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                {orders.map((order, index) => (
-                  <tr
-                    key={order.id}
-                    className="hover:bg-gray-50 text-xs md:text-sm border-t"
-                  >
-                    <td className="text-center px-3 py-2">{index + 1}</td>
-                    <td className="px-3 py-2">{order.orderNumber}</td>
-                    <td className="px-3 py-2">
-                      {toTitleCase(order.orderStatus)}
-                    </td>
-                    <td className="px-3 py-2">{order.weight} kg</td>
-                    <td className="px-3 py-2">Rp.{order.laundryPrice}</td>
-                    <td className="px-3 py-2">
-                      {new Date(order.createdAt).toLocaleDateString()}
-                    </td>
+      {loading && <p>Loading payments...</p>}
+      {error && <p className="text-red-500">{error}</p>}
 
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          ) : (
-            <p className="text-center py-6 text-gray-500">
-              No orders available.
-            </p>
-          )}
-        </div>
-      </div>
+      <button onClick={handleCreatePayment} className="px-4 py-2 bg-blue-500 text-white">
+        Create Payment
+      </button>
+
+      <table className="w-full border mt-4">
+        <thead>
+          <tr className="bg-gray-200">
+            <th>ID</th>
+            <th>Invoice</th>
+            <th>Status</th>
+            <th>Method</th>
+            <th>Created At</th>
+
+          </tr>
+        </thead>
+        <tbody>
+          {payments.map((payment) => (
+            <tr key={payment.id} className="border-t">
+              <td>{payment.id}</td>
+              <td>{payment.invoiceNumber}</td>
+              <td>{payment.paymentStatus}</td>
+              <td>{payment.paymentMethode}</td>
+              <td>{new Date(payment.createdAt).toLocaleString()}</td>
+
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };
 
-export default PaymentPage;
+export default TablePayment;

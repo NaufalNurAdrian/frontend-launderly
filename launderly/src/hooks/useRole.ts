@@ -5,11 +5,11 @@ import { jwtDecode } from "jwt-decode";
 
 interface JwtPayload {
   userId: string;
-  role: string; 
+  role: string;
 }
 
 export const useRole = () => {
-  const [role, setRole] = useState<string | null>(null); 
+  const [role, setRole] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -21,8 +21,8 @@ export const useRole = () => {
         router.push("/sign-in");
       } else {
         try {
-          const decodedToken = jwtDecode<JwtPayload>(storedToken); // Gunakan tipe generic
-          const userRole = decodedToken.role; // Ambil role dari token
+          const decodedToken = jwtDecode<JwtPayload>(storedToken);
+          const userRole = decodedToken.role;
           setRole(userRole);
         } catch (error) {
           toast.error("Invalid token!");

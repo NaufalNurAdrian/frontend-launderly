@@ -111,7 +111,7 @@ export default function WorkerProfile() {
               <div className="mt-6">
                 <label className="block text-gray-600 text-sm mb-2">Log out</label>
                 <div className="flex gap-3 bg-red-300 justify-center text-red-500 py-2 px-4 rounded-md hover:bg-red-400">
-                  <LogoutButton /> Log out
+                  <LogoutButton text="Log out"/> 
                 </div>
               </div>
             </div>

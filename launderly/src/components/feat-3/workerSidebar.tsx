@@ -43,6 +43,7 @@ export default function Sidebar() {
       const response = await fetch(`${BASE_URL}/notification/?notificationId=${notificationId}`, {
         method: "PATCH",
         headers: {
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });

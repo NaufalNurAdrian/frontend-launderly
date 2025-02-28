@@ -3,7 +3,11 @@ import { useRouter } from "next/navigation";
 import { deleteCookie } from "@/libs/action";
 import { LogOut } from "lucide-react";
 
-export default function LogoutButton() {
+interface buttonProps{
+  text?: string
+}
+
+export default function LogoutButton({text} :buttonProps ) {
   const router = useRouter();
 
   const onLogout = () => {
@@ -14,7 +18,7 @@ export default function LogoutButton() {
 
   return (
     <button onClick={onLogout} className="text-red-500  hover:text-red-500 transition">
-      <LogOut size={20} />
+      <LogOut size={20} /> {text}
     </button>
   );
 }

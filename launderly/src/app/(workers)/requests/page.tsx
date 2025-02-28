@@ -1,7 +1,6 @@
 "use client";
 import DriverRequestLists from "@/components/feat-3/driver/requestsLists";
 import Navbar from "@/components/feat-3/navbar";
-import Sidebar from "@/components/feat-3/sidebar";
 import WorkerRequestLists from "@/components/feat-3/worker/requestsLists";
 import { useRole } from "@/hooks/useRole";
 import { Swiper, SwiperSlide } from "swiper/react";

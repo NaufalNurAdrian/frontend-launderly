@@ -74,15 +74,20 @@ export default function WorkerAttendance({ token }: { token: string }) {
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
       });
       if (!response.ok) {
-        toast.error("You are already checked in");
+        toast.error("You are already clocked in");
         return;
       }
       if (response.ok) {
         setAttendanceStatus("ACTIVE");
-        toast.success("Check-in successful! Let`s work");
+        toast.success(
+          <>
+            Clock-in successful, Let's work ! <br />
+            Make sure to clock out before 23.59 WIB
+          </>
+        );
       }
     } catch (error) {
-      toast.error("error");
+      toast.error("Failed to Clock-in");
     }
   };
   const handleCheckOut = async () => {
@@ -92,15 +97,15 @@ export default function WorkerAttendance({ token }: { token: string }) {
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
       });
       if (!response.ok) {
-        toast.error("You are not checked in");
+        toast.error("You are not clocked in");
         return;
       }
       if (response.ok) {
         setAttendanceStatus("INACTIVE");
-        toast.success("Check-out successful! Get some rest");
+        toast.success("Clock-out successful! Get some rest");
       }
     } catch (error) {
-      toast.error("Failed to Check-out");
+      toast.error("Failed to Clock-out");
     }
   };
   useEffect(() => {
@@ -130,11 +135,11 @@ export default function WorkerAttendance({ token }: { token: string }) {
           }}
           className={`py-2 mt-2 px-5 rounded-xl text-white ${attendanceStatus == "INACTIVE" ? "bg-[#1678F2]  hover:bg-[#4b87cc]" : "bg-red-500 hover:bg-red-400"}`}
         >
-          {attendanceStatus == "INACTIVE" ? "Check In" : "Check Out"}
+          {attendanceStatus == "INACTIVE" ? "Clock In" : "Clock Out"}
         </button>
       </div>
       <div className="w-[150px] h-[100px] bg-black rounded-full overflow-hidden">
-       <Image src={profile?.avatar || "/user.png"} alt="Profile" width={600} height={600} className="rounded-full" />
+        <Image src={profile?.avatar || "/user.png"} alt="Profile" width={600} height={600} className="rounded-full" />
       </div>
     </div>
   );

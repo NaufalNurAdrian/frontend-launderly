@@ -6,6 +6,7 @@ import * as Yup from "yup";
 import { toast } from "react-hot-toast";
 import { IFormValues, IOrderItem, IOrderItemResponse } from "@/types/worker";
 import BypassModal from "./bypassModal";
+import { useToken } from "@/hooks/useToken";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL_BE;
 
@@ -16,6 +17,7 @@ export default function OrderProcessingPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const token = useToken()
   useEffect(() => {
     const fetchItem = async () => {
       try {
@@ -38,7 +40,6 @@ export default function OrderProcessingPage() {
     };
 
     fetchItem();
-    console.log(orderItems);
   }, [orderId]);
 
   const formik = useFormik<IFormValues>({
@@ -82,7 +83,10 @@ export default function OrderProcessingPage() {
       setLoading(true);
       const res = await fetch(`${BASE_URL}/bypass/${orderId}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({ bypassNote: notes }),
       });
       if (!res.ok) {
@@ -94,17 +98,20 @@ export default function OrderProcessingPage() {
     }
   };
 
-  const handleSubmitBypass = (notes: string) => {
-    bypass(notes);
-    toast.promise(bypass(notes), {
-      loading: "Sending...",
-      success: "Sent!",
-      error: (err) => err.message,
-    });
-    handleCloseModal();
-    router.push("/requests");
-  };
+  const handleSubmitBypass = async (notes: string) => {
+    try {
+      await toast.promise(bypass(notes), {
+        loading: "Sending...",
+        success: "Sent!",
+        error: (err) => err.message,
+      });
 
+      router.push("/requests");
+    } catch (err) {
+    } finally {
+      handleCloseModal();
+    }
+  };
   if (error) {
     return <p className="text-red-500">{error}</p>;
   }
@@ -126,6 +133,7 @@ export default function OrderProcessingPage() {
                 name={`items[${index}].workerQuantity`}
                 value={formik.values.items[index].workerQuantity}
                 onChange={formik.handleChange}
+                min="0"
                 className={`border p-2 rounded w-full mt-2 bg-white border-blue-300 focus:ring-2 ${isMatch ? "focus:ring-blue-500" : "focus:ring-red-500"}`}
                 style={{
                   WebkitAppearance: "none",

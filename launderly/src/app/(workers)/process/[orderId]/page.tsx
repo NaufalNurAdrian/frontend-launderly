@@ -1,6 +1,7 @@
 "use client";
 
 import CompleteOrder from "@/components/feat-3/worker/completeOrder";
+import ProtectedPage from "@/helpers/protectedRoutes";
 import { useParams } from "next/navigation";
 
 export default function ProcessPage() {
@@ -8,6 +9,7 @@ export default function ProcessPage() {
   const orderId = params.orderId;
 
   return (
+    <ProtectedPage allowedRoles={["DRIVER", "WORKER"]}>
     <div className="relative w-full min-h-screen flex justify-center items-center bg-gray-100">
       <div className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-70" style={{ backgroundImage: "url('/carousel1.jpeg')" }}></div>
 
@@ -15,5 +17,6 @@ export default function ProcessPage() {
         <CompleteOrder orderId={Number(orderId)} />
       </div>
     </div>
+    </ProtectedPage>
   );
 }

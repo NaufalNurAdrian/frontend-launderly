@@ -56,7 +56,7 @@ export default function WorkerProfile() {
     <div className="flex h-screen w-screen overflow-hidden">
       <main className="flex-1 bg-gray-100 overflow-auto relative p-4 sm:p-8 md:p-10">
         <div className="absolute top-0 left-0 right-0 h-60 bg-gradient-to-b from-green-200 via-sky-200 to-blue-100" />
-        <Image src="/profile.png" alt="Profile Decoration" width={100} height={100} className="absolute top-[-38px] right-[400px] transform sm:right-[200px] md:right-[300px]" />
+        <Image src="/profile.png" alt="" width={100} height={100} className="absolute top-[-38px] right-[400px] transform sm:right-[200px] md:right-[300px]" />
         <div className="relative">
           <div className="bg-white shadow-xl rounded-lg max-w-full sm:max-w-2xl mx-auto mt-16 p-6 sm:p-8">
             <div className="flex flex-col items-center">
@@ -65,7 +65,10 @@ export default function WorkerProfile() {
               </div>
 
               <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mt-4"> {worker?.fullName}</h2>
-              <p className="text-gray-500 text-md">{role?.toLocaleLowerCase()}{worker?.employee.station ? (` : ${worker?.employee.station}`) : ""}</p>
+              <p className="text-gray-500 text-md">
+                {role?.toLocaleLowerCase()}
+                {worker?.employee.station ? ` : ${worker?.employee.station}` : ""}
+              </p>
               <p className="text-gray-500 text-sm">{worker?.email}</p>
 
               {worker?.authProvider === "email" && (

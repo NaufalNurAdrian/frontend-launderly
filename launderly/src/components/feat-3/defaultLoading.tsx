@@ -1,9 +1,9 @@
-import { TypeAnimation } from "react-type-animation";
+import { PuffLoader } from "react-spinners";
 
-export default function DefaultLoading() {
+export default function SpinnerLoader() {
   return (
-    <div>
-      <TypeAnimation sequence={["Loading..."]} wrapper="span" speed={50} style={{ display: "inline-block", color: "#3B82F6" }} repeat={3} />
+    <div className="flex justify-center items-center h-screen">
+      <PuffLoader color="#3B82F6" size={100} />
     </div>
   );
 }

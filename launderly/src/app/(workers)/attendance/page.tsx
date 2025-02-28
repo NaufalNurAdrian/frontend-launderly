@@ -10,8 +10,8 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import Navbar from "@/components/feat-3/navbar";
 import { useToken } from "@/hooks/useToken";
-import { useRole } from "@/hooks/useRole";
 import WorkerSidebar from "@/components/feat-3/workerSidebar";
+import ProtectedPage from "@/helpers/protectedRoutes";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL_BE;
 export default function Attendance() {
@@ -25,7 +25,6 @@ export default function Attendance() {
     workHour: "asc",
   });
   const token = useToken();
-  const role = useRole();
 
   const getData = async (page: number, sortBy: string, order: "asc" | "desc") => {
     if (!token) return;
@@ -68,6 +67,7 @@ export default function Attendance() {
     }
   }, [token, currentPage, sortBy, order[sortBy]]);
   return (
+    <ProtectedPage allowedRoles={["DRIVER", "WORKER"]}>
     <div className="flex bg-white min-h-screen lg:py-3">
       <div>
         <span className="hidden lg:block">
@@ -106,5 +106,6 @@ export default function Attendance() {
         )}
       </div>
     </div>
+    </ProtectedPage>
   );
 }

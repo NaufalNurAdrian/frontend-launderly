@@ -68,44 +68,44 @@ export default function Attendance() {
   }, [token, currentPage, sortBy, order[sortBy]]);
   return (
     <ProtectedPage allowedRoles={["DRIVER", "WORKER"]}>
-    <div className="flex bg-white min-h-screen lg:py-3">
-      <div>
-        <span className="hidden lg:block">
-          <WorkerSidebar/>
-        </span>
-        <span className="max-md:block lg:hidden">
-          <Navbar />
-        </span>
-      </div>
-      <div className="flex w-full flex-col items-center lg:mt-10">
-        <div className=" flex justify-end mx-10 my-5">
-          <WorkerAttendance token={token!} />
+      <div className="flex bg-white min-h-screen lg:py-3">
+        <div>
+          <span className="hidden lg:block">
+            <WorkerSidebar />
+          </span>
+          <span className="max-md:block lg:hidden">
+            <Navbar />
+          </span>
         </div>
-        <div className="flex  flex-col max-md:gap-2 lg:gap-5 lg:flex-row justify-between mx-10">
-          <h1 className="text-blue-500 text-2xl font-bold">Your Attendance Log: </h1>
-          <div className="flex gap-2">
-            <SortButton sortBy="workHour" label="Sort By Work Hour" order={order.workHour} onSort={handleSort} />
-            <SortButton sortBy="createdAt" label="Sort By Date" order={order.createdAt} onSort={handleSort} />
+        <div className="flex w-full flex-col items-center lg:mt-10">
+          <div className=" flex justify-end mx-10 my-5">
+            <WorkerAttendance token={token!} />
           </div>
+          <div className="flex  flex-col max-md:gap-2 lg:gap-5 lg:flex-row justify-between mx-10">
+            <h1 className="text-blue-500 text-2xl font-bold">Your Attendance Log: </h1>
+            <div className="flex gap-2">
+              <SortButton sortBy="workHour" label="Sort By Work Hour" order={order.workHour} onSort={handleSort} />
+              <SortButton sortBy="createdAt" label="Sort By Date" order={order.createdAt} onSort={handleSort} />
+            </div>
+          </div>
+          {loading ? (
+            <div className="flex justify-center items-center text-3xl font-bold my-20">
+              <DefaultLoading />
+            </div>
+          ) : attendanceData.length === 0 ? (
+            <div className="flex justify-center items-center my-10 max-sm:my-20 max-sm:mx-5">
+              <NotFound text="No attendance data found." />
+            </div>
+          ) : (
+            <div className="w-full lg:px-10 px-5">
+              {attendanceData.map((data: IAttendance, index: number) => (
+                <Table key={index} date={data.createdAt} checkIn={new Date(data.checkIn)} checkOut={data.checkOut == null ? null : new Date(data.checkOut)} workHour={data.workHour} />
+              ))}
+              <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+            </div>
+          )}
         </div>
-        {loading ? (
-          <div className="flex justify-center items-center text-3xl font-bold my-20">
-            <DefaultLoading />
-          </div>
-        ) : attendanceData.length === 0 ? (
-          <div className="flex justify-center items-center my-10 max-sm:my-20 max-sm:mx-5">
-            <NotFound text="No attendance data found." />
-          </div>
-        ) : (
-          <div className="w-full lg:px-10 px-5">
-            {attendanceData.map((data: IAttendance, index: number) => (
-              <Table key={index} date={data.createdAt} checkIn={new Date(data.checkIn)} checkOut={data.checkOut  == null ? null : new Date(data.checkOut)} workHour={data.workHour} />
-            ))}
-            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
-          </div>
-        )}
       </div>
-    </div>
     </ProtectedPage>
   );
 }

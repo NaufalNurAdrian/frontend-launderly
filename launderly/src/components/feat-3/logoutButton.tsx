@@ -17,7 +17,7 @@ export default function LogoutButton({text} :buttonProps ) {
   };
 
   return (
-    <button onClick={onLogout} className="text-red-500  hover:text-red-500 transition">
+    <button onClick={onLogout} className="text-red-500  hover:text-red-500 transition flex gap-2 justify-center items-center">
       <LogOut size={20} /> {text}
     </button>
   );

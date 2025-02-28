@@ -1,5 +1,6 @@
 "use client";
 import formatDate from "@/helpers/dateFormatter";
+import formatId from "@/helpers/idFormatter";
 import { IUser } from "@/types/user";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -119,7 +120,7 @@ export default function WorkerAttendance({ token }: { token: string }) {
         <p className="text-white border-blue-600 w-full bg-blue-400 px-2 rounded-xl mb-1">{formatDate(new Date().toISOString())}</p>
         <div className="grid grid-cols-[50px_auto] gap-1">
           <span className="font-semibold">ID </span>
-          <span>: {profile?.id}</span>
+          <span>: {formatId(profile?.id!)}</span>
           <span className="font-semibold">Name </span>
           <span>: {profile?.fullName}</span>
           <span className="font-semibold">Role </span>

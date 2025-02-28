@@ -17,7 +17,7 @@ export default function OrderProcessingPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const token = useToken()
+  const token = useToken();
   useEffect(() => {
     const fetchItem = async () => {
       try {

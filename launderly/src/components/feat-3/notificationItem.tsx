@@ -1,5 +1,6 @@
 "use client";
 
+import { formatTime } from "@/helpers/timeFormatter";
 import { INotificationDetail } from "@/types/notification";
 
 interface NotificationItemProps {
@@ -15,7 +16,7 @@ export default function NotificationItem({ notification, onMarkAsRead }: Notific
           <p className="font-medium text-[15px]">{notification.notification.title}</p>
           <p className="text-sm text-gray-600">{notification.notification.description}</p>
         </div>
-        <span className="text-xs text-gray-500">{new Date(notification.createdAt).toLocaleTimeString()}</span>
+        <span className="text-xs text-gray-500">{formatTime(new Date(notification.createdAt))}</span>
       </div>
       {!notification.isRead && (
         <button onClick={() => onMarkAsRead(notification.id)} className="mt-2 text-sm text-blue-500 hover:text-blue-700">

@@ -178,12 +178,7 @@ export default function Sidebar() {
             </button>
           </div>
           <div className="flex gap-2 items-center text-red-500 mb-5 border-t p-4">
-            <LogoutButton />
-            {!isCollapsed && (
-              <span className="text-sm">
-                <p className="font-light">Log out</p>
-              </span>
-            )}
+            {isCollapsed ? (<LogoutButton/>) :( <LogoutButton text="Log out" />)}
           </div>
         </div>
       </aside>

@@ -1,26 +1,19 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/feat-1/table";
 import useSession from "@/hooks/useSession";
 import { getUserOrders } from "@/api/order";
-import { PickupStatus } from "@/types/request";
 import { toTitleCase } from "@/helpers/toTitleCase";
+import PayButton from "@/components/feat-1/payButton";
 
 interface OrderResult {
   id: number;
   orderNumber: string;
   orderStatus: string;
   weight: number;
-  laundryPrice: string;
+  laundryPrice: number;
   createdAt: string;
+  isPaid: boolean;
 }
 
 const OrderPage = () => {
@@ -72,6 +65,7 @@ const OrderPage = () => {
                   <th className="px-3 py-2 text-left">Weight</th>
                   <th className="px-3 py-2 text-left">Total Price</th>
                   <th className="px-3 py-2 text-left">Order Date</th>
+                  <th className="px-3 py-2 text-left">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -90,7 +84,18 @@ const OrderPage = () => {
                     <td className="px-3 py-2">
                       {new Date(order.createdAt).toLocaleDateString()}
                     </td>
-
+                    <td className="px-3 py-2">
+                      {order.isPaid ? (
+                        <span className="text-green-600 font-semibold">
+                          Already Paid
+                        </span>
+                      ) : order.laundryPrice > 0 ? (
+                        <PayButton
+                          orderId={order.id}
+                          amount={order.laundryPrice}
+                        />
+                      ) : null}
+                    </td>
                   </tr>
                 ))}
               </tbody>

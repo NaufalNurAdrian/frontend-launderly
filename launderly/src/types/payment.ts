@@ -9,8 +9,9 @@ export interface Payment {
   
   export interface CreatePaymentBody {
     orderId: number;
-    amount: number;
+    amount?: number; 
   }
+  
   
   export interface UpdatePaymentBody {
     order_id: string;

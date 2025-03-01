@@ -18,7 +18,7 @@ export async function getPaymentById(userId: number): Promise<Payment[]> {
   try {
     const token = getToken();
     const response = await axios.get<{ success: boolean; payments: Payment[] }>(
-      `${base_url}/api/payment/${userId}`,
+      `${base_url}/payment/${userId}`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
@@ -33,34 +33,29 @@ export async function getPaymentById(userId: number): Promise<Payment[]> {
 }
 
 // 🟢 2. Create Payment (New Payment)
-export async function createPayment(data: CreatePaymentBody): Promise<{ status: string; message: string }> {
+export async function createPayment(orderId: number): Promise<string | null> {
   try {
     const token = getToken();
-    const response = await axios.post<{ status: string; message: string }>(
-      `${base_url}/api/payment`,
-      data,
+    const response = await axios.post(
+      `${base_url}/payment`,
+      { orderId },
       {
         headers: { Authorization: `Bearer ${token}` },
       }
     );
 
-    toast.success("Payment created successfully!");
-    return response.data;
+    if (response.data && response.data.snapToken) {
+      toast.success("Payment created successfully!");
+      return response.data.snapToken;
+    } else {
+      toast.error("Failed to retrieve snapToken.");
+      console.error("Response:", response.data);
+      return null;
+    }
   } catch (error) {
     toast.error("Failed to create payment. Please try again.");
     console.error("Error creating payment:", error);
-    throw error;
+    return null;
   }
 }
 
-// 🟢 3. Update Payment (Midtrans Callback)
-export async function updatePayment(data: UpdatePaymentBody): Promise<{ message: string }> {
-  try {
-    const response = await axios.post<{ message: string }>(`${base_url}/api/payment/midtrans-callback`, data);
-    return response.data;
-  } catch (error) {
-    toast.error("Failed to update payment. Please try again.");
-    console.error("Error updating payment:", error);
-    throw error;
-  }
-}

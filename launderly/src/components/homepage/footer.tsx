@@ -43,10 +43,10 @@ export function Footer() {
                 Nopal
               </Link>
               <Link
-                href=""
+                href="http://linkedin.com/in/nuaysa"
                 className="text-gray-400 hover:text-white transition"
               >
-                Alysha
+                Allysa
               </Link>
             </div>
           </div>

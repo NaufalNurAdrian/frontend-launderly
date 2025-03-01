@@ -77,10 +77,10 @@ export default function HistoryTable() {
         <SortButton sortBy="createdAt" label="Sort By Date" order={order.createdAt} onSort={handleSort} />
         <FilterDropdown onFilterChange={handleFilterChange} option1="pickup" option2="delivery" />
       </div>
-      <div className="w-full bg-blue-200 rounded-md my-5 z-10 mx-10 lg:mx-0 relative overflow-visible">
-        <table className="table table-lg w-screen overflow-x-scroll lg:w-[1000px] rounded-md text-lg">
+      <div className="w-full bg-blue-200 my-5 z-10 mx-10 lg:mx-0 relative overflow-visible">
+        <table className="table table-lg w-screen overflow-x-scroll lg:w-[1000px] text-lg">
           <thead className="border border-b-blue-600 text-center">
-            <tr className="border border-b-white text-blue-600 bg-blue-400 text-lg">
+            <tr className="border border-b-white text-white bg-blue-400 text-lg">
               <th>orderName</th>
               <th>Date</th>
               <th>Time</th>
@@ -88,12 +88,12 @@ export default function HistoryTable() {
               <th>Distance (km)</th>
             </tr>
           </thead>
-          <tbody className="border border-white text-center text-neutral-800">
+          <tbody className="border border-white text-center text-blue-600">
             {requests.length > 0 ? (
               requests.map((request: IRequest) => (
                 <tr key={request.id} className="border border-collapse-white">
                   {request.type == "delivery" ? <td className="p-5">{request.deliveryNumber}</td> : <td className="p-5">{request.pickupNumber}</td>}
-                  <td>{formatDate(request.createdAt)}</td>
+                  <td >{formatDate(request.createdAt)}</td>
                   <td>{formatTime(new Date(request.updatedAt))}</td>
                   <td>{request.type}</td>
                   <td>{roundDistance(request.distance)}</td>

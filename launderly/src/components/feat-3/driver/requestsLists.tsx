@@ -1,14 +1,14 @@
 "use client";
 import { useState, useEffect } from "react";
 import { MapPin } from "lucide-react";
-import Pagination from "../paginationButton";
 import { IApiResponse, IRequest } from "@/types/driver";
 import { toast } from "react-hot-toast";
-import DefaultLoading from "../defaultLoading";
-import NotFound from "../notFound";
 import { calculateTimeDifference } from "@/helpers/timeCounter";
 import SortButton from "../sortingButton";
+import DefaultLoading from "../defaultLoading";
+import NotFound from "../notFound";
 import RequestButton from "./processButton";
+import Pagination from "../paginationButton";
 
 interface IList {
   type: string;
@@ -114,11 +114,11 @@ export default function DriverRequestLists({ type }: IList) {
                 <p className="text-xs sm:text-sm text-gray-500 mb-1 mx-4">{Math.round(request.distance * 10) / 10} km from outlet</p>
                 {type === "delivery" ? (
                   <div>
-                    <RequestButton requestId={request.id} status={request.deliveryStatus!} onSuccess={handleSuccess} type="delivery" />
+                    <RequestButton requestId={request.id} type={"delivery"} onSuccess={handleSuccess} status={request.deliveryStatus!} />
                   </div>
                 ) : (
                   <div>
-                    <RequestButton requestId={request.id} status={request.pickupStatus!} onSuccess={handleSuccess} type="pickup" />
+                    <RequestButton requestId={request.id} type={"pickup"} onSuccess={handleSuccess} status={request.pickupStatus!} />
                   </div>
                 )}
               </div>

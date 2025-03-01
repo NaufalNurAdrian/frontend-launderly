@@ -73,10 +73,10 @@ export default function OrderHistoryTable() {
         <SortButton sortBy="weight" label="Sort By Weight" order={order.weight} onSort={handleSort} />
         <SortButton sortBy="createdAt" label="Sort By Date" order={order.createdAt} onSort={handleSort} />
       </div>
-      <div className="w-full bg-blue-200 rounded-md my-5 z-10 mx-10 lg:mx-0 relative overflow-visible">
+      <div className="w-full bg-blue-200 rounded-lg my-5 z-10 mx-10 lg:mx-0 relative overflow-visible ">
         <div className="overflow-x-auto">
           <table className="table w-full rounded-md text-lg">
-            <thead className="border border-b-blue-600 text-center hidden lg:table-header-group">
+            <thead className="border border-b-blue-600 text-center hidden lg:table-header-group rounded-t">
               <tr className="border border-b-white text-blue-600 bg-blue-400 text-lg">
                 <th className="p-3">Order Number</th>
                 <th className="p-3">Date</th>
@@ -89,20 +89,20 @@ export default function OrderHistoryTable() {
               {requests.length > 0 ? (
                 requests.map((request: IOrder) => (
                   <tr key={request.id} className="border border-collapse-white flex flex-col lg:table-row">
-                    <td className="p-3 lg:hidden font-bold text-blue-500">Order Number</td>
-                    <td className="p-3">{request.orderNumber}</td>
+                    <td className="p-3 lg:hidden font-bold text-white">Order Number</td>
+                    <td className="p-3 text-blue-600">{request.orderNumber}</td>
 
-                    <td className="p-3 lg:hidden font-bold text-blue-500">Date</td>
-                    <td className="p-3">{formatDate(request.createdAt)}</td>
+                    <td className="p-3 lg:hidden font-bold text-white">Date</td>
+                    <td className="p-3 text-blue-600">{formatDate(request.createdAt)}</td>
 
-                    <td className="p-3 lg:hidden font-bold text-blue-500">Time</td>
-                    <td className="p-3">{formatTime(new Date(request.updatedAt))}</td>
+                    <td className="p-3 lg:hidden font-bold text-white">Time</td>
+                    <td className="p-3 text-blue-600">{formatTime(new Date(request.updatedAt))}</td>
 
-                    <td className="p-3 lg:hidden font-bold text-blue-500">Weight (kg)</td>
-                    <td className="p-3">{request.weight}</td>
+                    <td className="p-3 lg:hidden font-bold text-white">Weight (kg)</td>
+                    <td className="p-3 text-blue-600">{request.weight}</td>
 
-                    <td className="p-3 lg:hidden font-bold text-blue-500">Income</td>
-                    <td className="p-3">{request.laundryPrice}</td>
+                    <td className="p-3 lg:hidden font-bold text-white">Income</td>
+                    <td className="p-3 text-blue-600">{request.laundryPrice}</td>
                   </tr>
                 ))
               ) : (

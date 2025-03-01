@@ -84,6 +84,7 @@ const Login = () => {
                   <ErrorMessage name="password" component="div" className="text-red-500 text-sm mt-1" />
                 </div>
 
+                {/* Forgot Password Link */}
                 <div className="mb-6 flex justify-between text-sm">
                   <Link href="/" className=" text-fuchsia-600 hover:underline">
                     <div className="flex">
@@ -96,13 +97,19 @@ const Login = () => {
                   </Link>
                 </div>
 
-                <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-200" disabled={isSubmitting}>
+                {/* Tombol Login */}
+                <button
+                  type="submit"
+                  className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-200"
+                  disabled={isSubmitting}
+                >
                   {isSubmitting ? "Signing In..." : "Sign In"}
                 </button>
               </Form>
             )}
           </Formik>
 
+          {/* Sign Up Link */}
           <div className="mt-6 text-center">
             <p className="text-gray-600">
               Don&apos;t have an account?{" "}
@@ -112,6 +119,7 @@ const Login = () => {
             </p>
           </div>
 
+          {/* Login dengan Google */}
           <LoginGoogle />
         </div>
       </div>

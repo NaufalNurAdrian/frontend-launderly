@@ -1,14 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/feat-1/table";
 import useSession from "@/hooks/useSession";
 import CreateRequestOrderDialog from "../_components/CreateRequestOrder";
 import { getUserRequestOrder } from "@/api/order";
@@ -27,7 +19,6 @@ interface OrderResult {
 }
 
 const RequestOrderPage = () => {
-  const { user } = useSession();
   const [orders, setOrders] = useState<OrderResult[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

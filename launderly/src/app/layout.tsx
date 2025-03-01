@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { ToastContainer } from "react-toastify";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
+import "leaflet/dist/leaflet.css";
+
 
 export const metadata: Metadata = {
   title: "launderly",

@@ -1,28 +1,29 @@
+"use client"
+
 import type { Metadata } from "next";
 import "../../app/globals.css";
-import Sidebar from "@/components/sidebar";
-export const metadata: Metadata = {
-  title: "launderly",
-  description: "A laundry service",
-};
+import Sidebar from "../../components/sidebar";
+import "leaflet/dist/leaflet.css";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useState } from "react";
+
+
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const [queryClient] = useState(() => new QueryClient());
   return (
-    <html lang="en">
-      <body className="font-sans">
-        <div className="container flex flex-row w-full h-full">
-          <div>
-            <Sidebar />
+    <QueryClientProvider client={queryClient}>
+
+        <main className="flex flex-row w-full h-full font-sans">
+          <Sidebar />
+          <div className="ml-[50px] md:ml-[250px] w-full">
+          {children}
           </div>
-          <div className="container">
-            {children}
-          </div>
-        </div>
-      </body>
-    </html>
+        </main>
+    </QueryClientProvider>
   );
 }

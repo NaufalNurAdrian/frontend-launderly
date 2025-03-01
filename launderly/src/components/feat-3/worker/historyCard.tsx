@@ -7,21 +7,9 @@ import { IApiResponse, IOrder } from "@/types/worker";
 import DefaultLoading from "../defaultLoading";
 import NotFound from "../notFound";
 import SortButton from "../sortingButton";
-<<<<<<< HEAD
-import FilterDropdown from "../driver/history/filterButton";
-import Pagination from "../paginationButton";
-
-=======
-<<<<<<< HEAD
 import Pagination from "../paginationButton";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL_BE;
-=======
-import FilterDropdown from "../driver/history/filterButton";
-import Pagination from "../paginationButton";
-
->>>>>>> d4581cef50b9f61bdd749d47118aa9da896f65ac
->>>>>>> ea41255c277fa321e8825de19f6805bcd436b3d3
 export default function OrderMobileHistoryTable() {
   const [loading, setLoading] = useState(true);
   const [requests, setRequests] = useState<IOrder[]>([]);
@@ -41,31 +29,12 @@ export default function OrderMobileHistoryTable() {
 
   const fetchRequests = async (page: number, sortBy: string, order: "asc" | "desc", filter: string) => {
     if (!token) return;
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
     try {
       setLoading(true);
       const res = await fetch(`${BASE_URL}/order/history/?&page=${page}&sortBy=${sortBy}&order=${order}&pageSize=5`, {
         method: "GET",
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
       });
-=======
->>>>>>> ea41255c277fa321e8825de19f6805bcd436b3d3
-
-    try {
-      setLoading(true);
-      const res = await fetch(
-        `http://localhost:8000/api/order/history/?&page=${page}&sortBy=${sortBy}&order=${order}&type=${filter}`,
-        {
-          method: "GET",
-          headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-        }
-      );
-<<<<<<< HEAD
-=======
->>>>>>> d4581cef50b9f61bdd749d47118aa9da896f65ac
->>>>>>> ea41255c277fa321e8825de19f6805bcd436b3d3
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
@@ -103,9 +72,6 @@ export default function OrderMobileHistoryTable() {
   }, [sortBy, order, currentPage, filter, token]);
 
   if (loading) {
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
     return (
       <div className="text-center items-center py-5">
         <DefaultLoading />
@@ -119,39 +85,15 @@ export default function OrderMobileHistoryTable() {
         <NotFound text="No History Data Found." />
       </div>
     );
-=======
->>>>>>> ea41255c277fa321e8825de19f6805bcd436b3d3
-    return <div className="text-center items-center py-5"><DefaultLoading/></div>;
-  }
-
-  if (requests.length === 0 && !loading) {
-    return <div className="text-center py-5">\<NotFound text="not history found"/></div>;
-<<<<<<< HEAD
-=======
->>>>>>> d4581cef50b9f61bdd749d47118aa9da896f65ac
->>>>>>> ea41255c277fa321e8825de19f6805bcd436b3d3
   }
 
   return (
     <div className="p-4">
       <div className="flex flex-col gap-3 mb-4">
-        <span className="flex justify-between mx-2">
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
+        <span className="flex justify-between gap-3 mx-2">
           <SortButton sortBy="distance" label="Sort By Distance" order={order.distance} onSort={handleSort} />
           <SortButton sortBy="createdAt" label="Sort By Date" order={order.createdAt} onSort={handleSort} />
         </span>
-=======
->>>>>>> ea41255c277fa321e8825de19f6805bcd436b3d3
-        <SortButton sortBy="distance" label="Sort By Distance" order={order.distance} onSort={handleSort} />
-        <SortButton sortBy="createdAt" label="Sort By Date" order={order.createdAt} onSort={handleSort} />
-        </span>
-        <FilterDropdown onFilterChange={handleFilterChange} option1="pickup" option2="delivery" />
-<<<<<<< HEAD
-=======
->>>>>>> d4581cef50b9f61bdd749d47118aa9da896f65ac
->>>>>>> ea41255c277fa321e8825de19f6805bcd436b3d3
       </div>
 
       <div className="space-y-4">
@@ -180,12 +122,4 @@ export default function OrderMobileHistoryTable() {
       </div>
     </div>
   );
-<<<<<<< HEAD
 }
-=======
-<<<<<<< HEAD
-}
-=======
-}
->>>>>>> d4581cef50b9f61bdd749d47118aa9da896f65ac
->>>>>>> ea41255c277fa321e8825de19f6805bcd436b3d3

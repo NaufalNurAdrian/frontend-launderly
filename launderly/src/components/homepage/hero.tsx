@@ -1,78 +1,78 @@
+"use client"
+
 import Image from "next/image";
+import { motion } from "framer-motion";
 
 export function Hero() {
   return (
-    <div className="bg-cyan-400" id="Hero">
-      <div className="carousel w-full h-60 sm:h-80 md:h-[400px] lg:h-[500px]">
-        <div id="item1" className="carousel-item w-full relative">
-          <Image
-            src="/carousel1.jpeg"
-            alt="Why us?"
-            fill
-            className="object-cover w-full h-full"
-          />
-          <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-            <p className="text-white text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-center px-4">
-              Why us?
-            </p>
-          </div>
-        </div>
-        <div id="item2" className="carousel-item w-full relative">
-          <Image
-            src="/carousel2.jpeg"
-            alt="Why us?"
-            fill
-            className="object-cover w-full h-full"
-          />
-          <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-            <p className="text-white text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-center px-4">
-              We'll Pick Up Your Laundry, So You Don’t Have To!
-            </p>
-          </div>
-        </div>
-        <div id="item3" className="carousel-item w-full relative">
-          <Image
-            src="/carousel3.gif"
-            alt="Why us?"
-            fill
-            className="object-cover w-full h-full"
-          />
-          <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-            <p className="text-white text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-center px-4">
-              We Deliver the Best Service, Just for You!
-            </p>
-          </div>
-        </div>
-        <div id="item4" className="carousel-item w-full relative">
-          <Image
-            src="/carousel4.jpeg"
-            alt="Why us?"
-            fill
-            className="object-cover w-full h-full"
-          />
-          <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-            <p className="text-white text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-center px-4">
-              So Just Relax with a cup of tea while we deliver your freshly
-              cleaned laundry to your doorstep!
-            </p>
-          </div>
-        </div>
-      </div>
+    <section className="bg-[#00CCDD] py-16 md:py-0 md:px-48 text-black">
+      <div className="mx-auto flex flex-col md:flex-row items-center justify-between px-4 md:h-screen">
+        {/* Bagian kiri: Teks */}
+        <motion.div
+          className="md:w-1/2 text-center md:text-left mb-8 md:mb-0"
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          <h1 className="text-4xl md:text-7xl font-bold mb-4">
+            Effortless Laundry <br />
+            at Your Doorstep!
+          </h1>
+          <p className="md:text-xl mb-6">
+            Experience the convenience of our professional laundry service with
+            pickup and delivery. Save time and enjoy fresh, clean clothes
+            without the hassle!
+          </p>
+        </motion.div>
 
-      <div className="flex w-full justify-center gap-2 py-2">
-        <a href="#item1" className="btn btn-xs">
-          1
-        </a>
-        <a href="#item2" className="btn btn-xs">
-          2
-        </a>
-        <a href="#item3" className="btn btn-xs">
-          3
-        </a>
-        <a href="#item4" className="btn btn-xs">
-          4
-        </a>
+        {/* Bagian kanan: Grid 3 gambar */}
+        <motion.div
+          className="md:w-1/2 grid grid-cols-1 sm:grid-cols-2 gap-4 w-full"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8 }}
+        >
+          {/* Gambar pertama */}
+          <motion.div
+            className="relative w-full h-[200px] sm:h-[250px] md:h-[300px]"
+            whileHover={{ scale: 1.05 }}
+          >
+            <Image
+              src="/homepage.jpeg"
+              alt="Fashion 1"
+              layout="fill"
+              objectFit="cover"
+              className="rounded"
+            />
+          </motion.div>
+          {/* Gambar kedua */}
+          <motion.div
+            className="relative w-full h-[200px] sm:h-[250px] md:h-[300px]"
+            whileHover={{ scale: 1.05 }}
+          >
+            <Image
+              src="/homepage1.jpeg"
+              alt="Fashion 2"
+              layout="fill"
+              objectFit="cover"
+              className="rounded"
+            />
+          </motion.div>
+          {/* Gambar ketiga, melebar di 2 kolom */}
+          <motion.div
+            className="relative w-full h-[200px] sm:h-[250px] md:h-[300px] sm:col-span-2"
+            whileHover={{ scale: 1.05 }}
+          >
+            <Image
+              src="/sign-in.jpeg"
+              alt="Fashion 3"
+              layout="fill"
+              objectFit="cover"
+              className="rounded"
+            />
+          </motion.div>
+        </motion.div>
       </div>
-    </div>
+    </section>
   );
 }

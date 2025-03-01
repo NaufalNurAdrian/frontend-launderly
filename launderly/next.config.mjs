@@ -1,8 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    images:{
+    images: {
+        domains: ["lh3.googleusercontent.com", "res.cloudinary.com"],
         remotePatterns: [
-            {hostname: "cdn.pixabay.com"}
+            { hostname: "cdn.pixabay.com" }
         ]
     }
 };

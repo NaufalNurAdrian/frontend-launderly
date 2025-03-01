@@ -2,16 +2,26 @@
 
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useState } from "react";
+<<<<<<< HEAD
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { validationSchema } from "@/libs/schema";
+=======
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { RegisterSchema } from "@/libs/schema";
+import { registerUser } from "@/api/auth";
+import Link from "next/link";
+import { FormValues, initialValues } from "@/types/auth";
+>>>>>>> 8171f226bddff7a9d8a0947144c2bb07a1ec3940
 
 export default function CustomerSignUpPage() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
+<<<<<<< HEAD
   interface FormValues {
     fullName: string;
     email: string;
@@ -55,12 +65,22 @@ export default function CustomerSignUpPage() {
         console.error("Unexpected error during registration:", err);
         toast.error("An unexpected error occurred.");
       }
+=======
+  const handleSubmit = async (values: FormValues) => {
+    try {
+      setIsLoading(true);
+      const response = await registerUser(values);
+      router.push("/"); // redirect after success
+    } catch (err) {
+      // Handle error here
+>>>>>>> 8171f226bddff7a9d8a0947144c2bb07a1ec3940
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
+<<<<<<< HEAD
     <div className="flex flex-col md:flex-row h-screen bg-black text-gray-300 mt-16">
       <div className="w-full lg:w-1/2 relative">
         <div>
@@ -111,6 +131,61 @@ export default function CustomerSignUpPage() {
                     name="fullName"
                     placeholder="Enter your fullName"
                     className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md"
+=======
+    <div className="h-screen flex flex-col lg:flex-row bg-blue-300 text-white">
+      {/* Bagian Kiri - Background Gambar (Hidden di Mobile) */}
+      <div className="hidden lg:flex lg:w-1/2 relative bg-blue-400">
+        <Image
+          src="/homepage.jpeg"
+          alt="Login background"
+          layout="fill"
+          objectFit="cover"
+          className="rounded-lg"
+        />
+      </div>
+
+      {/* Bagian Kanan - Form Sign Up (Full-Screen di Mobile) */}
+      <div className="w-full lg:w-1/2 flex flex-col items-center justify-center p-6 md:p-12 shadow-lg rounded-lg h-screen">
+        {/* Header */}
+        <div className="mb-8 text-center w-full max-w-lg">
+          <Link href={"/"}>
+            <h1 className="text-4xl font-bold text-black mb-4">Launderly</h1>
+          </Link>
+          <p className="text-lg mx-auto">
+            Sign up to enjoy all the benefits. Create your account today!
+          </p>
+        </div>
+
+        {/* Form */}
+        <div className="w-full max-w-lg bg-white p-8 rounded-lg shadow-lg">
+          <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">
+            Create Account
+          </h2>
+          <p className="text-gray-600 mb-6 text-center">
+            Please enter your details to create a new account.
+          </p>
+
+          <Formik
+            initialValues={initialValues}
+            validationSchema={RegisterSchema}
+            onSubmit={handleSubmit}
+          >
+            {({ isSubmitting }) => (
+              <Form>
+                <div className="mb-6">
+                  <label
+                    htmlFor="fullName"
+                    className="block text-sm font-semibold text-gray-700 mb-2"
+                  >
+                    Full Name
+                  </label>
+                  <Field
+                    id="fullName"
+                    name="fullName"
+                    type="text"
+                    placeholder="Enter your full name"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+>>>>>>> 8171f226bddff7a9d8a0947144c2bb07a1ec3940
                   />
                   <ErrorMessage
                     name="fullName"
@@ -119,16 +194,31 @@ export default function CustomerSignUpPage() {
                   />
                 </div>
 
+<<<<<<< HEAD
                 <div>
                   <label htmlFor="email" className="block text-gray-300">
+=======
+                <div className="mb-6">
+                  <label
+                    htmlFor="email"
+                    className="block text-sm font-semibold text-gray-700 mb-2"
+                  >
+>>>>>>> 8171f226bddff7a9d8a0947144c2bb07a1ec3940
                     Email
                   </label>
                   <Field
                     id="email"
+<<<<<<< HEAD
                     type="email"
                     name="email"
                     placeholder="Enter your email"
                     className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md"
+=======
+                    name="email"
+                    type="email"
+                    placeholder="Enter your email"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+>>>>>>> 8171f226bddff7a9d8a0947144c2bb07a1ec3940
                   />
                   <ErrorMessage
                     name="email"
@@ -137,16 +227,31 @@ export default function CustomerSignUpPage() {
                   />
                 </div>
 
+<<<<<<< HEAD
                 <div>
                   <label htmlFor="password" className="block text-gray-300">
+=======
+                <div className="mb-6">
+                  <label
+                    htmlFor="password"
+                    className="block text-sm font-semibold text-gray-700 mb-2"
+                  >
+>>>>>>> 8171f226bddff7a9d8a0947144c2bb07a1ec3940
                     Password
                   </label>
                   <Field
                     id="password"
+<<<<<<< HEAD
                     type="password"
                     name="password"
                     placeholder="Enter your password"
                     className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md"
+=======
+                    name="password"
+                    type="password"
+                    placeholder="Enter your password"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+>>>>>>> 8171f226bddff7a9d8a0947144c2bb07a1ec3940
                   />
                   <ErrorMessage
                     name="password"
@@ -155,19 +260,33 @@ export default function CustomerSignUpPage() {
                   />
                 </div>
 
+<<<<<<< HEAD
                 <div>
                   <label
                     htmlFor="confirmPassword"
                     className="block text-gray-300"
+=======
+                <div className="mb-6">
+                  <label
+                    htmlFor="confirmPassword"
+                    className="block text-sm font-semibold text-gray-700 mb-2"
+>>>>>>> 8171f226bddff7a9d8a0947144c2bb07a1ec3940
                   >
                     Confirm Password
                   </label>
                   <Field
                     id="confirmPassword"
+<<<<<<< HEAD
                     type="password"
                     name="confirmPassword"
                     placeholder="Confirm your password"
                     className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md"
+=======
+                    name="confirmPassword"
+                    type="password"
+                    placeholder="Confirm your password"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+>>>>>>> 8171f226bddff7a9d8a0947144c2bb07a1ec3940
                   />
                   <ErrorMessage
                     name="confirmPassword"
@@ -176,9 +295,16 @@ export default function CustomerSignUpPage() {
                   />
                 </div>
 
+<<<<<<< HEAD
                 <button
                   type="submit"
                   className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+=======
+                {/* Tombol Submit */}
+                <button
+                  type="submit"
+                  className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-200"
+>>>>>>> 8171f226bddff7a9d8a0947144c2bb07a1ec3940
                   disabled={isSubmitting || isLoading}
                 >
                   {isSubmitting || isLoading ? "Submitting..." : "Sign Up"}
@@ -186,6 +312,19 @@ export default function CustomerSignUpPage() {
               </Form>
             )}
           </Formik>
+<<<<<<< HEAD
+=======
+
+          {/* Sudah Punya Akun */}
+          <div className="mt-6 text-center">
+            <p className="text-gray-600">
+              Already have an account?{" "}
+              <Link href="/sign-in" className="text-blue-500 hover:underline">
+                Sign In
+              </Link>
+            </p>
+          </div>
+>>>>>>> 8171f226bddff7a9d8a0947144c2bb07a1ec3940
         </div>
       </div>
     </div>

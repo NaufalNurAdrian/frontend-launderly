@@ -1,19 +1,5 @@
 import * as Yup from "yup";
 
-<<<<<<< HEAD
-export const validationSchema = Yup.object().shape({
-    username: Yup.string().required("Username is required"),
-    email: Yup.string()
-      .email("Invalid email format")
-      .required("Email is required"),
-    password: Yup.string()
-      .min(8, "Password must be at least 8 characters")
-      .required("Password is required"),
-    confirmPassword: Yup.string()
-      .oneOf([Yup.ref("password")], "Passwords must match")
-      .required("Confirm password is required"),
-  });
-=======
 export const RegisterSchema = Yup.object().shape({
   fullName: Yup.string().required("Username is required"),
   email: Yup.string()
@@ -56,4 +42,3 @@ export const AddressSchema = Yup.object().shape({
 export const RequestOrderSchema = Yup.object().shape({
   addressId: Yup.number().required("Wajib diisi")
 })
->>>>>>> 8171f226bddff7a9d8a0947144c2bb07a1ec3940

@@ -1,6 +1,7 @@
 "use client";
 import formatDate from "@/helpers/dateFormatter";
 import formatId from "@/helpers/idFormatter";
+import useSession from "@/hooks/useSession";
 import { IUser } from "@/types/user";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -9,27 +10,7 @@ import toast from "react-hot-toast";
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL_BE;
 export default function WorkerAttendance({ token }: { token: string }) {
   const [attendanceStatus, setAttendanceStatus] = useState<string>("INACTIVE");
-  const [profile, setProfile] = useState<IUser | null>(null);
-
-  const fetchProfile = async () => {
-    try {
-      const response = await fetch(`${BASE_URL}/user/profile`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch profile");
-      }
-
-      const data = await response.json();
-      setProfile(data.user);
-    } catch (error) {
-      toast.error("Failed to fetch profile");
-    }
-  };
+  const { user} = useSession();
 
   const fetchAttendanceStatus = async () => {
     const fetchData = async (url: string) => {
@@ -91,6 +72,7 @@ export default function WorkerAttendance({ token }: { token: string }) {
       toast.error("Failed to Clock-in");
     }
   };
+
   const handleCheckOut = async () => {
     try {
       const response = await fetch(`${BASE_URL}/attendance/check-out`, {
@@ -109,22 +91,23 @@ export default function WorkerAttendance({ token }: { token: string }) {
       toast.error("Failed to Clock-out");
     }
   };
+
   useEffect(() => {
     fetchAttendanceStatus();
-    fetchProfile();
-    console.log(profile);
   }, [token, attendanceStatus]);
+  
+  const worker = user as IUser;
   return (
     <div className="flex bg-neutral-100 lg:py-8 p-3 lg:px-10 rounded-xl justify-evenly items-center shadow-md lg:mx-2">
       <div className="flex flex-col justify-center items-start h-full w-full">
         <p className="text-white border-blue-600 w-full bg-blue-400 px-2 rounded-xl mb-1">{formatDate(new Date().toISOString())}</p>
         <div className="grid grid-cols-[50px_auto] gap-1">
           <span className="font-semibold">ID </span>
-          <span>: {formatId(profile?.id!)}</span>
+          <span>: {formatId(worker?.id!)}</span>
           <span className="font-semibold">Name </span>
-          <span>: {profile?.fullName}</span>
+          <span>: {worker?.fullName}</span>
           <span className="font-semibold">Role </span>
-          <span>: {profile?.role === "WORKER" ? profile.employee?.station.toLowerCase() : profile?.role.toLowerCase()}</span>
+         <span>: {worker?.role === "WORKER" ? worker?.employee!.station.toLowerCase() : worker?.role!.toLowerCase()}</span>
         </div>
         <button
           onClick={() => {
@@ -140,7 +123,7 @@ export default function WorkerAttendance({ token }: { token: string }) {
         </button>
       </div>
       <div className="w-[150px] h-[100px] bg-black rounded-full overflow-hidden">
-        <Image src={profile?.avatar || "/user.png"} alt="Profile" width={600} height={600} className="rounded-full" />
+        <Image src={worker?.avatar || "/user.png"} alt="Profile" width={600} height={600} className="rounded-full" />
       </div>
     </div>
   );

@@ -54,17 +54,29 @@ export function Navbar() {
               className="menu menu-sm dropdown-content bg-cyan-100 rounded-box z-[1] mt-3 w-52 p-2 shadow-md"
             >
               <li>
-                <Link href="#WhoWeAre" onClick={closeDropdown} className="hover:text-cyan-600">
+                <Link
+                  href="#WhoWeAre"
+                  onClick={closeDropdown}
+                  className="hover:text-cyan-600"
+                >
                   Who We Are
                 </Link>
               </li>
               <li>
-                <Link href="#Services" onClick={closeDropdown} className="hover:text-cyan-600">
+                <Link
+                  href="#Services"
+                  onClick={closeDropdown}
+                  className="hover:text-cyan-600"
+                >
                   Our Services
                 </Link>
               </li>
               <li>
-                <Link href="#Quotes" onClick={closeDropdown} className="hover:text-cyan-600">
+                <Link
+                  href="#Quotes"
+                  onClick={closeDropdown}
+                  className="hover:text-cyan-600"
+                >
                   Quotes?
                 </Link>
               </li>
@@ -75,7 +87,7 @@ export function Navbar() {
 
       <div className="navbar-center">
         <Link href="/">
-          <p className="btn btn-ghost text-3xl font-bold tracking-wide text-white">
+          <p className="text-3xl font-bold tracking-wide drop-shadow-lg">
             Launderly
           </p>
         </Link>
@@ -90,9 +102,12 @@ export function Navbar() {
 
         {isAuth && user ? (
           <div className="relative">
-            <button className="flex items-center gap-2" onClick={toggleDropdown}>
+            <button
+              className="flex items-center gap-2"
+              onClick={toggleDropdown}
+            >
               <img
-                src={user.avatar || "/wyh2.jpeg"} 
+                src={user.avatar || "/wyh2.jpeg"}
                 alt="User Avatar"
                 className="w-10 h-10 rounded-full border border-white"
               />

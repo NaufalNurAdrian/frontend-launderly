@@ -74,11 +74,6 @@ const CustomerSidebar = () => {
       text: "My Profile",
       href: "/profileCustomer",
     },
-    {
-      icon: <Receipt size={24} />,
-      text: "Payment",
-      href: "/myPayment",
-    },
   ];
 
   const customer = user as IUser;

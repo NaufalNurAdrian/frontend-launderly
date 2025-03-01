@@ -84,6 +84,7 @@ const Login = () => {
                   <ErrorMessage name="password" component="div" className="text-red-500 text-sm mt-1" />
                 </div>
 
+                {/* Forgot Password Link */}
                 <div className="mb-6 flex justify-between text-sm">
                   <Link href="/" className=" text-fuchsia-600 hover:underline">
                     <div className="flex">
@@ -96,7 +97,11 @@ const Login = () => {
                   </Link>
                 </div>
 
-                <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-200" disabled={isSubmitting}>
+                <button
+                  type="submit"
+                  className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-200"
+                  disabled={isSubmitting}
+                >
                   {isSubmitting ? "Signing In..." : "Sign In"}
                 </button>
               </Form>

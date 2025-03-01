@@ -5,7 +5,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { IApiResponse, INotificationDetail } from "@/types/notification";
 import toast from "react-hot-toast";
 import NotificationModal from "./notificationModal";
-import LogoutButton from "./logoutButton";
 import { useToken } from "@/hooks/useToken";
 import Image from "next/image";
 import useSession from "@/hooks/useSession";

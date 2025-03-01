@@ -34,13 +34,17 @@ export default function CompleteOrder({ orderId }: CompleteOrderProps) {
   };
 
   const handleFinishOrder = async () => {
-    await toast.promise(finishOrder(), {
-      loading: "Processing...",
-      success: "Order Completed",
-      error: "Error!",
-    });
-
-    router.push("/requests");
+    try {
+      await toast.promise(finishOrder(), {
+        loading: "Processing...",
+        success: "Order Completed",
+        error: "Error!",
+      });
+  
+      router.push("/requests");
+    } catch (error: unknown) {
+      toast.error("Failed to finish order:");
+    }
   };
 
   return (

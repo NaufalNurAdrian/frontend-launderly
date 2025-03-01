@@ -18,6 +18,7 @@ export default function OrderProcessingPage() {
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const token = useToken();
+
   useEffect(() => {
     const fetchItem = async () => {
       try {
@@ -63,13 +64,13 @@ export default function OrderProcessingPage() {
       const isValid = values.items.every((item) => item.workerQuantity === item.quantity);
 
       if (isValid) {
+
         toast.success("Order process succeed");
       } else {
         toast.custom("quantity doesn't match, please request a bypass.");
       }
     },
   });
-
   const handleOpenModal = () => {
     setIsModalOpen(true);
   };
@@ -105,7 +106,6 @@ export default function OrderProcessingPage() {
         success: "Sent!",
         error: (err) => err.message,
       });
-
       router.push("/requests");
     } catch (err) {
     } finally {
@@ -117,6 +117,7 @@ export default function OrderProcessingPage() {
   }
 
   return (
+
     <div className="p-6 bg-white rounded-lg max-w-[500px] lg:w-[600px] lg:mx-auto mx-3 gap-5 flex flex-col items-center">
       <h1 className="text-2xl font-bold text-blue-500">Processing Order #{orderId}</h1>
 
@@ -125,6 +126,7 @@ export default function OrderProcessingPage() {
           const isMatch = item.workerQuantity === item.quantity;
 
           return (
+
             <div key={item.id} className="border bg-white shadow-md p-4 rounded-lg">
               <p className="font-bold text-lg">{item.itemName}</p>
               <p className="text-blue-500">order qty: {item.quantity}</p>
@@ -135,6 +137,7 @@ export default function OrderProcessingPage() {
                 onChange={formik.handleChange}
                 min="0"
                 className={`border p-2 rounded w-full mt-2 bg-white border-blue-300 focus:ring-2 ${isMatch ? "focus:ring-blue-500" : "focus:ring-red-500"}`}
+
                 style={{
                   WebkitAppearance: "none",
                 }}

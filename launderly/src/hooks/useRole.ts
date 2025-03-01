@@ -5,11 +5,11 @@ import { jwtDecode } from "jwt-decode";
 
 interface JwtPayload {
   userId: string;
-  role: string;
+  role: string; 
 }
 
 export const useRole = () => {
-  const [role, setRole] = useState<string | null>(null);
+  const [role, setRole] = useState<string | null>(null); 
   const router = useRouter();
 
   useEffect(() => {

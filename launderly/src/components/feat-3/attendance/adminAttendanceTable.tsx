@@ -49,4 +49,5 @@ export default function AttendanceTable({ date, workHour, role, checkIn, checkOu
       <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
     </div>
   );
+
 }

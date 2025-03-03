@@ -45,3 +45,8 @@ export interface EmployeeApiResponse {
   totalPages: number;
   currentPage: number;
 }
+
+export interface EmployeeById {
+  message: string;
+  employee: Employee;
+}

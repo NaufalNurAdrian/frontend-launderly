@@ -8,8 +8,8 @@ export interface Address {
   addressLine: string;
   city: string;
   isPrimary: boolean;
-  latitude?: string
-  longitude?: string
+  latitude?: number
+  longitude?: number
   isDelete: boolean;
   outletId?: number
   userId?: number

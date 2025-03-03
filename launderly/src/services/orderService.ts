@@ -29,7 +29,7 @@ export const fetchOrders = async (
     if (filterCustomerName) params.append("customerName", filterCustomerName);
 
     const response = await api.get<OrderApiResponse>(
-      `/order/?${params.toString()}`
+      `/orders/?${params.toString()}`
     );
     console.log(response.data);
     return response.data;
@@ -44,7 +44,7 @@ export const createOrder = async (orderData: {
   orderItem: { laundryItemId: number; qty: number }[];
 }): Promise<Order> => {
   try {
-    const response = await api.post<Order>(`/order/create`, orderData);
+    const response = await api.post<Order>(`/orders/create`, orderData);
     return response.data;
   } catch (error: any) {
     console.error(
@@ -57,7 +57,7 @@ export const createOrder = async (orderData: {
 
 export const bypassOrder = async (data: { orderWorkerId: number; action: string }) => {
   try {
-    const response = await api.post(`/order/bypass`, data);
+    const response = await api.post(`/orders/bypass`, data);
     return response.data;
   } catch (error: any) {
     console.error("Bypass order error:", error.response?.data || error.message);

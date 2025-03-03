@@ -12,7 +12,6 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import LoginGoogle from "./loginGoggle";
 import { ArrowBigLeftDash } from "lucide-react";
-import { useRole } from "@/hooks/useRole";
 
 const Login = () => {
   const initialValues: LoginValues = {

@@ -3,11 +3,14 @@
 @tailwind utilities;
 
 :root {
+  --background: #ffffff;
+  --foreground: #000000;
   --font-sans: "Poppins", sans-serif;
 }
 
 body {
   background-color: var(--background);
+  color: var(--foreground);
   font-family: var(--font-sans); /* Pakai font Poppins di seluruh body */
 }
 

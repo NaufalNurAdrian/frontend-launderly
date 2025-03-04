@@ -9,7 +9,6 @@ import {
   ChevronRight,
   LayoutDashboard,
   Calendar,
-  Receipt,
   UserCircle,
   LogOut,
   House,

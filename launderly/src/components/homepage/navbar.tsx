@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import useSession from "@/hooks/useSession";
+import { PersonStanding } from "lucide-react";
 
 export function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -20,7 +21,7 @@ export function Navbar() {
     localStorage.removeItem("token");
     setIsAuth(false);
     setUser(null);
-    window.location.href = "/sign-in"; // Redirect ke halaman login setelah logout
+    window.location.href = "/sign-in"; 
   };
 
   return (
@@ -106,11 +107,7 @@ export function Navbar() {
               className="flex items-center gap-2"
               onClick={toggleDropdown}
             >
-              <img
-                src={user.avatar || "/wyh2.jpeg"}
-                alt="User Avatar"
-                className="w-10 h-10 rounded-full border border-white"
-              />
+              <PersonStanding />
               <span className="text-black font-semibold">{user.fullName}</span>
             </button>
 

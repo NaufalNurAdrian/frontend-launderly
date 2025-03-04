@@ -15,9 +15,11 @@ export interface EmployeePerformanceData {
 }
 
 export interface EmployeePerformanceResponse {
-  data: any;
   message: string;
   result: {
-    performanceReport: EmployeePerformanceData[];
+    message: string;
+    result: {
+      performanceReport: EmployeePerformanceData[];
+    }
   };
 }

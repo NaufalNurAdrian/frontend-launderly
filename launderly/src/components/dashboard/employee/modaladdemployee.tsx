@@ -223,7 +223,7 @@ export default function ModalAddEmployee({ onClose }: { onClose: () => void }) {
                 <Label htmlFor="station">Station</Label>
                 <Select
                   value={formik.values.station}
-                  onValueChange={(value) => formik.setFieldValue("station", value)}
+                  onValueChange={(value: string) => formik.setFieldValue("station", value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select Station" />
@@ -246,7 +246,7 @@ export default function ModalAddEmployee({ onClose }: { onClose: () => void }) {
                 <Label htmlFor="workShift">Shift</Label>
                 <Select
                   value={formik.values.workShift}
-                  onValueChange={(value) => formik.setFieldValue("workShift", value)}
+                  onValueChange={(value: string) => formik.setFieldValue("workShift", value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select Shift" />
@@ -268,7 +268,7 @@ export default function ModalAddEmployee({ onClose }: { onClose: () => void }) {
                 <Label htmlFor="outletId">Outlet</Label>
                 <Select
                   value={formik.values.outletId}
-                  onValueChange={(value) => formik.setFieldValue("outletId", value)}
+                  onValueChange={(value: string) => formik.setFieldValue("outletId", value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select Outlet" />
@@ -294,7 +294,7 @@ export default function ModalAddEmployee({ onClose }: { onClose: () => void }) {
             </Button>
             <Button
               type="submit"
-              className="bg-blue"
+              className="bg-cyan-500"
               disabled={isSubmitting}
             >
               {isSubmitting ? "Submitting..." : "Submit"}

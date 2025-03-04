@@ -12,6 +12,8 @@ import {
 import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
+import { MdFilterAlt } from "react-icons/md";
+import { GiWashingMachine } from "react-icons/gi";
 
 interface HeaderReportFilterProps {
   setFilterOutlet: (value: string) => void;
@@ -25,7 +27,6 @@ export default function HeaderReportFilter({
   setFilterYear,
 }: HeaderReportFilterProps) {
   const [outletData, setOutletData] = useState<OutletApiResponse>();
-
   const [localMonth, setLocalMonth] = useState<Date | undefined>(undefined);
   const [localYear, setLocalYear] = useState<Date | undefined>(undefined);
 
@@ -42,33 +43,40 @@ export default function HeaderReportFilter({
   }, []);
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 bg-zinc-200 w-full rounded-r-3xl mr-5 shadow-xl">
-      <div className="flex items-center gap-2">
-        <label className="text-sm font-medium">Outlet:</label>
-        <select
-          className="border p-2 rounded-md text-sm"
-          onChange={(e) => setFilterOutlet(e.target.value)}
-        >
-          <option value="all">All Outlets</option>
-          {outletData?.outlets.map((outlet) => (
-            <option key={outlet.id} value={outlet.id.toString()}>
-              {outlet.outletName}
-            </option>
-          ))}
-        </select>
+    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 bg-blue-100/80 w-full border-b border-blue-300/50">
+      <div className="flex items-center">
+        <div className="flex items-center text-blue-600 gap-2 bg-white/80 px-3 py-2 rounded-lg border border-blue-200 shadow-sm">
+          <GiWashingMachine className="text-blue-600" size={20} />
+          <h2 className="text-sm font-medium">Report Filters</h2>
+        </div>
       </div>
-
-      <div className="flex gap-4">
+      
+      <div className="flex flex-wrap gap-3 justify-end">
         <div className="flex items-center gap-2">
-          <label className="text-sm font-medium">Month:</label>
+          <label className="text-sm font-medium text-blue-700">Outlet:</label>
+          <select
+            className="border border-blue-200 p-2 rounded-lg text-sm bg-white focus:ring-1 focus:ring-blue-400 focus:border-blue-400 focus:outline-none shadow-sm"
+            onChange={(e) => setFilterOutlet(e.target.value)}
+          >
+            <option value="all">All Outlets</option>
+            {outletData?.outlets.map((outlet) => (
+              <option key={outlet.id} value={outlet.id.toString()}>
+                {outlet.outletName}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <label className="text-sm font-medium text-blue-700">Month:</label>
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="outline" className="w-32 text-sm text-left">
+              <Button variant="outline" className="w-32 text-sm text-left border-blue-200 bg-white hover:bg-blue-50 hover:border-blue-400 shadow-sm rounded-lg">
                 {localMonth ? format(localMonth, "MMMM") : "Select Month"}
-                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                <CalendarIcon className="ml-auto h-4 w-4 text-blue-500" />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
+            <PopoverContent className="w-auto p-0 border-blue-200 shadow-md rounded-lg" align="start">
               <Calendar
                 mode="single"
                 selected={localMonth} 
@@ -79,24 +87,25 @@ export default function HeaderReportFilter({
                   }
                 }}
                 initialFocus
+                className="rounded-lg"
               />
             </PopoverContent>
           </Popover>
         </div>
 
         <div className="flex items-center gap-2">
-          <label className="text-sm font-medium">Year:</label>
+          <label className="text-sm font-medium text-blue-700">Year:</label>
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="outline" className="w-32 text-sm text-left">
+              <Button variant="outline" className="w-32 text-sm text-left border-blue-200 bg-white hover:bg-blue-50 hover:border-blue-400 shadow-sm rounded-lg">
                 {localYear ? format(localYear, "yyyy") : "Select Year"}
-                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                <CalendarIcon className="ml-auto h-4 w-4 text-blue-500" />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
+            <PopoverContent className="w-auto p-0 border-blue-200 shadow-md rounded-lg" align="start">
               <Calendar
                 mode="single"
-                selected={localYear} // localYear bertipe Date | undefined
+                selected={localYear}
                 onSelect={(date) => {
                   if (date) {
                     setLocalYear(date);
@@ -104,12 +113,12 @@ export default function HeaderReportFilter({
                   }
                 }}
                 initialFocus
+                className="rounded-lg"
               />
             </PopoverContent>
           </Popover>
         </div>
       </div>
-
     </div>
   );
 }

@@ -175,7 +175,7 @@ export default function ModalCreateOutlet({ onClose }: { onClose: () => void }) 
               <Label htmlFor="type">Type</Label>
               <Select
                 value={formik.values.type}
-                onValueChange={(value) => formik.setFieldValue("type", value)}
+                onValueChange={(value: string) => formik.setFieldValue("type", value)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select outlet type" />
@@ -236,7 +236,7 @@ export default function ModalCreateOutlet({ onClose }: { onClose: () => void }) 
               <Button variant="outline" onClick={onClose}>
                 Cancel
               </Button>
-              <Button type="submit" className="bg-blue">
+              <Button type="submit" className="bg-cyan-500">
                 Submit
               </Button>
             </CardFooter>

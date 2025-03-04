@@ -5,6 +5,7 @@ import HomeDashboard from "../../components/dashboard/homedashboard";
 import { useState } from "react";
 import HeaderReportFilter from "@/components/dashboard/report/headerReportFilter";
 import ReportEmployeePerformanceChart from "@/components/dashboard/report/reportPerformanceChart";
+import ReportDashboard from "@/components/dashboard/report/report.service";
 
 function DashboardPage() {
   const [filterOutlet, setFilterOutlet] = useState<string>("");
@@ -15,10 +16,11 @@ function DashboardPage() {
   return (
     <div>
       <div className="flex flex-col justify-center items-center w-full h-full">
-        <HeaderReportFilter setFilterOutlet={setFilterOutlet} setFilterMonth={setFilterMonth} setFilterYear={setFilterYear}/>
-        <HomeDashboard/>
+        {/* <HeaderReportFilter setFilterOutlet={setFilterOutlet} setFilterMonth={setFilterMonth} setFilterYear={setFilterYear}/>
+        <HomeDashboard filterOutlet={filterOutlet} filterMonth={filterMonth} filterYear={filterYear}/>
         <ReportSalesChart filterOutlet={filterOutlet} filterMonth={filterMonth} filterYear={filterYear}/>
-        <ReportEmployeePerformanceChart/>
+        <ReportEmployeePerformanceChart/> */}
+        <ReportDashboard/>
       </div>
     </div>
   );

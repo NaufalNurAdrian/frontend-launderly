@@ -113,7 +113,7 @@ export default function ModalCreateOrder({
           <div className="flex w-full gap-2 mt-4">
             <div className="space-y-2 flex-col w-[70%]">
               <Label>Item Name</Label>
-              <Select onValueChange={(value) => handleAddItem(parseInt(value), "1")}>
+              <Select onValueChange={(value: string) => handleAddItem(parseInt(value), "1")}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select Item" />
                 </SelectTrigger>

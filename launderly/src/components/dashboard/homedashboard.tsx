@@ -1,8 +1,29 @@
 "use client"
 
+import { getReportSales } from "@/services/reportService";
+import { SalesReportApiResponse } from "@/types/reportSales.type";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 
-function HomeDashboard() {
+function HomeDashboard({
+  filterOutlet,
+  filterMonth,
+  filterYear
+}: {
+  filterOutlet: string;
+  filterMonth: string;
+  filterYear: string;
+}) {
+  const [order, setOrder] = useState<SalesReportApiResponse>();
+
+  useEffect(() => {
+    const fetchOrder = async () => {
+      const res: SalesReportApiResponse = await getReportSales(filterOutlet, filterMonth, filterYear);
+      setOrder(res);
+    }
+    fetchOrder();
+  }, [filterOutlet, filterMonth, filterYear]);
+
   return (
     <div className="p-5 space-y-5 w-full">
       {/* Top Section: Balance and Report */}
@@ -15,7 +36,7 @@ function HomeDashboard() {
           </div>
           <div className="p-5">
             <div className="text-2xl sm:text-4xl font-bold text-gray-800">
-              Rp. 000.000.000
+              Rp. {order?.result.result.totalIncome || 0}
             </div>
             <div className="text-sm text-gray-500 mt-1">0% This Week</div>
           </div>
@@ -30,19 +51,19 @@ function HomeDashboard() {
           <div className="p-5 space-y-2">
             <div className="flex justify-between text-gray-700">
               <span>Total Order</span>
-              <span>0</span>
+              <span>{order?.result.result.totalOrders || 0}</span>
             </div>
             <div className="flex justify-between text-gray-700">
               <span>Received</span>
-              <span>0</span>
+              <span>{order?.result.result.receivedAtOutlet || 0}</span>
             </div>
             <div className="flex justify-between text-gray-700">
               <span>On Progress</span>
-              <span>0</span>
+              <span>{order?.result.result.onProgress || 0}</span>
             </div>
             <div className="flex justify-between text-gray-700">
               <span>Completed</span>
-              <span>0</span>
+              <span>{order?.result.result.completed || 0}</span>
             </div>
           </div>
         </div>

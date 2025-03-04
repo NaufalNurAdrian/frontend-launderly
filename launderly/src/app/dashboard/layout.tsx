@@ -1,13 +1,11 @@
 "use client"
 
-import type { Metadata } from "next";
+import { useState } from "react";
+import { usePathname } from "next/navigation";
 import "../../app/globals.css";
-import Sidebar from "../../components/sidebar";
 import "leaflet/dist/leaflet.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useState } from "react";
-
-
+import Sidebar from "../../components/sidebar";
 
 export default function RootLayout({
   children,
@@ -15,15 +13,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const [queryClient] = useState(() => new QueryClient());
+  const pathname = usePathname();
+  
   return (
     <QueryClientProvider client={queryClient}>
-
-        <main className="flex flex-row w-full h-full font-sans">
-          <Sidebar />
-          <div className="ml-[50px] md:ml-[250px] w-full">
+      <main className="flex flex-row w-full h-full font-sans">
+        <Sidebar currentPath={pathname} />
+        <div className="ml-[60px] md:ml-[280px] w-full">
           {children}
-          </div>
-        </main>
+        </div>
+      </main>
     </QueryClientProvider>
   );
 }

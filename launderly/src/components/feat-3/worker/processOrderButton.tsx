@@ -1,32 +1,26 @@
 "use client";
+import { processOrder } from "@/api/worker";
 import { useToken } from "@/hooks/useToken";
 import { useRouter } from "next/navigation";
-import {useState } from "react";
+import { useState } from "react";
+
 interface ProcessOrderButtonProps {
   orderId: number;
 }
-
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL_BE;
 export default function ProcessOrderButton({ orderId }: ProcessOrderButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-  const token = useToken()
+  const token = useToken();
 
   const handleProcessOrder = async () => {
     setIsLoading(true);
     setError(null);
+    if (!token) {
+      return;
+    }
     try {
-      const response = await fetch(`${BASE_URL}/order/create/${orderId}`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-      });
-
-      if (!response.ok) {
-        throw new Error("Error Processing");
-      }
-
-      const data = await response.json();
+      const response = await processOrder(token, orderId);
       router.push(`/requests/${orderId}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error");

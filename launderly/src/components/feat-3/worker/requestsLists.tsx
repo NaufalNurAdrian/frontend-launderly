@@ -7,11 +7,11 @@ import DefaultLoading from "../defaultLoading";
 import NotFound from "../notFound";
 import Pagination from "../paginationButton";
 import { Shirt } from "lucide-react";
-import { IApiResponse, IOrder } from "@/types/worker";
+import { IOrder } from "@/types/worker";
 import ProcessOrderButton from "./processOrderButton";
 import { useToken } from "@/hooks/useToken";
+import { getWorkerRequests } from "@/api/worker";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL_BE;
 export default function WorkerRequestLists() {
   const [loading, setLoading] = useState(true);
   const [requests, setRequests] = useState<IOrder[]>([]);
@@ -28,20 +28,11 @@ export default function WorkerRequestLists() {
   const fetchRequests = useCallback(
     async (page: number, sortBy: string, order: "asc" | "desc") => {
       try {
-        setLoading(true);
-        const res = await fetch(`${BASE_URL}/order/?page=${page}&sortBy=${sortBy}&order=${order}`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
+        if(!token) {
+          return;
         }
-
-        const result: IApiResponse = await res.json();
+        setLoading(true);
+        const result = await getWorkerRequests(page, sortBy, order, token);
         setRequests(result.data);
         setTotalPages(result.pagination.totalPages);
         setCurrentPage(result.pagination.page);
@@ -73,7 +64,7 @@ export default function WorkerRequestLists() {
   return (
     <div className="max-w-[500px] mb-5 lg:w-[800px] rounded-xl bg-white shadow-md py-3 px-4 lg:px-8 min-h-[30rem] flex flex-col items-center ">
       <div className="max-w-[500px] lg:flex lg:flex-col lg:w-[600px] lg:px-10">
-        <h2 className="text-xl lg:text-2xl font-bold text-blue-500 mb-2 my-2 text-center lg:text-left">Order Requests</h2>
+        <h2 className="text-xl lg:text-2xl font-bold text-blue-500 mb-2 my-2 text-center lg:text-left py-4">Order Requests</h2>
 
         <div className="flex justify-between gap-3 mb-2">
           <SortButton sortBy="createdAt" label="Sort By Date" order={order.createdAt} onSort={handleSort} />
@@ -86,8 +77,8 @@ export default function WorkerRequestLists() {
             <DefaultLoading />
           </div>
         ) : requests.length === 0 ? (
-          <div className="flex justify-center items-center my-5">
-            <NotFound text="No Order Request found." />
+          <div className="flex justify-center items-center my-5 p-10">
+            <NotFound text="No order request found." />
           </div>
         ) : (
           <div className="space-y-4">

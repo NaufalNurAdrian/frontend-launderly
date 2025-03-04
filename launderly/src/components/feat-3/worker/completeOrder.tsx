@@ -1,3 +1,4 @@
+import { completeOrder } from "@/api/worker";
 import { useToken } from "@/hooks/useToken";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -7,23 +8,18 @@ interface CompleteOrderProps {
   orderId: number;
 }
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL_BE;
 export default function CompleteOrder({ orderId }: CompleteOrderProps) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const token = useToken();
 
   const finishOrder = async () => {
+    if(!token){
+    return;
+    }
     try {
       setLoading(true);
-      const res = await fetch(`${BASE_URL}/order/complete/${orderId}`, {
-        method: "PATCH",
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-      });
-
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
+      const res = await completeOrder(token, orderId)
 
       return res.json();
     } catch (err) {

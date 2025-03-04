@@ -1,4 +1,5 @@
 "use client";
+import { clockIn, clockOut, fetchAttendanceStatus } from "@/api/attendance";
 import formatDate from "@/helpers/dateFormatter";
 import formatId from "@/helpers/idFormatter";
 import useSession from "@/hooks/useSession";
@@ -7,67 +8,33 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL_BE;
 export default function WorkerAttendance({ token }: { token: string }) {
   const [attendanceStatus, setAttendanceStatus] = useState<string>("INACTIVE");
-  const { user} = useSession();
+  const { user } = useSession();
 
-  const fetchAttendanceStatus = async () => {
-    const fetchData = async (url: string) => {
-      const response = await fetch(url, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message);
-      }
-      return await response.json();
-    };
-
+  const fetchLastStatus = async (token: string) => {
     try {
-      const baseUrl = `${BASE_URL}/attendance/history/`;
-      const initialData = await fetchData(baseUrl);
-
-      console.log("Initial Data:", initialData);
-
-      if (initialData.data.length === 0) {
-        setAttendanceStatus("INACTIVE");
-        return;
-      }
-
-      const lastPage = initialData.pagination.totalPages;
-      const lastPageData = await fetchData(`${baseUrl}?page=${lastPage}`);
-
-      const lastAttendance = lastPageData.data[lastPageData.data.length - 1].attendanceStatus;
-      setAttendanceStatus(lastAttendance);
-      console.log(lastAttendance);
-    } catch (error: any) {
-      toast.error(error.message || "Failed to fetch attendance status");
+      const result = await fetchAttendanceStatus(token);
+      setAttendanceStatus(result.status);
+    } catch (error) {
+      console.error(error);
     }
   };
+
   const handleCheckIn = async () => {
     try {
-      const response = await fetch(`${BASE_URL}/attendance/check-in`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-      });
-      if (!response.ok) {
+      const response = await clockIn(token);
+      if (response.message === "You are already clocked in") {
         toast.error("You are already clocked in");
         return;
       }
-      if (response.ok) {
-        setAttendanceStatus("ACTIVE");
-        toast.success(
-          <>
-            Clock-in successful, Let's work ! <br />
-            Make sure to clock out before 23.59 WIB
-          </>
-        );
-      }
+      setAttendanceStatus("ACTIVE");
+      toast.success(
+        <>
+          Clock-in successful, Let's work! <br />
+          Make sure to clock out before the shift ends
+        </>
+      );
     } catch (error) {
       toast.error("Failed to Clock-in");
     }
@@ -75,27 +42,22 @@ export default function WorkerAttendance({ token }: { token: string }) {
 
   const handleCheckOut = async () => {
     try {
-      const response = await fetch(`${BASE_URL}/attendance/check-out`, {
-        method: "PATCH",
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-      });
-      if (!response.ok) {
-        toast.error("You are not clocked in");
+      const response = await clockOut(token);
+      if (response.message == "You are not clocked in or Already clockled Out") {
+        toast.error("You are not clocked in or Already clockled Out");
         return;
       }
-      if (response.ok) {
         setAttendanceStatus("INACTIVE");
         toast.success("Clock-out successful! Get some rest");
-      }
     } catch (error) {
       toast.error("Failed to Clock-out");
     }
   };
 
   useEffect(() => {
-    fetchAttendanceStatus();
+    fetchLastStatus(token);
   }, [token, attendanceStatus]);
-  
+
   const worker = user as IUser;
   return (
     <div className="flex bg-neutral-100 lg:py-8 p-3 lg:px-10 rounded-xl justify-evenly items-center shadow-md lg:mx-2">
@@ -105,9 +67,9 @@ export default function WorkerAttendance({ token }: { token: string }) {
           <span className="font-semibold">ID </span>
           <span>: {formatId(worker?.id!)}</span>
           <span className="font-semibold">Name </span>
-          <span>: {worker?.fullName}</span>
+          <span className="line-clamp-2">: {worker?.fullName}</span>
           <span className="font-semibold">Role </span>
-         <span>: {worker?.role === "WORKER" ? worker?.employee!.station.toLowerCase() : worker?.role!.toLowerCase()}</span>
+          <span>: {worker?.role === "WORKER" ? worker?.employee!.station.toLowerCase() : worker?.role!.toLowerCase()}</span>
         </div>
         <button
           onClick={() => {

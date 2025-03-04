@@ -1,21 +1,22 @@
 "use client";
 import { useState, useEffect } from "react";
 import { MapPin } from "lucide-react";
-import { IApiResponse, IRequest } from "@/types/driver";
+import { IRequest } from "@/types/driver";
 import { toast } from "react-hot-toast";
 import { calculateTimeDifference } from "@/helpers/timeCounter";
 import SortButton from "../sortingButton";
 import DefaultLoading from "../defaultLoading";
 import NotFound from "../notFound";
-import RequestButton from "./processButton";
 import Pagination from "../paginationButton";
+import { getDriverRequests, processDriverOrder } from "@/api/driver";
+import Modal from "./processModal";
+import { useToken } from "@/hooks/useToken";
 
-interface IList {
-  type: string;
+interface IProps {
+  type: "pickup" | "delivery";
 }
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL_BE;
-export default function DriverRequestLists({ type }: IList) {
+export default function DriverRequestLists({ type }: IProps) {
   const [loading, setLoading] = useState(true);
   const [requests, setRequests] = useState<IRequest[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -25,26 +26,20 @@ export default function DriverRequestLists({ type }: IList) {
     createdAt: "desc",
     distance: "asc",
   });
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedRequest, setSelectedRequest] = useState<{
+    id: number;
+    type: "pickup" | "delivery";
+    status: string;
+    address: string;
+    orderNumber: string;
+  } | null>(null);
+  const token = useToken();
   const fetchRequests = async (page: number, sortBy: string, order: "asc" | "desc") => {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      console.error("Token tidak ditemukan. Redirect ke halaman login...");
-      window.location.href = "/login";
-      return;
-    }
-
+    if (!token) return;
     try {
       setLoading(true);
-      const res = await fetch(`${BASE_URL}/${type}/?page=${page}&sortBy=${sortBy}&order=${order}`, {
-        method: "GET",
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-      });
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
-      const result: IApiResponse = await res.json();
+      const result = await getDriverRequests(page, sortBy, order, token, type);
       setRequests(result.data);
       setTotalPages(result.pagination.totalPages);
       setCurrentPage(result.pagination.page);
@@ -58,7 +53,7 @@ export default function DriverRequestLists({ type }: IList) {
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
-
+  
   const handleSort = (sortBy: string, newOrder: "asc" | "desc") => {
     setSortBy(sortBy);
     setOrder((prevOrder) => ({
@@ -67,13 +62,37 @@ export default function DriverRequestLists({ type }: IList) {
     }));
   };
 
-  useEffect(() => {
-    fetchRequests(currentPage, sortBy, order[sortBy]);
-  }, [sortBy, order, currentPage, type]);
-
-  const handleSuccess = () => {
+  const handleSuccess = (requestId: number, newStatus: string) => {
+    updateRequestStatus(requestId, newStatus);
     fetchRequests(currentPage, sortBy, order[sortBy]);
   };
+  
+  const openModal = (requestId: number, type: "pickup" | "delivery", status: string, address: string, orderNumber: string) => {
+    setSelectedRequest({ id: requestId, type, status, address, orderNumber });
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedRequest(null);
+  };
+
+  const updateRequestStatus = (requestId: number, newStatus: string) => {
+    setRequests((prevRequests) =>
+      prevRequests.map((req) =>
+        req.id === requestId
+          ? {
+              ...req,
+              ...(type === "delivery" ? { deliveryStatus: newStatus } : { pickupStatus: newStatus }),
+            }
+          : req
+      )
+    );
+  };
+  useEffect(() => {
+    fetchRequests(currentPage, sortBy, order[sortBy]);
+  }, [sortBy, order[sortBy], currentPage, type]);
+
   return (
     <div className=" max-w-[500px] max-sm:mr-8 mb-20 lg:max-w-[700px] rounded-xl bg-white shadow-md py-3 px-4 lg:px-8 min-h-[30rem] flex flex-col items-center">
       <div className=" max-w-[500px]">
@@ -90,7 +109,7 @@ export default function DriverRequestLists({ type }: IList) {
           </div>
         ) : requests.length === 0 ? (
           <div className="flex justify-center items-center my-5">
-            <NotFound text={`No ${type} Request found.`} />
+            <NotFound text={`No ${type === "pickup" ? "pick up" : "delivery"} request found.`} />
           </div>
         ) : (
           <div>
@@ -112,15 +131,20 @@ export default function DriverRequestLists({ type }: IList) {
                   {request.address.addressLine || "Unknown Address"}
                 </div>
                 <p className="text-xs sm:text-sm text-gray-500 mb-1 mx-4">{Math.round(request.distance * 10) / 10} km from outlet</p>
-                {type === "delivery" ? (
-                  <div>
-                    <RequestButton requestId={request.id} type={"delivery"} onSuccess={handleSuccess} status={request.deliveryStatus!} />
-                  </div>
-                ) : (
-                  <div>
-                    <RequestButton requestId={request.id} type={"pickup"} onSuccess={handleSuccess} status={request.pickupStatus!} />
-                  </div>
-                )}
+                <button
+                  onClick={() =>
+                    openModal(
+                      request.id,
+                      type as "pickup" | "delivery",
+                      type === "delivery" ? request.deliveryStatus! : request.pickupStatus!,
+                      request.address.addressLine,
+                      type === "delivery" ? request.deliveryNumber! : request.pickupNumber!
+                    )
+                  }
+                  className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
+                >
+                  Process Request
+                </button>
               </div>
             ))}
           </div>
@@ -129,6 +153,19 @@ export default function DriverRequestLists({ type }: IList) {
       <div className="mt-auto">
         <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
       </div>
+      {selectedRequest && (
+        <Modal
+          isOpen={!!selectedRequest}
+          onClose={closeModal}
+          requestId={selectedRequest.id}
+          type={selectedRequest.type}
+          status={selectedRequest.type === "pickup" ? requests.find((r) => r.id === selectedRequest.id)?.pickupStatus || "" : requests.find((r) => r.id === selectedRequest.id)?.deliveryStatus || ""}
+          address={selectedRequest.address}
+          orderNumber={selectedRequest.orderNumber}
+          onSuccess={handleSuccess}
+          updateRequestStatus={updateRequestStatus}
+        />
+      )}
     </div>
   );
 }

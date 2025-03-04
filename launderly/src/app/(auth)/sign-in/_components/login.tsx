@@ -43,7 +43,10 @@ const Login = () => {
       }
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
-        const errorMessage = err.response?.data?.message || err.message || "An error occurred during login.";
+        const errorMessage =
+          err.response?.data?.message ||
+          err.message ||
+          "An error occurred during login.";
         toast.error(errorMessage);
       } else {
         toast.error("An unexpected error occurred.");
@@ -57,30 +60,70 @@ const Login = () => {
     <div className="h-screen flex flex-col lg:flex-row bg-blue-300 text-white">
       {/* Bagian Kiri - Background Gambar (Hidden di Mobile) */}
       <div className="hidden lg:flex lg:w-1/2 relative bg-blue-400">
-        <Image src="/homepage.jpeg" alt="Login background" layout="fill" objectFit="cover" className="rounded-lg" />
+        <Image
+          src="/homepage.jpeg"
+          alt="Login background"
+          layout="fill"
+          objectFit="cover"
+          className="rounded-lg"
+        />
       </div>
 
       {/* Bagian Kanan - Form Login (Full-Screen di Mobile) */}
       <div className="w-full lg:w-1/2 flex flex-col items-center justify-center p-6 md:p-12 shadow-lg rounded-lg h-screen">
         <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">Welcome Back!</h2>
-          <p className="text-gray-600 mb-6 text-center">Please enter your email and password to log in.</p>
-          <Formik initialValues={initialValues} validationSchema={LoginSchema} onSubmit={handleLogin}>
+          <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">
+            Welcome Back!
+          </h2>
+          <p className="text-gray-600 mb-6 text-center">
+            Please enter your email and password to log in.
+          </p>
+          <Formik
+            initialValues={initialValues}
+            validationSchema={LoginSchema}
+            onSubmit={handleLogin}
+          >
             {({ isSubmitting }) => (
               <Form>
                 <div className="mb-6">
-                  <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label
+                    htmlFor="email"
+                    className="block text-sm font-semibold text-gray-700 mb-2"
+                  >
                     Email
                   </label>
-                  <Field id="email" name="email" type="text" placeholder="Enter your email" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
-                  <ErrorMessage name="email" component="div" className="text-red-500 text-sm mt-1" />
+                  <Field
+                    id="email"
+                    name="email"
+                    type="text"
+                    placeholder="Enter your email"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  />
+                  <ErrorMessage
+                    name="email"
+                    component="div"
+                    className="text-red-500 text-sm mt-1"
+                  />
                 </div>
                 <div className="mb-6">
-                  <label htmlFor="password" className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label
+                    htmlFor="password"
+                    className="block text-sm font-semibold text-gray-700 mb-2"
+                  >
                     Password
                   </label>
-                  <Field id="password" name="password" type="password" placeholder="Enter your password" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
-                  <ErrorMessage name="password" component="div" className="text-red-500 text-sm mt-1" />
+                  <Field
+                    id="password"
+                    name="password"
+                    type="password"
+                    placeholder="Enter your password"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  />
+                  <ErrorMessage
+                    name="password"
+                    component="div"
+                    className="text-red-500 text-sm mt-1"
+                  />
                 </div>
 
                 {/* Forgot Password Link */}
@@ -91,7 +134,10 @@ const Login = () => {
                       Back Home
                     </div>
                   </Link>
-                  <Link href="/forgot-password" className="text-blue-500 hover:underline">
+                  <Link
+                    href="/forgot-password"
+                    className="text-blue-500 hover:underline"
+                  >
                     Forgot Password?
                   </Link>
                 </div>
@@ -118,8 +164,20 @@ const Login = () => {
             </p>
           </div>
 
+          {/* Divider */}
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="bg-white px-2 text-gray-500">or</span>
+            </div>
+          </div>
+
           {/* Login dengan Google */}
-          <LoginGoogle />
+          <div className="w-full">
+            <LoginGoogle />
+          </div>
         </div>
       </div>
     </div>

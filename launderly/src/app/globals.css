@@ -11,7 +11,7 @@
 body {
   background-color: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans); /* Pakai font Poppins di seluruh body */
+  font-family: var(--font-sans); 
 }
 
 html {

@@ -137,7 +137,7 @@ export async function confirmForgetPassword(
   confirmPassword: string
 ) {
   try {
-    const response = await axios.post(
+    const response = await axios.patch(
       `${base_url}/user/confirm-forget-password`,
       {
         token,
@@ -151,6 +151,22 @@ export async function confirmForgetPassword(
   } catch (error) {
     toast.error("Failed to reset password. Please try again.");
     console.error("Error confirming reset password:", error);
+    throw error;
+  }
+}
+
+// konfirmasi order
+export async function confirmOrder(orderId: number) {
+  try {
+    const response = await axios.patch(`${base_url}/user/confirm-order`, {
+      orderId,
+    });
+
+    toast.success("Order has been confirmed successfully!");
+    return response.data;
+  } catch (error) {
+    toast.error("Failed to confirm order. Please try again.");
+    console.error("Error confirming order:", error);
     throw error;
   }
 }

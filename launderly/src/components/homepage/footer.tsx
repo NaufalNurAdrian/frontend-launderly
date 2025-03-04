@@ -32,18 +32,24 @@ export function Footer() {
             <div className="flex flex-col gap-2 mt-3">
               <Link
                 href="https://www.linkedin.com/in/muhammad-naufal04/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-gray-400 hover:text-white transition"
               >
                 Muno
               </Link>
               <Link
                 href="https://www.linkedin.com/in/naufal-nur-adrian-613705234/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-gray-400 hover:text-white transition"
               >
                 Nopal
               </Link>
               <Link
                 href="http://linkedin.com/in/nuaysa"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-gray-400 hover:text-white transition"
               >
                 Allysa

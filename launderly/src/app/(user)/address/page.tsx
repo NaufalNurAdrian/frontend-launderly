@@ -9,13 +9,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/feat-1/table";
-import useSession from "@/hooks/useSession";
 import { getUserAddresses } from "@/api/address";
 import CreateAddressDialog from "./_components/CreateAddressDialog";
 import CustomerSidebar from "@/components/ui/sidebar";
 import UpdateAddressDialog from "./_components/UpdateAddressDialog";
 import DeleteAddressDialog from "./_components/DeleteAddressDialog";
-import { Home } from "lucide-react";
 
 interface UserResult {
   fullname: string;
@@ -33,7 +31,6 @@ interface AddressResult {
 }
 
 const AddressPage = () => {
-  const { user } = useSession();
   const [addresses, setAddresses] = useState<AddressResult[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

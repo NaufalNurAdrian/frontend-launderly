@@ -11,6 +11,7 @@ import { IOrder } from "@/types/worker";
 import ProcessOrderButton from "./processOrderButton";
 import { useToken } from "@/hooks/useToken";
 import { getWorkerRequests } from "@/api/worker";
+import ProcessOrderModal from "./requestModal";
 
 export default function WorkerRequestLists() {
   const [loading, setLoading] = useState(true);
@@ -22,15 +23,14 @@ export default function WorkerRequestLists() {
     createdAt: "desc",
     weight: "asc",
   });
+  const [selectedOrder, setSelectedOrder] = useState<IOrder | null>(null);
 
   const token = useToken();
 
   const fetchRequests = useCallback(
     async (page: number, sortBy: string, order: "asc" | "desc") => {
       try {
-        if(!token) {
-          return;
-        }
+        if (!token) return;
         setLoading(true);
         const result = await getWorkerRequests(page, sortBy, order, token);
         setRequests(result.data);
@@ -55,6 +55,13 @@ export default function WorkerRequestLists() {
       ...prevOrder,
       [sortBy]: prevOrder[sortBy] === "asc" ? "desc" : "asc",
     }));
+  };
+  const openProcessModal = (order: IOrder) => {
+    setSelectedOrder(order);
+  };
+
+  const closeProcessModal = () => {
+    setSelectedOrder(null);
   };
 
   useEffect(() => {
@@ -94,7 +101,9 @@ export default function WorkerRequestLists() {
                   <span className="ml-2 text-sm lg:text-md">{request.weight || "Unknown Weight"} Kg</span>
                 </div>
                 <div className="lg:mt-3 mt-1">
-                  <ProcessOrderButton orderId={request.id} />
+                  <button onClick={() => openProcessModal(request)} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
+                    Process Request
+                  </button>
                 </div>
               </div>
             ))}
@@ -105,6 +114,15 @@ export default function WorkerRequestLists() {
       <div className=" w-full flex justify-center mt-auto">
         <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
       </div>
+      {selectedOrder && (
+        <ProcessOrderModal
+          order={selectedOrder}
+          onClose={closeProcessModal}
+          onConfirm={() => {
+            closeProcessModal();
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -24,16 +24,14 @@ export default function WorkerAttendance({ token }: { token: string }) {
   const handleCheckIn = async () => {
     try {
       const response = await clockIn(token);
+      console.log(`ini token di handler = ${token}`)
       if (response.message === "You are already clocked in") {
         toast.error("You are already clocked in");
         return;
       }
       setAttendanceStatus("ACTIVE");
       toast.success(
-        <>
-          Clock-in successful, Let's work! <br />
-          Make sure to clock out before the shift ends
-        </>
+       "Clock-in successful! Let's work! Make sure to clock out before the shift ends"
       );
     } catch (error) {
       toast.error("Failed to Clock-in");

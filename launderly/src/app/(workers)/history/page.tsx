@@ -13,7 +13,7 @@ export default function History() {
   return (
     <ProtectedPage allowedRoles={["DRIVER", "WORKER"]}>
       <div className="flex bg-[url('/LaundryPattern.jpeg')] bg-repeat w-full min-h-screen">
-      <div className="absolute inset-0 bg-white bg-opacity-30 z-0"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-300 opacity-40 z-0"></div>
         <div className="z-30">
           <span className="hidden lg:block">
             <WorkerSidebar />

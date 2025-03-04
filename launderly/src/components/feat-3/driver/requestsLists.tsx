@@ -36,8 +36,8 @@ export default function DriverRequestLists({ type }: IProps) {
   } | null>(null);
   const token = useToken();
   const fetchRequests = async (page: number, sortBy: string, order: "asc" | "desc") => {
-    if (!token) return;
     try {
+      if (!token) return;
       setLoading(true);
       const result = await getDriverRequests(page, sortBy, order, token, type);
       setRequests(result.data);

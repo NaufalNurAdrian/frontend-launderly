@@ -19,7 +19,7 @@ export default function RequestsPage() {
   return (
     <ProtectedPage allowedRoles={["DRIVER", "WORKER"]}>
       <div className="flex bg-[url('/LaundryPattern.jpeg')] bg-repeat mix-blend-multiply w-full min-h-screen relative">
-        <div className="absolute inset-0 bg-white bg-opacity-30 z-10"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-300 opacity-40 z-10"></div>
         <div className="relative z-30">
           <div>
             <span className="hidden lg:block">

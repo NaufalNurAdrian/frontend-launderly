@@ -8,7 +8,7 @@ import SortButton from "../sortingButton";
 import DefaultLoading from "../defaultLoading";
 import NotFound from "../notFound";
 import Pagination from "../paginationButton";
-import { getDriverRequests, processDriverOrder } from "@/api/driver";
+import { getDriverRequests } from "@/api/driver";
 import Modal from "./processModal";
 import { useToken } from "@/hooks/useToken";
 

@@ -3,7 +3,7 @@ import formatDate from "@/helpers/dateFormatter";
 import { formatTime } from "@/helpers/timeFormatter";
 import SortButton from "../sortingButton";
 import { useEffect, useState } from "react";
-import { IApiResponse, IRequest } from "@/types/driver";
+import { IRequest } from "@/types/driver";
 import toast from "react-hot-toast";
 import Pagination from "../paginationButton";
 import NotFound from "../notFound";

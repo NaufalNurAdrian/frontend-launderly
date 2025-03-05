@@ -116,11 +116,11 @@ export function Navbar() {
                 <ul className="py-2">
                   <li>
                     <Link
-                      href="/dashboardCustomer"
+                      href={user.role == "CUSTOMER" ? "/dashboardCustomer" : user.role == "DRIVER" || "WORKER" ? "/attendance" : "/dashboard"}
                       className="block px-4 py-2 text-gray-700 hover:bg-gray-200"
                       onClick={closeDropdown}
                     >
-                      Dashboard
+                      {user.role == "DRIVER" || "WORKER" ? "Attendance" : "Dashboard"}
                     </Link>
                   </li>
                   <li>

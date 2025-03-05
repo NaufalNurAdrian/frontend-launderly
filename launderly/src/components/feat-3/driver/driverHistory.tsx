@@ -1,5 +1,5 @@
 "use client";
-import { IApiResponse, IRequest } from "@/types/driver";
+import { IRequest } from "@/types/driver";
 import Pagination from "../paginationButton";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";

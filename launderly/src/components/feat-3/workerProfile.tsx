@@ -65,9 +65,8 @@ export default function WorkerProfile() {
               </div>
 
               <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mt-4"> {worker?.fullName}</h2>
-              <p className="text-gray-500 text-md">
-                {worker?.employee.station ? `${worker?.employee.station.toLocaleLowerCase()} station` : worker?.role.toLocaleLowerCase()}
-              </p>
+              <p className="text-gray-500 text-md">{worker?.employee.station ? `${worker?.employee.station.toLocaleLowerCase()} station` : worker?.role.toLocaleLowerCase()}</p>
+              <p className="text-gray-500 text-md">{worker?.employee.workShift == "DAY" ? "Shift : (06.00 - 15.00)" : "Shift : (15.00 - 00.00)"}</p>
               <p className="text-gray-500 text-sm">{worker?.email}</p>
 
               {worker?.authProvider === "email" && (
@@ -110,7 +109,7 @@ export default function WorkerProfile() {
               <div className="mt-6">
                 <label className="block text-gray-600 text-sm mb-2">Log out</label>
                 <div className="flex gap-3 bg-red-300 justify-center text-red-500 py-2 px-4 rounded-md hover:bg-red-400">
-                  <LogoutButton text="Log out"/> 
+                  <LogoutButton text="Log out" />
                 </div>
               </div>
             </div>

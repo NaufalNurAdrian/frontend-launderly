@@ -1,5 +1,5 @@
 "use client";
-import { clockIn, clockOut, fetchAttendanceStatus } from "@/api/attendance";
+import { clockOut, fetchAttendanceStatus } from "@/api/attendance";
 import formatDate from "@/helpers/dateFormatter";
 import formatId from "@/helpers/idFormatter";
 import useSession from "@/hooks/useSession";
@@ -7,6 +7,8 @@ import { IUser } from "@/types/user";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL_BE;
 
 export default function WorkerAttendance({ token }: { token: string }) {
   const [attendanceStatus, setAttendanceStatus] = useState<string>("INACTIVE");
@@ -23,18 +25,17 @@ export default function WorkerAttendance({ token }: { token: string }) {
 
   const handleCheckIn = async () => {
     try {
-      const response = await clockIn(token);
-      console.log(`ini token di handler = ${token}`)
-      if (response.message === "You are already clocked in") {
-        toast.error("You are already clocked in");
-        return;
-      }
-      setAttendanceStatus("ACTIVE");
-      toast.success(
-       "Clock-in successful! Let's work! Make sure to clock out before the shift ends"
-      );
-    } catch (error) {
+      const res = await fetch(`${BASE_URL}/attendance/check-in`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      });
+     if(!res.ok){
       toast.error("Failed to Clock-in");
+     }
+      setAttendanceStatus("ACTIVE");
+      toast.success("Clock-in successful! Let's work! Make sure to clock out before the shift ends");
+    } catch (error) {
+      toast.error("Failed to Clock-in" + error);
     }
   };
 
@@ -45,8 +46,8 @@ export default function WorkerAttendance({ token }: { token: string }) {
         toast.error("You are not clocked in or Already clockled Out");
         return;
       }
-        setAttendanceStatus("INACTIVE");
-        toast.success("Clock-out successful! Get some rest");
+      setAttendanceStatus("INACTIVE");
+      toast.success("Clock-out successful! Get some rest");
     } catch (error) {
       toast.error("Failed to Clock-out");
     }

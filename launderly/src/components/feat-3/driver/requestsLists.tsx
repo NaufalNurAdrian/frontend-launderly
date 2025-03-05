@@ -91,7 +91,7 @@ export default function DriverRequestLists({ type }: IProps) {
   };
   useEffect(() => {
     fetchRequests(currentPage, sortBy, order[sortBy]);
-  }, [sortBy, order[sortBy], currentPage, type]);
+  }, [sortBy, order[sortBy], currentPage, type, token]);
 
   return (
     <div className=" max-w-[500px] max-sm:mr-8 mb-20 lg:max-w-[700px] rounded-xl bg-white shadow-md py-3 px-4 lg:px-8 min-h-[30rem] flex flex-col items-center">

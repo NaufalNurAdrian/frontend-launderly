@@ -37,8 +37,6 @@ const ProcessOrderModal: React.FC<ProcessOrderModalProps> = ({ order, onClose, o
             <h1>: {order.weight}kg</h1>
           </div>
         </div>
-        </div>
-        <div className="flex justify-end space-x-2">
           <ProcessOrderButton orderId={order.id}/>
         </div>
       </div>

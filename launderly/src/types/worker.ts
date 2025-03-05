@@ -27,16 +27,7 @@ export interface IPickupOrder {
     pickupOrder: IPickupOrder;
   }
   
-  export interface IApiResponse {
-    station: string;
-    data: IOrder[];
-    pagination: {
-      total: number;
-      page: number;
-      pageSize: number;
-      totalPages: number;
-    };
-  }
+
   export interface ILaundryItem {
     id: number;
     itemName: string;

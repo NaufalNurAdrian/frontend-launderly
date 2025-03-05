@@ -34,7 +34,7 @@ const Modal = ({ isOpen, onClose, requestId, type, status, address, orderNumber,
           </button>
         </span>
         <div className="flex justify-center">
-          <img src="/services1.gif" alt="Processing" className="w-24 h-24 object-contain" />
+          <img src="/services3.gif" alt="Processing" className="w-32 h-32 object-contain" />
         </div>
         <h1>Are you sure want to {type == "pickup" ? "pick up" : "delivery"} this order ?</h1>
         <div className="my-3 border border-blue-400 rounded-xl p-4 space-y-2">

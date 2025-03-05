@@ -48,7 +48,7 @@ export default function RequestButton({ status, onSuccess, type, requestId, upda
         case "ON_THE_WAY_TO_CUSTOMER":
           return "Finish Order";
         case "RECEIVED_BY_CUSTOMER":
-          return "Finish Order";
+          return "Finished";
         default:
           return "Process Delivery";
       }
@@ -61,7 +61,7 @@ export default function RequestButton({ status, onSuccess, type, requestId, upda
         case "ON_THE_WAY_TO_OUTLET":
           return "Finish Order";
         case "RECEIVED_BY_OUTLET":
-          return "";
+          return "Finished";
         default:
           return "Process Pickup";
       }
@@ -72,22 +72,22 @@ export default function RequestButton({ status, onSuccess, type, requestId, upda
     if (type === "delivery") {
       switch (status) {
         case "WAITING_FOR_DRIVER":
-          return "bg-blue-500 hover:bg-blue-600";
+          return "bg-gradient-to-r from-blue-300 to-green-400 ";
         case "ON_THE_WAY_TO_OUTLET":
         case "ON_THE_WAY_TO_CUSTOMER":
         case "RECEIVED_BY_CUSTOMER":
-          return "bg-green-500 hover:bg-green-600";
+          return "bg-gradient-to-r from-blue-300 to-green-400 ";
         default:
           return "bg-gray-500 hover:bg-gray-600";
       }
     } else {
       switch (status) {
         case "WAITING_FOR_DRIVER":
-          return "bg-blue-500 hover:bg-blue-600";
+          return "bg-gradient-to-r from-blue-300 to-green-400 ";
         case "ON_THE_WAY_TO_CUSTOMER":
         case "ON_THE_WAY_TO_OUTLET":
         case "RECEIVED_BY_OUTLET":
-          return "bg-green-500 hover:bg-green-600";
+          return "bg-gradient-to-l from-blue-300 to-green-400 ";
         default:
           return "bg-gray-500 hover:bg-gray-600";
       }
@@ -96,7 +96,7 @@ export default function RequestButton({ status, onSuccess, type, requestId, upda
 
   return (
     <div>
-      <button onClick={handleRequest} disabled={loading || isProcessing} className={`px-4 py-2 w-full rounded-lg ${loading || isProcessing ? "bg-blue-300 cursor-not-allowed" : getButtonStyle()} text-white`}>
+      <button onClick={handleRequest} disabled={loading || isProcessing} className={`px-4 py-2 w-full rounded-lg ${loading || isProcessing ? "bg-gradient-to-r from-blue-300 to-green-400 animate-gradient cursor-not-allowed" : getButtonStyle()} text-white`}>
         {loading ? "Processing..." : getButtonText()}
       </button>
       {error && <p className="text-red-500 mt-2">{error}</p>}

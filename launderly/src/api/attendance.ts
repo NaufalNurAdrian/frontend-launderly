@@ -44,17 +44,6 @@ export async function fetchAttendanceStatus(token: string): Promise<{ status: st
   }
 }
 
-export async function clockIn(token: string) {
-  try {
-    console.log(`ini token di API sebelum fetch = ${token}`)
-    const res = await axios.post(`${BASE_URL}/attendance/check-in`, { headers: { Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json" } });
-    return res.data
-  } catch (error: any) {
-    toast.error(error.response?.data?.message || "Failed to clock in");
-  }
-}
-
 export async function clockOut(token: string) {
   try {
     const res = await axios.patch(`${BASE_URL}/attendance/check-out`, {}, { headers: { Authorization: `Bearer ${token}` } });

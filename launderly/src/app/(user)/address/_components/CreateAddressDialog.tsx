@@ -10,15 +10,21 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/feat-1/dialog";
-import { Button } from "@/components/feat-1/button";
 import { Input } from "@/components/feat-1/input";
 import { createUserAddress } from "@/api/address";
 import { AddressSchema } from "@/libs/schema";
 import { toast } from "react-toastify";
 import useSession from "@/hooks/useSession";
-import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from "react-leaflet";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  useMapEvents,
+  useMap,
+} from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { customIcon } from "@/components/feat-1/customIcon";
+import { Button } from "@/components/ui/button";
 
 interface AddressFormValues {
   street: string;
@@ -36,13 +42,15 @@ const CreateAddressDialog: React.FC<CreateAddressDialogProps> = ({
 }) => {
   const { user } = useSession();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [userLocation, setUserLocation] = useState<{
-    lat: number;
-    lng: number;
-  }>({
+  const [isClient, setIsClient] = useState(false);
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number }>({
     lat: -6.9203,
     lng: 107.6074,
   });
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   useEffect(() => {
     if ("geolocation" in navigator) {
@@ -62,9 +70,10 @@ const CreateAddressDialog: React.FC<CreateAddressDialogProps> = ({
 
   const LocationMarker = ({
     setFieldValue,
+    userLocation, // Tambahkan userLocation di sini
   }: {
     setFieldValue: (field: string, value: any) => void;
-    userLocation: { lat: number; lng: number };
+    userLocation: { lat: number; lng: number }; // Tambahkan tipe userLocation di sini
   }) => {
     useMapEvents({
       click(e) {
@@ -72,22 +81,21 @@ const CreateAddressDialog: React.FC<CreateAddressDialogProps> = ({
         setFieldValue("longitude", e.latlng.lng);
       },
     });
-
+  
     const map = useMap();
-
+  
     useEffect(() => {
       if (userLocation.lat && userLocation.lng) {
         map.setView([userLocation.lat, userLocation.lng], 13);
       }
     }, [userLocation, map]);
-
+  
     return (
-      <Marker
-        position={[userLocation.lat, userLocation.lng]}
-        icon={customIcon}
-      />
+      <Marker position={[userLocation.lat, userLocation.lng]} icon={customIcon} />
     );
   };
+  
+
   const handleUseCurrentLocation = (setFieldValue: any) => {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
@@ -98,10 +106,6 @@ const CreateAddressDialog: React.FC<CreateAddressDialogProps> = ({
           };
           setFieldValue("latitude", position.coords.latitude);
           setFieldValue("longitude", position.coords.longitude);
-          setUserLocation({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          });
           setUserLocation(newLocation);
           toast.success("Lokasi berhasil diperoleh!");
         },
@@ -157,10 +161,12 @@ const CreateAddressDialog: React.FC<CreateAddressDialogProps> = ({
     }
   };
 
+  if (!isClient) return <p>Loading...</p>;
+  
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
-        <Button className="px-6 py-2 rounded-lg shadow bg-teal-200">
+        <Button className="px-6 py-2 rounded-lg shadow">
           Add New Address
         </Button>
       </DialogTrigger>
@@ -191,12 +197,12 @@ const CreateAddressDialog: React.FC<CreateAddressDialogProps> = ({
             <Form className="space-y-4 mt-4">
               <div>
                 <label className="block text-sm font-medium">
-                  Street Address <span className="text-red-500">*</span>
+                  Name Address <span className="text-red-500">*</span>
                 </label>
                 <Field
                   as={Input}
                   name="street"
-                  placeholder="Enter street address"
+                  placeholder="Enter Name Address ex: My House"
                   className="w-full"
                 />
                 <ErrorMessage
@@ -222,7 +228,7 @@ const CreateAddressDialog: React.FC<CreateAddressDialogProps> = ({
                   className="text-red-500 text-sm mt-1"
                 />
               </div>
-              
+
               {/* Map */}
               <div>
                 <label className="block text-sm font-medium">
@@ -235,7 +241,10 @@ const CreateAddressDialog: React.FC<CreateAddressDialogProps> = ({
                     className="h-full w-full"
                   >
                     <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                    <LocationMarker setFieldValue={setFieldValue} userLocation={userLocation}/>
+                    <LocationMarker
+                      setFieldValue={setFieldValue}
+                      userLocation={userLocation}
+                    />
                     <Marker
                       position={[values.latitude, values.longitude]}
                       icon={customIcon}
@@ -288,7 +297,7 @@ const CreateAddressDialog: React.FC<CreateAddressDialogProps> = ({
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  variant="primary"
+                  variant="default"
                   className="w-full sm:w-auto"
                 >
                   {isSubmitting ? "Submitting..." : "Submit"}

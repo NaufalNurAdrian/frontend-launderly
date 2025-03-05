@@ -126,9 +126,8 @@ export default function Sidebar() {
       <aside className={`${isCollapsed ? "w-20" : "w-56"}  min-h-screen  justify-between items-center z-50 gap-2 text-[#1678F2]  transition-all duration-300 bg-white shadow-lg relative flex flex-col`}>
         <div className="flex flex-col w-full px-3 gap-4 justify-between h-[100px]">
           <div className="flex items-center p-4 border-b">
-            <Image src="/services1.gif" alt="Logo" width={32} height={32} />
             {!isCollapsed && (
-              <Link href="/" className="ml-3 text-xl font-bold text-gray-800">
+              <Link href="/" className="ml-3 text-xl text-center font-bold text-gray-800">
                 Launderly
               </Link>
             )}
@@ -160,11 +159,11 @@ export default function Sidebar() {
           ))}
         </div>
         <NotificationModal isOpen={isNotificationOpen} onClose={() => setIsNotificationOpen(false)} notifications={notifications} onMarkAsRead={handleMarkAsRead} onMarkAllAsRead={handleMarkAllAsRead} />
-        <div className="flex flex-col items-center justify-center font-bold">
-          <div className="border-t">
+        <div className="flex w-full flex-col items-center justify-center font-bold">
+          <div className="border-t w-full">
             <div className="p-4">
               {isCollapsed ? (
-                <div className="flex items-center gap-3 max-w-[200px]">
+                <div className="flex items-center justify-center gap-3 max-w-[200px]">
                   <Image src={worker?.avatar || "/user.png"} alt="Profile" width={32} height={32} className="rounded-full" />
                 </div>
               ) : (

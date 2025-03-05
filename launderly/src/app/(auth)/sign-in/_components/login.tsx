@@ -38,8 +38,8 @@ const Login = () => {
         router.push("/attendance");
       } else if (role === "CUSTOMER") {
         router.push("/dashboardCustomer");
-      } else {
-        router.push("/");
+      } else if (role === "SUPER_ADMIN" || "OUTLET_ADMIN") {
+        router.push("/dashboard");
       }
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
@@ -142,7 +142,6 @@ const Login = () => {
                   </Link>
                 </div>
 
-                {/* Tombol Login */}
                 <button
                   type="submit"
                   className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-200"
@@ -154,7 +153,6 @@ const Login = () => {
             )}
           </Formik>
 
-          {/* Sign Up Link */}
           <div className="mt-6 text-center">
             <p className="text-gray-600">
               Don&apos;t have an account?{" "}

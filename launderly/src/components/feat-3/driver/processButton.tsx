@@ -1,4 +1,6 @@
 "use client";
+import { processDriverOrder } from "@/api/driver";
+import { getNextDeliveryStatus, getNextPickupStatus } from "@/helpers/status";
 import { useToken } from "@/hooks/useToken";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -7,11 +9,11 @@ interface RequestButtonProps {
   requestId: number;
   status: string;
   onSuccess: () => void;
-  type: "delivery" | "pickup"; 
+  type: "delivery" | "pickup";
+  updateRequestStatus: (requestId: number, newStatus: string) => void;
 }
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL_BE
-export default function RequestButton({ requestId, status, onSuccess, type }: RequestButtonProps) {
+export default function RequestButton({ status, onSuccess, type, requestId, updateRequestStatus }: RequestButtonProps) {
   const [loading, setLoading] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -21,19 +23,12 @@ export default function RequestButton({ requestId, status, onSuccess, type }: Re
     if (loading || isProcessing) return;
     setLoading(true);
     setIsProcessing(true);
-
+    if (!token) return;
     try {
-      const response = await fetch(`${BASE_URL}/request`, {
-        method: "PATCH",
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ requestId, type }), 
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to update ${type} status`);
-      }
-
+      const response = await processDriverOrder(token, requestId, type);
       toast.success(`${type === "delivery" ? "Delivery" : "Pickup"} proceed`);
+      const newStatus = type === "pickup" ? getNextPickupStatus(status) : getNextDeliveryStatus(status);
+      updateRequestStatus(requestId, newStatus); 
       onSuccess();
     } catch (error: any) {
       toast.error(`Failed to update ${type} status: ${error.message}`);
@@ -53,7 +48,7 @@ export default function RequestButton({ requestId, status, onSuccess, type }: Re
         case "ON_THE_WAY_TO_CUSTOMER":
           return "Finish Order";
         case "RECEIVED_BY_CUSTOMER":
-          return "Finish Order";
+          return "Finished";
         default:
           return "Process Delivery";
       }
@@ -66,7 +61,7 @@ export default function RequestButton({ requestId, status, onSuccess, type }: Re
         case "ON_THE_WAY_TO_OUTLET":
           return "Finish Order";
         case "RECEIVED_BY_OUTLET":
-          return "";
+          return "Finished";
         default:
           return "Process Pickup";
       }
@@ -77,22 +72,22 @@ export default function RequestButton({ requestId, status, onSuccess, type }: Re
     if (type === "delivery") {
       switch (status) {
         case "WAITING_FOR_DRIVER":
-          return "bg-blue-500 hover:bg-blue-600";
+          return "bg-gradient-to-r from-blue-300 to-green-400 ";
         case "ON_THE_WAY_TO_OUTLET":
         case "ON_THE_WAY_TO_CUSTOMER":
         case "RECEIVED_BY_CUSTOMER":
-          return "bg-green-500 hover:bg-green-600";
+          return "bg-gradient-to-r from-blue-300 to-green-400 ";
         default:
           return "bg-gray-500 hover:bg-gray-600";
       }
     } else {
       switch (status) {
         case "WAITING_FOR_DRIVER":
-          return "bg-blue-500 hover:bg-blue-600";
+          return "bg-gradient-to-r from-blue-300 to-green-400 ";
         case "ON_THE_WAY_TO_CUSTOMER":
         case "ON_THE_WAY_TO_OUTLET":
         case "RECEIVED_BY_OUTLET":
-          return "bg-green-500 hover:bg-green-600";
+          return "bg-gradient-to-l from-blue-300 to-green-400 ";
         default:
           return "bg-gray-500 hover:bg-gray-600";
       }
@@ -101,13 +96,7 @@ export default function RequestButton({ requestId, status, onSuccess, type }: Re
 
   return (
     <div>
-      <button
-        onClick={handleRequest}
-        disabled={loading || isProcessing}
-        className={`px-4 py-2 w-full rounded-lg ${
-          loading || isProcessing ? "bg-blue-300 cursor-not-allowed" : getButtonStyle()
-        } text-white`}
-      >
+      <button onClick={handleRequest} disabled={loading || isProcessing} className={`px-4 py-2 w-full rounded-lg ${loading || isProcessing ? "bg-gradient-to-r from-blue-300 to-green-400 animate-gradient cursor-not-allowed" : getButtonStyle()} text-white`}>
         {loading ? "Processing..." : getButtonText()}
       </button>
       {error && <p className="text-red-500 mt-2">{error}</p>}

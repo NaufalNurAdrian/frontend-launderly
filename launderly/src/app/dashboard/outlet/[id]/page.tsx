@@ -15,13 +15,11 @@ import { Address } from "@/types/address.type";
 import { Switch } from "@/components/ui/switch";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
-// React Leaflet imports
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaflet";
 import { toast } from "react-toastify";
 
-// Configure default Leaflet icon
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
@@ -29,21 +27,17 @@ L.Icon.Default.mergeOptions({
   shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
 });
 
-// MapClickHandler component with reverse geocoding
 function MapClickHandler({ setFieldValue }: { setFieldValue: (field: string, value: any) => void }) {
   useMapEvents({
     async click(e) {
       const { lat, lng } = e.latlng;
-      // Update coordinates in form
       setFieldValue("address.latitude", lat.toString());
       setFieldValue("address.longitude", lng.toString());
       try {
-        // Reverse geocoding using Nominatim API
         const response = await axios.get(
           `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`
         );
         const address = (response.data as { address: { road?: string; neighbourhood?: string; city?: string; town?: string } }).address;
-        // Update addressLine and city fields based on response
         setFieldValue("address.addressLine", address.road || address.neighbourhood || "Unknown Street");
         setFieldValue("address.city", address.city || address.town || "Unknown City");
       } catch (error) {
@@ -64,10 +58,8 @@ export default function EditOutletPage({ params }: { params: { id: string } }) {
     location: false
   });
   
-  // Original outlet data from the API
   const [originalData, setOriginalData] = useState<OutletById | null>(null);
   
-  // Form initial values
   const [initialValues, setInitialValues] = useState({
     outletName: "",
     outletType: "BRANCH" as "BRANCH" | "MAIN",
@@ -81,7 +73,6 @@ export default function EditOutletPage({ params }: { params: { id: string } }) {
 
   const router = useRouter();
 
-  // Validation schema with Yup - Now all fields are conditional based on the enabled state
   const validationSchema = Yup.object({
     outletName: Yup.string().when('$enabledFields.outletName', {
       is: true,
@@ -114,7 +105,6 @@ export default function EditOutletPage({ params }: { params: { id: string } }) {
     }),
   });
 
-  // Fetch outlet data from API and set initial form values
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -143,14 +133,11 @@ export default function EditOutletPage({ params }: { params: { id: string } }) {
     loadData();
   }, [params.id]);
 
-  // Submit function: send data to updateOutlet API
   const handleSubmit = async (values: typeof initialValues) => {
-    // Create payload based on enabled fields only
     const payload: any = {
       id: params.id,
     };
     
-    // Only include fields that are enabled
     if (enabledFields.outletName) {
       payload.outletName = values.outletName;
     }
@@ -159,7 +146,6 @@ export default function EditOutletPage({ params }: { params: { id: string } }) {
       payload.outletType = values.outletType;
     }
     
-    // Handle address fields
     if (enabledFields.address || enabledFields.location) {
       payload.address = {} as Partial<Address>;
       
@@ -199,7 +185,6 @@ export default function EditOutletPage({ params }: { params: { id: string } }) {
         <h1 className="text-xl font-bold mb-4">Edit Outlet</h1>
         <p className="text-sm text-gray-500 mb-4">Pilih field yang ingin diperbarui</p>
         
-        {/* Field Toggles */}
         <div className="space-y-3 mb-6">
           <div className="flex items-center justify-between">
             <Label htmlFor="toggle-name" className="cursor-pointer">Nama Outlet</Label>
@@ -258,7 +243,6 @@ export default function EditOutletPage({ params }: { params: { id: string } }) {
           {({ isSubmitting, values, setFieldValue }) => (
             <Form className="space-y-4">
               <Accordion type="single" collapsible className="w-full">
-                {/* Outlet Name Section */}
                 {enabledFields.outletName && (
                   <AccordionItem value="name">
                     <AccordionTrigger className="text-sm font-medium">Nama Outlet</AccordionTrigger>
@@ -271,7 +255,6 @@ export default function EditOutletPage({ params }: { params: { id: string } }) {
                   </AccordionItem>
                 )}
 
-                {/* Outlet Type Section */}
                 {enabledFields.outletType && (
                   <AccordionItem value="type">
                     <AccordionTrigger className="text-sm font-medium">Tipe Outlet</AccordionTrigger>
@@ -291,7 +274,6 @@ export default function EditOutletPage({ params }: { params: { id: string } }) {
                   </AccordionItem>
                 )}
 
-                {/* Address Fields Section */}
                 {enabledFields.address && (
                   <AccordionItem value="address">
                     <AccordionTrigger className="text-sm font-medium">Alamat</AccordionTrigger>
@@ -312,7 +294,6 @@ export default function EditOutletPage({ params }: { params: { id: string } }) {
                   </AccordionItem>
                 )}
 
-                {/* Map Section */}
                 {enabledFields.location && (
                   <AccordionItem value="location">
                     <AccordionTrigger className="text-sm font-medium">Lokasi Peta</AccordionTrigger>

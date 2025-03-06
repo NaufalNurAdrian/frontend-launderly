@@ -5,7 +5,9 @@ const nextConfig = {
         remotePatterns: [
             { hostname: "cdn.pixabay.com" }
         ]
-    }
+    },
+    reactStrictMode: true,
+    transpilePackages: ['@mui/material', '@mui/icons-material', '@mui/system'],
 };
 
 export default nextConfig;

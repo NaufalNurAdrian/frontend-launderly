@@ -38,11 +38,13 @@ export const fetchOrders = async (
   }
 };
 
-export const createOrder = async (orderData: {
+interface CreateOrderData {
   orderNumber: string;
   weight: number;
-  orderItem: { laundryItemId: number; qty: number }[];
-}): Promise<Order> => {
+  orderItem: { laundryItemId: string; qty: string }[];
+}
+
+export const createOrder = async (orderData: CreateOrderData): Promise<Order> => {
   try {
     const response = await api.post<Order>(`/orders/create`, orderData);
     return response.data;

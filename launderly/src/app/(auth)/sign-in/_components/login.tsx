@@ -41,16 +41,8 @@ const Login = () => {
       } else if (role === "SUPER_ADMIN" || "OUTLET_ADMIN") {
         router.push("/dashboard");
       }
-    } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        const errorMessage =
-          err.response?.data?.message ||
-          err.message ||
-          "An error occurred during login.";
-        toast.error(errorMessage);
-      } else {
-        toast.error("An unexpected error occurred.");
-      }
+    } catch (err) {
+      console.log(err);
     } finally {
       setSubmitting(false);
     }

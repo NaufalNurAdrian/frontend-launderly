@@ -161,9 +161,14 @@ export default function HeaderOrder({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Outlets</SelectItem>
-                  {outlet?.outlets.map((outlet) => {
-                    <SelectItem value={outlet.outletName}>{outlet.outletName}</SelectItem>;
-                  })}
+                  {outlet?.outlets.map((outlet) => (
+                    <SelectItem
+                      key={outlet.outletName}
+                      value={outlet.outletName}
+                    >
+                      {outlet.outletName}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>

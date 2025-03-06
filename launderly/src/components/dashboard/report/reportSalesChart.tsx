@@ -47,8 +47,8 @@ export function ReportSalesChart({
         const data: SalesReportApiResponse = await getReportSales(filterOutlet, filterMonth, filterYear);
         const report: SalesReportResult = data.result.result;
 
-        let labels: string[] = [];
-        let incomeData: number[] = [];
+        const labels: string[] = [];
+        const incomeData: number[] = [];
         let total = 0;
 
         // Format data based on selected time range

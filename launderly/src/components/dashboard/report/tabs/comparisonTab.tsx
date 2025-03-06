@@ -16,6 +16,7 @@ interface ComparisonTabProps {
   comparisonLoading: boolean;
 }
 
+
 const ComparisonTab: React.FC<ComparisonTabProps> = ({
   comparisonData,
   comparisonLoading,

@@ -10,6 +10,7 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { numberFormatter } from "@/utils/formatters";
+import { toTitleCase } from "@/helpers/toTitleCase";
 
 interface OrdersTabProps {
   reportData: any;
@@ -59,7 +60,7 @@ const OrdersTab: React.FC<OrdersTabProps> = ({ reportData }) => {
                     <TableRow key={status.orderStatus} className="hover:bg-gray-50">
                       <TableCell>
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColor}`}>
-                          {status.orderStatus}
+                          {toTitleCase(status.orderStatus)}
                         </span>
                       </TableCell>
                       <TableCell className="text-right font-medium">

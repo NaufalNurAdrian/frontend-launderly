@@ -1,6 +1,6 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import {
   Table,
   TableHeader,
@@ -10,15 +10,11 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { formatCurrency, numberFormatter } from "@/utils/formatters";
+import { ComparisonTabProps } from "@/types/report.types";
 
-interface ComparisonTabProps {
-  comparisonData: any;
-  comparisonLoading: boolean;
-}
-
-const ComparisonTab: React.FC<ComparisonTabProps> = ({
-  comparisonData,
-  comparisonLoading,
+const ComparisonTab: React.FC<ComparisonTabProps> = ({ 
+  comparisonData, 
+  comparisonLoading 
 }) => {
   if (comparisonLoading) {
     return (
@@ -41,7 +37,7 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({
           </svg>
           <h3 className="text-lg font-semibold text-yellow-800 mb-2">No Comparison Data</h3>
           <p className="text-sm text-yellow-700">
-            There is no outlet comparison data available for the selected period. Try adjusting your filters or ensuring there are multiple outlets with data.
+            There is no outlet comparison data available. Try adjusting your filters or ensuring there are multiple outlets with data.
           </p>
         </div>
       </div>
@@ -67,7 +63,7 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {comparisonData.outlets.map((outlet: any) => (
+                {comparisonData.outlets.map((outlet) => (
                   <TableRow key={outlet.id} className="hover:bg-gray-50">
                     <TableCell className="font-medium">{outlet.name}</TableCell>
                     <TableCell>
@@ -94,15 +90,19 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({
             <CardTitle>Revenue by Outlet</CardTitle>
           </CardHeader>
           <CardContent className="pt-6">
-            <div className="h-80">
-              <BarChart
-                data={comparisonData.outlets}
-                index="name"
-                categories={["revenue"]}
-                colors={["blue"]}
-                valueFormatter={(value: number) => formatCurrency(value)}
-              />
-            </div>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={comparisonData.outlets}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis 
+                  tickFormatter={(value) => formatCurrency(value)} 
+                />
+                <Tooltip 
+                  formatter={(value) => [formatCurrency(value as number), 'Revenue']} 
+                />
+                <Bar dataKey="revenue" fill="#3B82F6" />
+              </BarChart>
+            </ResponsiveContainer>
           </CardContent>
         </Card>
 
@@ -111,15 +111,19 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({
             <CardTitle>Orders by Outlet</CardTitle>
           </CardHeader>
           <CardContent className="pt-6">
-            <div className="h-80">
-              <BarChart
-                data={comparisonData.outlets}
-                index="name"
-                categories={["orders"]}
-                colors={["green"]}
-                valueFormatter={numberFormatter}
-              />
-            </div>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={comparisonData.outlets}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis 
+                  tickFormatter={(value) => numberFormatter(value)} 
+                />
+                <Tooltip 
+                  formatter={(value) => [numberFormatter(value as number), 'Orders']} 
+                />
+                <Bar dataKey="orders" fill="#22C55E" />
+              </BarChart>
+            </ResponsiveContainer>
           </CardContent>
         </Card>
       </div>
@@ -129,15 +133,19 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({
           <CardTitle>Customers by Outlet</CardTitle>
         </CardHeader>
         <CardContent className="pt-6">
-          <div className="h-80">
-            <BarChart
-              data={comparisonData.outlets}
-              index="name"
-              categories={["customers"]}
-              colors={["purple"]}
-              valueFormatter={numberFormatter}
-            />
-          </div>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={comparisonData.outlets}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis 
+                tickFormatter={(value) => numberFormatter(value)} 
+              />
+              <Tooltip 
+                formatter={(value) => [numberFormatter(value as number), 'Customers']} 
+              />
+              <Bar dataKey="customers" fill="#8B5CF6" />
+            </BarChart>
+          </ResponsiveContainer>
         </CardContent>
       </Card>
     </div>

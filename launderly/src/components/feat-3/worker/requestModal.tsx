@@ -2,6 +2,7 @@ import React from "react";
 import { X } from "lucide-react";
 import { IOrder } from "@/types/worker";
 import ProcessOrderButton from "./processOrderButton";
+import Image from "next/image";
 
 interface ProcessOrderModalProps {
   order: IOrder;
@@ -9,18 +10,33 @@ interface ProcessOrderModalProps {
   onConfirm: () => void;
 }
 
-const ProcessOrderModal: React.FC<ProcessOrderModalProps> = ({ order, onClose, onConfirm }) => {
+const ProcessOrderModal: React.FC<ProcessOrderModalProps> = ({
+  order,
+  onClose,
+  onConfirm,
+}) => {
   return (
     <div className="fixed inset-0 flex justify-center items-center z-50">
       <div className="bg-white rounded-lg p-6 max-w-md w-full space-y-4">
         <span className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold text-blue-00">Confirm Process Order</h2>
-          <button onClick={onClose} className=" text-gray-600  rounded hover:text-red-600 transition-colors">
+          <h2 className="text-xl font-bold text-blue-00">
+            Confirm Process Order
+          </h2>
+          <button
+            onClick={onClose}
+            className=" text-gray-600  rounded hover:text-red-600 transition-colors"
+          >
             <X />
           </button>
         </span>
         <div className="flex justify-center">
-          <img src="/services1.gif" alt="Processing" className="w-24 h-24 object-contain" />
+          <Image
+            src="/services1.gif"
+            alt="Processing"
+            width={96}
+            height={96}
+            className="object-contain"
+          />
         </div>
         <p>Are you sure you want to process this order?</p>
         <div className="my-3 border border-blue-400 rounded-xl p-4 space-y-2">
@@ -37,9 +53,9 @@ const ProcessOrderModal: React.FC<ProcessOrderModalProps> = ({ order, onClose, o
             <h1>: {order.weight}kg</h1>
           </div>
         </div>
-          <ProcessOrderButton orderId={order.id}/>
-        </div>
+        <ProcessOrderButton orderId={order.id} />
       </div>
+    </div>
   );
 };
 

@@ -25,12 +25,4 @@ export interface IRequest {
   user: IUser;
 }
 
-export interface IApiResponse {
-  data: IRequest[];
-  pagination: {
-    total: number;
-    page: number;
-    pageSize: number;
-    totalPages: number;
-  };
-}
+

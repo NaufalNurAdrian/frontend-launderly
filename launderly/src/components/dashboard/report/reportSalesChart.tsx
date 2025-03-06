@@ -22,7 +22,6 @@ import { SalesReportApiResponse, SalesReportResult } from "@/types/reportSales.t
 import { getReportSales } from "@/services/reportService";
 import { GiWashingMachine } from "react-icons/gi";
 
-// Sales Report Chart Component
 export function ReportSalesChart({
   filterOutlet,
   filterMonth,
@@ -32,7 +31,6 @@ export function ReportSalesChart({
   filterMonth: string;
   filterYear: string;
 }) {
-  // Time range options: "daily", "monthly", or "yearly"
   const [timeRange, setTimeRange] = useState<"daily" | "monthly" | "yearly">("daily");
   const [series, setSeries] = useState<any[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
@@ -267,7 +265,7 @@ export function ReportSalesChart({
   };
 
   return (
-    <Card className="shadow-lg border border-blue-100 rounded-xl overflow-hidden bg-white w-full sm:mx-4 md:mx-5 lg:mx-6 max-w-7xl mx-auto">
+    <Card className="shadow-lg border border-blue-100 rounded-xl overflow-hidden bg-white max-w-7xl mx-auto">
       <CardHeader className="bg-gradient-to-r from-blue-500 to-blue-600 text-white">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center gap-2">

@@ -20,6 +20,7 @@ import {
   ClockIcon,
   ShieldCheckIcon
 } from "lucide-react";
+import { withSuperAndOutletAdmin } from "@/hoc/adminAuthorizaton";
 
 // Helper function to get status styles
 const getStatusStyle = (status: keyof typeof statusStyles) => {
@@ -32,8 +33,7 @@ const getStatusStyle = (status: keyof typeof statusStyles) => {
 
   return statusStyles[status] || 'bg-gray-100 text-gray-800 border-gray-200';
 };
-
-export default function BypassRequest() {
+function BypassRequest() {
   const [orders, setOrders] = useState<OrderApiResponse>();
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -343,3 +343,5 @@ export default function BypassRequest() {
     </div>
   );
 }
+
+export default withSuperAndOutletAdmin(BypassRequest)

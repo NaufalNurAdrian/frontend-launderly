@@ -78,7 +78,7 @@ export default function CustomerSignUpPage() {
                     name="fullName"
                     type="text"
                     placeholder="Enter your full name"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className="w-full px-4 py-2 border text-white bg-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   />
                   <ErrorMessage
                     name="fullName"
@@ -99,7 +99,7 @@ export default function CustomerSignUpPage() {
                     name="email"
                     type="email"
                     placeholder="Enter your email"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className="w-full px-4 py-2 border text-white bg-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   />
                   <ErrorMessage
                     name="email"
@@ -120,7 +120,7 @@ export default function CustomerSignUpPage() {
                     name="password"
                     type="password"
                     placeholder="Enter your password"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className="w-full px-4 py-2 border text-white bg-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   />
                   <ErrorMessage
                     name="password"
@@ -141,7 +141,7 @@ export default function CustomerSignUpPage() {
                     name="confirmPassword"
                     type="password"
                     placeholder="Confirm your password"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className="w-full px-4 py-2 border text-white bg-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   />
                   <ErrorMessage
                     name="confirmPassword"

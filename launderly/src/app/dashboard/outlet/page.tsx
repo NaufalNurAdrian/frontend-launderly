@@ -3,8 +3,9 @@
 import { useState } from "react";
 import HeaderOutlet from "@/components/dashboard/outlet/headeroutlet";
 import OutletTable from "@/components/dashboard/outlet/outlettable";
+import { withSuperAdmin } from "@/hoc/adminAuthorizaton";
 
-export default function Outlet() {
+function Outlet() {
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleSearch = (query: string) => {
@@ -25,3 +26,5 @@ export default function Outlet() {
     </div>
   );
 }
+
+export default withSuperAdmin(Outlet)

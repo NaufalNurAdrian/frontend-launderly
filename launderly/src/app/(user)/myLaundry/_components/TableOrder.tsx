@@ -40,13 +40,15 @@ const OrderPage = () => {
     setError(null);
     try {
       const response = await getUserOrders(user?.id!);
-      setOrders(response.data || []);
+      const sortedOrders = (response.data || []).sort((a: { id: number; }, b: { id: number; }) => a.id - b.id);
+      setOrders(sortedOrders);
     } catch (err) {
       setError("Failed to fetch orders. Please try again later.");
     } finally {
       setLoading(false);
     }
   };
+  
 
   useEffect(() => {
     fetchUserOrders();

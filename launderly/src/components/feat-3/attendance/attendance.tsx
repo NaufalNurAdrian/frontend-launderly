@@ -16,6 +16,7 @@ export default function WorkerAttendance({ token }: { token: string }) {
 
   const fetchLastStatus = async (token: string) => {
     try {
+      console.log(token)
       const result = await fetchAttendanceStatus(token);
       setAttendanceStatus(result.status);
     } catch (error) {

@@ -9,7 +9,24 @@ export async function registerUser(values: RegisterValues): Promise<any> {
     const res = await axios.post(`${base_url}/auth/register`, values, {});
     toast.success("Registration successful!");
     return res.data;
-  } catch (err: unknown) {
+  } catch (err: any) {
+    if (axios.isAxiosError(err)) {
+      const errorMessage =
+        err.response?.data?.message || "Registration failed.";
+
+      if (err.response?.status === 400) {
+        if (errorMessage.toLowerCase().includes("email")) {
+          toast.error("Email is already in use. Please use another email.");
+        } else {
+          toast.error(errorMessage);
+        }
+      } else {
+        toast.error(errorMessage);
+      }
+    } else {
+      toast.error("An unexpected error occurred.");
+    }
+
     console.error("Registration failed:", err);
     throw err;
   }
@@ -20,14 +37,31 @@ export async function loginUser(values: { email: string; password: string }) {
     const payload = { email: values.email, password: values.password };
     const res = await axios.post(`${base_url}/auth/login`, payload);
 
-    // Menyimpan token di localStorage
+    // Simpan token ke localStorage
     localStorage.setItem("token", res.data.token);
     console.log("Token saved to localStorage:", res.data.token);
 
+    toast.success("Login successful!");
     return res.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Login failed", error);
-    throw error;
+
+    // Ambil pesan error dari backend
+    const errorMessage = error.response?.data || "";
+
+    // Tampilkan toast hanya jika error terkait Google login
+    if (
+      error.response &&
+      error.response.status === 400 &&
+      typeof errorMessage === "string" &&
+      errorMessage.includes("Google")
+    ) {
+      toast.error(
+        "This email is registered via Google. Please log in using Google."
+      );
+    }
+
+    throw error; // Pastikan error tetap dilempar agar bisa ditangani di tempat lain jika diperlukan
   }
 }
 
@@ -46,7 +80,7 @@ export async function loginWithGoogle(googleToken: string) {
       throw new Error(`Google login failed: ${res.statusText}`);
     }
 
-    const data = await res.json(); 
+    const data = await res.json();
 
     localStorage.setItem("token", data.token);
     toast.success("Login successful with Google!");

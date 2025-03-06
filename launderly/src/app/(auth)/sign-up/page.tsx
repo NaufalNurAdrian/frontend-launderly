@@ -16,8 +16,8 @@ export default function CustomerSignUpPage() {
   const handleSubmit = async (values: FormValues) => {
     try {
       setIsLoading(true);
-      const response = await registerUser(values);
-      router.push("/"); // redirect after success
+      await registerUser(values);
+      router.push("/"); 
     } catch (err) {
       // Handle error here
     } finally {

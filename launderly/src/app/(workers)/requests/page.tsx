@@ -18,18 +18,21 @@ export default function RequestsPage() {
 
   return (
     <ProtectedPage allowedRoles={["DRIVER", "WORKER"]}>
-      <div className="flex bg-neutral-200 w-full min-h-screen">
-        <div>
-          <span className="hidden lg:block">
-            <WorkerSidebar />
-          </span>
-          <span className="max-md:block lg:hidden">
-            <Navbar />
-          </span>
+      <div className="flex bg-[url('/LaundryPattern.jpeg')] bg-repeat mix-blend-multiply w-full min-h-screen relative">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-300 opacity-40 z-10"></div>
+        <div className="relative z-30">
+          <div>
+            <span className="hidden lg:block">
+              <WorkerSidebar />
+            </span>
+            <span className="max-md:block lg:hidden">
+              <Navbar />
+            </span>
+          </div>
         </div>
 
-        <div className="w-full flex flex-col items-center lg:mt-0 mt-10 lg:mx-0 mx-4">
-          <h1 className="lg:mt-8 mb-4 text-3xl text-blue-500 font-bold text-start lg:text-center">Requests Waiting for You...</h1>
+        <div className="w-full flex flex-col items-center lg:mt-0 mt-10 lg:mx-0 mx-4 z-20">
+          <h1 className="lg:mt-8 mb-6 text-3xl text-blue-500 font-bold text-start lg:text-center">Requests Waiting for You...</h1>
 
           {role === "DRIVER" ? (
             <div className="max-sm:w-full">

@@ -41,12 +41,6 @@ const CustomerDashboard: React.FC = () => {
           {/* Bagian Kiri - Info User */}
           <div className="flex flex-col justify-center p-6 lg:p-12 w-full lg:w-1/2 space-y-6">
             <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-200 to-blue-100 px-4 py-2 rounded-full">
-              <Image
-                src="/services1.gif"
-                alt="Laundry Icon"
-                width={24}
-                height={24}
-              />
               <p className="text-blue-800 font-medium">Welcome back!</p>
             </div>
             <h1 className="text-3xl lg:text-5xl font-bold text-gray-900 tracking-tight">
@@ -73,12 +67,6 @@ const CustomerDashboard: React.FC = () => {
                 className="dashboard-btn bg-teal-500 hover:bg-teal-600"
               >
                 My Address
-              </Link>
-              <Link
-                href="/myPayment"
-                className="dashboard-btn bg-blue-500 hover:bg-blue-600"
-              >
-                Payment
               </Link>
               <Link
                 href="/profileCustomer"

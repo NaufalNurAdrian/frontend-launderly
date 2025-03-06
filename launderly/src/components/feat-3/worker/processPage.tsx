@@ -4,11 +4,10 @@ import { useState, useEffect } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-hot-toast";
-import { IFormValues, IOrderItem, IOrderItemResponse } from "@/types/worker";
+import { IFormValues, IOrderItem} from "@/types/worker";
 import BypassModal from "./bypassModal";
 import { useToken } from "@/hooks/useToken";
-
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL_BE;
+import { bypassRequest, getWorkerRequest } from "@/api/worker";
 
 export default function OrderProcessingPage() {
   const { orderId } = useParams();
@@ -23,15 +22,8 @@ export default function OrderProcessingPage() {
     const fetchItem = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`${BASE_URL}/order/orders/${orderId}`, {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-        });
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
-        }
-        const data: IOrderItemResponse = await res.json();
-        setOrderItems(data.data);
+        const res = await getWorkerRequest(orderId);
+        setOrderItems(res.data);
       } catch (err) {
         setError("failed to get order data.");
         toast.error("failed to get order data: " + (err as Error).message);
@@ -80,19 +72,12 @@ export default function OrderProcessingPage() {
   };
 
   const bypass = async (notes: string) => {
+    if (!token){
+      return;
+    }
     try {
       setLoading(true);
-      const res = await fetch(`${BASE_URL}/bypass/${orderId}`, {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ bypassNote: notes }),
-      });
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
+      const res = await bypassRequest(token, notes, orderId)
     } catch (err) {
     } finally {
       setLoading(false);

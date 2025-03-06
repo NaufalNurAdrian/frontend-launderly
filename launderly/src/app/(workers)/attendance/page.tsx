@@ -12,8 +12,8 @@ import Navbar from "@/components/feat-3/navbar";
 import { useToken } from "@/hooks/useToken";
 import WorkerSidebar from "@/components/feat-3/workerSidebar";
 import ProtectedPage from "@/helpers/protectedRoutes";
+import { fetchAttendanceHistory } from "@/api/attendance";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL_BE;
 export default function Attendance() {
   const [attendanceData, setAttendanceData] = useState<IAttendance[]>([]);
   const [loading, setLoading] = useState(true);
@@ -28,17 +28,9 @@ export default function Attendance() {
 
   const getData = async (page: number, sortBy: string, order: "asc" | "desc") => {
     if (!token) return;
-
     try {
-      setLoading(true);
-      const res = await fetch(`${BASE_URL}/attendance/history/?page=${page}&sortBy=${sortBy}&order=${order}`, {
-        method: "GET",
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-      });
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
-      const result: IApiResponse = await res.json();
+      const result: IApiResponse = await fetchAttendanceHistory(token, page, sortBy, order);
+
       setAttendanceData(result.data);
       setTotalPages(result.pagination.totalPages);
       setCurrentPage(result.pagination.page);

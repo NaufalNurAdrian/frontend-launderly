@@ -3,14 +3,13 @@
 import { useState } from "react";
 import EmployeeTable from "@/components/dashboard/employee/employeetable";
 import HeaderEmployee from "@/components/dashboard/employee/headeremployee";
+import { withSuperAdmin } from "@/hoc/adminAuthorizaton";
 
-export default function Employee() {
+function Employee() {
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Handle search functionality
   const handleSearch = (query: string) => {
     setSearchQuery(query);
-    // This query can be passed to your EmployeeTable or used for API filtering
   };
 
   return (
@@ -27,3 +26,5 @@ export default function Employee() {
     </div>
   );
 }
+
+export default withSuperAdmin(Employee)

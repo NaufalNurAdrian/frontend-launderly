@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { RegisterSchema } from "@/libs/schema";
-import { registerUser } from "@/api/auth";
+import { registerUser } from "@/app/api/auth";
 import Link from "next/link";
 import { FormValues, initialValues } from "@/types/auth";
 
@@ -17,7 +17,7 @@ export default function CustomerSignUpPage() {
     try {
       setIsLoading(true);
       await registerUser(values);
-      router.push("/"); 
+      router.push("/");
     } catch (err) {
       // Handle error here
     } finally {

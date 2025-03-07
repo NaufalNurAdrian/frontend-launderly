@@ -8,7 +8,7 @@ import SortButton from "../sortingButton";
 import DefaultLoading from "../defaultLoading";
 import NotFound from "../notFound";
 import Pagination from "../paginationButton";
-import { getDriverRequests, processDriverOrder } from "@/api/driver";
+import { getDriverRequests } from "@/app/api/driver";
 import Modal from "./processModal";
 import { useToken } from "@/hooks/useToken";
 
@@ -35,7 +35,11 @@ export default function DriverRequestLists({ type }: IProps) {
     orderNumber: string;
   } | null>(null);
   const token = useToken();
-  const fetchRequests = async (page: number, sortBy: string, order: "asc" | "desc") => {
+  const fetchRequests = async (
+    page: number,
+    sortBy: string,
+    order: "asc" | "desc"
+  ) => {
     try {
       if (!token) return;
       setLoading(true);
@@ -53,7 +57,7 @@ export default function DriverRequestLists({ type }: IProps) {
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
-  
+
   const handleSort = (sortBy: string, newOrder: "asc" | "desc") => {
     setSortBy(sortBy);
     setOrder((prevOrder) => ({
@@ -66,8 +70,14 @@ export default function DriverRequestLists({ type }: IProps) {
     updateRequestStatus(requestId, newStatus);
     fetchRequests(currentPage, sortBy, order[sortBy]);
   };
-  
-  const openModal = (requestId: number, type: "pickup" | "delivery", status: string, address: string, orderNumber: string) => {
+
+  const openModal = (
+    requestId: number,
+    type: "pickup" | "delivery",
+    status: string,
+    address: string,
+    orderNumber: string
+  ) => {
     setSelectedRequest({ id: requestId, type, status, address, orderNumber });
     setIsModalOpen(true);
   };
@@ -83,7 +93,9 @@ export default function DriverRequestLists({ type }: IProps) {
         req.id === requestId
           ? {
               ...req,
-              ...(type === "delivery" ? { deliveryStatus: newStatus } : { pickupStatus: newStatus }),
+              ...(type === "delivery"
+                ? { deliveryStatus: newStatus }
+                : { pickupStatus: newStatus }),
             }
           : req
       )
@@ -96,10 +108,22 @@ export default function DriverRequestLists({ type }: IProps) {
   return (
     <div className=" max-w-[500px] max-sm:mr-8 mb-20 lg:max-w-[700px] rounded-xl bg-white shadow-md py-3 px-4 lg:px-8 min-h-[30rem] flex flex-col items-center">
       <div className=" max-w-[500px]">
-        <h2 className="text-xl lg:text-2xl font-bold text-blue-500 mb-2 my-2">{type === "pickup" ? "Pick up" : "Delivery"} Requests</h2>
+        <h2 className="text-xl lg:text-2xl font-bold text-blue-500 mb-2 my-2">
+          {type === "pickup" ? "Pick up" : "Delivery"} Requests
+        </h2>
         <div className="flex justify-between gap-3 mb-2">
-          <SortButton sortBy="distance" label="Sort by Distance" order={order.distance} onSort={handleSort} />
-          <SortButton sortBy="createdAt" label="Sort by Date" order={order.createdAt} onSort={handleSort} />
+          <SortButton
+            sortBy="distance"
+            label="Sort by Distance"
+            order={order.distance}
+            onSort={handleSort}
+          />
+          <SortButton
+            sortBy="createdAt"
+            label="Sort by Date"
+            order={order.createdAt}
+            onSort={handleSort}
+          />
         </div>
       </div>
       <div className="grid grid-cols-1 gap-4 w-full">
@@ -109,36 +133,57 @@ export default function DriverRequestLists({ type }: IProps) {
           </div>
         ) : requests.length === 0 ? (
           <div className="flex justify-center items-center my-5">
-            <NotFound text={`No ${type === "pickup" ? "pick up" : "delivery"} request found.`} />
+            <NotFound
+              text={`No ${
+                type === "pickup" ? "pick up" : "delivery"
+              } request found.`}
+            />
           </div>
         ) : (
           <div>
             {requests.map((request: IRequest) => (
-              <div key={request.id} className="bg-blue-400/30 mb-2 px-4 py-3 rounded-xl border border-blue-600">
-                <p className="text-blue-500 font-bold text-md sm:text-lg">{request.user.fullName || "Unknown User"}</p>
+              <div
+                key={request.id}
+                className="bg-blue-400/30 mb-2 px-4 py-3 rounded-xl border border-blue-600"
+              >
+                <p className="text-blue-500 font-bold text-md sm:text-lg">
+                  {request.user.fullName || "Unknown User"}
+                </p>
                 {type === "delivery" ? (
                   <div>
-                    <p className="text-blue-600 text-md">{request.deliveryNumber}</p>
+                    <p className="text-blue-600 text-md">
+                      {request.deliveryNumber}
+                    </p>
                   </div>
                 ) : (
                   <div>
-                    <p className="text-blue-600 text-md">{request.pickupNumber}</p>
+                    <p className="text-blue-600 text-md">
+                      {request.pickupNumber}
+                    </p>
                   </div>
                 )}
-                <p className="text-xs sm:text-sm text-gray-500">Requested {calculateTimeDifference(request.createdAt)}</p>
+                <p className="text-xs sm:text-sm text-gray-500">
+                  Requested {calculateTimeDifference(request.createdAt)}
+                </p>
                 <div className="flex items-center">
                   <MapPin size={20} className="text-blue-500" />
                   {request.address.addressLine || "Unknown Address"}
                 </div>
-                <p className="text-xs sm:text-sm text-gray-500 mb-1 mx-4">{Math.round(request.distance * 10) / 10} km from outlet</p>
+                <p className="text-xs sm:text-sm text-gray-500 mb-1 mx-4">
+                  {Math.round(request.distance * 10) / 10} km from outlet
+                </p>
                 <button
                   onClick={() =>
                     openModal(
                       request.id,
                       type as "pickup" | "delivery",
-                      type === "delivery" ? request.deliveryStatus! : request.pickupStatus!,
+                      type === "delivery"
+                        ? request.deliveryStatus!
+                        : request.pickupStatus!,
                       request.address.addressLine,
-                      type === "delivery" ? request.deliveryNumber! : request.pickupNumber!
+                      type === "delivery"
+                        ? request.deliveryNumber!
+                        : request.pickupNumber!
                     )
                   }
                   className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
@@ -151,7 +196,11 @@ export default function DriverRequestLists({ type }: IProps) {
         )}
       </div>
       <div className="mt-auto">
-        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
       </div>
       {selectedRequest && (
         <Modal
@@ -159,7 +208,13 @@ export default function DriverRequestLists({ type }: IProps) {
           onClose={closeModal}
           requestId={selectedRequest.id}
           type={selectedRequest.type}
-          status={selectedRequest.type === "pickup" ? requests.find((r) => r.id === selectedRequest.id)?.pickupStatus || "" : requests.find((r) => r.id === selectedRequest.id)?.deliveryStatus || ""}
+          status={
+            selectedRequest.type === "pickup"
+              ? requests.find((r) => r.id === selectedRequest.id)
+                  ?.pickupStatus || ""
+              : requests.find((r) => r.id === selectedRequest.id)
+                  ?.deliveryStatus || ""
+          }
           address={selectedRequest.address}
           orderNumber={selectedRequest.orderNumber}
           onSuccess={handleSuccess}

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/feat-1/table";
-import { getUserAddresses } from "@/api/address";
+import { getUserAddresses } from "@/app/api/address";
 import CreateAddressDialog from "./_components/CreateAddressDialog";
 import CustomerSidebar from "@/components/ui/sidebar";
 import UpdateAddressDialog from "./_components/UpdateAddressDialog";
@@ -30,12 +30,13 @@ interface AddressResult {
   user: UserResult;
 }
 
+
 const AddressPage = () => {
   const [addresses, setAddresses] = useState<AddressResult[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchUserAddress = async () => {
+  const fetchUserAddress = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -46,11 +47,13 @@ const AddressPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    fetchUserAddress();
-  }, []);
+    if (typeof window !== "undefined") {
+      fetchUserAddress();
+    }
+  }, [fetchUserAddress]);
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -68,7 +71,7 @@ const AddressPage = () => {
             View, create, and edit your address here.
           </p>
         </div>
-        
+
         {/* Create Address Button */}
         <div className="w-full max-w-[800px] flex justify-end">
           <CreateAddressDialog onAddressCreated={fetchUserAddress} />
@@ -78,11 +81,19 @@ const AddressPage = () => {
         <div className="w-full max-w-[800px]">
           <div className="overflow-x-auto shadow-md rounded-lg border border-gray-200 bg-white">
             {loading ? (
-              <p className="text-center py-6 text-gray-500">
-                Loading addresses...
-              </p>
+              <div className="p-6 flex justify-center">
+                <span className="animate-spin h-6 w-6 border-t-2 border-blue-500 rounded-full"></span>
+              </div>
             ) : error ? (
-              <p className="text-center py-6 text-red-500">{error}</p>
+              <div className="text-center py-6 text-red-500">
+                {error}
+                <button
+                  onClick={fetchUserAddress}
+                  className="ml-2 text-blue-500 underline"
+                >
+                  Retry
+                </button>
+              </div>
             ) : addresses.length > 0 ? (
               <Table className="w-full">
                 <TableHeader>

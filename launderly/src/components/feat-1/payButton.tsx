@@ -1,5 +1,5 @@
 import React from "react";
-import { createPayment } from "@/api/payment";
+import { createPayment } from "@/app/api/payment";
 
 interface PayButtonProps {
   orderId: number;

@@ -11,7 +11,7 @@ import {
 } from "@/components/feat-1/dialog";
 import { FiTrash } from "react-icons/fi";
 import { Button } from "@/components/feat-1/button";
-import { deleteUserAddress } from "@/api/address";
+import { deleteUserAddress } from "@/app/api/address";
 import { toast } from "react-toastify";
 
 interface DeleteDialogProps {

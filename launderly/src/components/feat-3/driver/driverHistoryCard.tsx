@@ -3,14 +3,14 @@ import formatDate from "@/helpers/dateFormatter";
 import { formatTime } from "@/helpers/timeFormatter";
 import SortButton from "../sortingButton";
 import { useEffect, useState } from "react";
-import { IApiResponse, IRequest } from "@/types/driver";
+import { IRequest } from "@/types/driver";
 import toast from "react-hot-toast";
 import Pagination from "../paginationButton";
 import NotFound from "../notFound";
 import DefaultLoading from "../defaultLoading";
 import FilterTabs from "../filterTab";
 import { useToken } from "@/hooks/useToken";
-import { getDriverHistory } from "@/api/driver";
+import { getDriverHistory } from "@/app/api/driver";
 
 function roundDistance(distance: number): number {
   return Math.round(distance * 10) / 10;
@@ -29,17 +29,32 @@ export default function MobileHistoryTable() {
   const [filter, setFilter] = useState<string>("");
   const token = useToken();
 
-  const fetchRequests = async (page: number, sortBy: string, order: "asc" | "desc", filter: string) => {
+  const fetchRequests = async (
+    page: number,
+    sortBy: string,
+    order: "asc" | "desc",
+    filter: string
+  ) => {
     if (!token) return;
     try {
       const pageSize = 5;
       setLoading(true);
-      const result = await getDriverHistory(token, page, sortBy, order, filter, pageSize);
+      const result = await getDriverHistory(
+        token,
+        page,
+        sortBy,
+        order,
+        filter,
+        pageSize
+      );
       setRequests(result.data);
       setTotalPages(result.pagination.totalPages);
       setCurrentPage(result.pagination.page);
     } catch (err) {
-      toast.error("Fetch failed: " + (err instanceof Error ? err.message : "Unknown error"));
+      toast.error(
+        "Fetch failed: " +
+          (err instanceof Error ? err.message : "Unknown error")
+      );
     } finally {
       setLoading(false);
     }
@@ -79,10 +94,24 @@ export default function MobileHistoryTable() {
     <div className="p-4 mb-10 bg-white mx-3 rounded-lg shadow-md">
       <div className="flex flex-col gap-3 mb-4">
         <span className="flex justify-between gap-3 mx-1">
-          <SortButton sortBy="distance" label="Sort By Distance" order={order.distance} onSort={handleSort} />
-          <SortButton sortBy="createdAt" label="Sort By Date" order={order.createdAt} onSort={handleSort} />
+          <SortButton
+            sortBy="distance"
+            label="Sort By Distance"
+            order={order.distance}
+            onSort={handleSort}
+          />
+          <SortButton
+            sortBy="createdAt"
+            label="Sort By Date"
+            order={order.createdAt}
+            onSort={handleSort}
+          />
         </span>
-        <FilterTabs onFilterChange={handleFilterChange} option1="pickup" option2="delivery" />
+        <FilterTabs
+          onFilterChange={handleFilterChange}
+          option1="pickup"
+          option2="delivery"
+        />
       </div>
 
       <div className="space-y-4">
@@ -96,14 +125,28 @@ export default function MobileHistoryTable() {
           </div>
         ) : (
           requests.map((request) => (
-            <div key={request.deliveryNumber} className="flex w-full justify-between h-[100px] border-2 bg-white p-4 py-2 rounded-lg shadow-sm">
+            <div
+              key={request.deliveryNumber}
+              className="flex w-full justify-between h-[100px] border-2 bg-white p-4 py-2 rounded-lg shadow-sm"
+            >
               <div className="flex flex-col">
                 <p className="text-sm text-blue-600 bg-blue-300 px-2 rounded-full">
-                  {formatDate(request.updatedAt)} : {formatTime(new Date(request.updatedAt))}
+                  {formatDate(request.updatedAt)} :{" "}
+                  {formatTime(new Date(request.updatedAt))}
                 </p>
                 <div className="mt-1">
-                  {request.type == "delivery" ? <h1 className="text-lg text-blue-500 font-bold">{request.deliveryNumber}</h1> : <h1 className="text-lg text-blue-500 font-bold">{request.pickupNumber}</h1>}
-                  <h1 className="text-sm">{roundDistance(request.distance)} km from outlet</h1>
+                  {request.type == "delivery" ? (
+                    <h1 className="text-lg text-blue-500 font-bold">
+                      {request.deliveryNumber}
+                    </h1>
+                  ) : (
+                    <h1 className="text-lg text-blue-500 font-bold">
+                      {request.pickupNumber}
+                    </h1>
+                  )}
+                  <h1 className="text-sm">
+                    {roundDistance(request.distance)} km from outlet
+                  </h1>
                 </div>
               </div>
 
@@ -116,7 +159,11 @@ export default function MobileHistoryTable() {
       </div>
 
       <div className="mt-4">
-        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
       </div>
     </div>
   );

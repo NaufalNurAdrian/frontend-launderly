@@ -1,8 +1,15 @@
 import type { Metadata } from "next";
 import { ToastContainer } from "react-toastify";
 import Script from "next/script";
+import { Poppins } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
+
+const poppins = Poppins({
+  weight: ["300", "400", "600", "700"],
+  subsets: ["latin"],
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Launderly App",
@@ -15,14 +22,8 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
-      <head>
-        <link
-          href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
-          rel="stylesheet"
-        />
-      </head>
-      <body className="font-poppins">
+    <html lang="en" className={poppins.className}>
+      <body>
         <Toaster />
         <ToastContainer
           draggable

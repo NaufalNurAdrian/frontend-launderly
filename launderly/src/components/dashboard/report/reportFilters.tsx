@@ -17,6 +17,7 @@ interface ReportFiltersProps {
   onTimeframeChange: (value: string) => void;
   onOutletChange: (value: string) => void;
   onDateRangeChange: (range: { from: Date; to: Date } | undefined) => void;
+  role?: string | null;
 }
 
 const ReportFilters: React.FC<ReportFiltersProps> = ({
@@ -27,30 +28,35 @@ const ReportFilters: React.FC<ReportFiltersProps> = ({
   onTimeframeChange,
   onOutletChange,
   onDateRangeChange,
+  role = "SUPER_ADMIN",
 }) => {
+  const isOutletAdmin = role === "OUTLET_ADMIN";
+  
   return (
     <div className="bg-white rounded-lg shadow-sm p-4 mb-6 border border-gray-100">
       <h2 className="text-lg font-medium mb-4 text-gray-700">Report Filters</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">Outlet</label>
-          <Select
-            value={outletId?.toString() || "all"}
-            onValueChange={onOutletChange}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select outlet" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Outlets</SelectItem>
-              {outletsResponse?.outlets.map((outlet: any) => (
-                <SelectItem key={outlet.id} value={outlet.id.toString()}>
-                  {outlet.outletName}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+      <div className={`grid grid-cols-1 ${isOutletAdmin ? 'sm:grid-cols-2' : 'sm:grid-cols-2 lg:grid-cols-3'} gap-4`}>
+        {!isOutletAdmin && (
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">Outlet</label>
+            <Select
+              value={outletId?.toString() || "all"}
+              onValueChange={onOutletChange}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select outlet" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Outlets</SelectItem>
+                {outletsResponse?.outlets.map((outlet: any) => (
+                  <SelectItem key={outlet.id} value={outlet.id.toString()}>
+                    {outlet.outletName}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
 
         <div className="space-y-2">
           <label className="block text-sm font-medium text-gray-700">Time Period</label>

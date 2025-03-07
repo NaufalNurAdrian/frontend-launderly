@@ -39,8 +39,8 @@ export const getEmployeeById = async (id: string): Promise<EmployeeById> => {
   try {
     const response = await api.get<EmployeeById>(`/employee/${id}`);
     return response.data;
-  } catch (error: any) {
-    throw new Error(error.message);
+  } catch (error) {
+    throw new Error();
   }
 };
 
@@ -65,8 +65,8 @@ export const updateEmployee = async (
     console.log("Data yang dikirim ke backend:", response.data);
 
     return response.data;
-  } catch (error: any) {
-    console.error("Failed to update employee:", error.response?.data || error.message);
+  } catch (error) {
+    console.error("Failed to update employee:");
     throw new Error("Failed to update employee");
   }
 };

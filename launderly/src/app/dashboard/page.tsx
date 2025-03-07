@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { DateRange, ReportTimeframe } from "@/types/report.types";
 import { useReportData, useOutletComparison } from "@/hooks/useReportHooks";
@@ -13,6 +13,8 @@ import OrdersTab from "@/components/dashboard/report/tabs/ordersTab";
 import CustomersTab from "@/components/dashboard/report/tabs/customerTab";
 import ComparisonTab from "@/components/dashboard/report/tabs/comparisonTab";
 import EmployeePerformanceTab from "@/components/dashboard/report/tabs/employeePerformanceTab";
+import { useRole } from "@/hooks/useRole";
+import OverviewOutletTab from "@/components/dashboard/report/tabs/overviewOutletTab";
 
 
 const ReportDashboard: React.FC = () => {
@@ -22,6 +24,17 @@ const ReportDashboard: React.FC = () => {
   const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
   const [selectedMonth, setSelectedMonth] = useState<string>(new Date().getMonth() + 1 + "");
   const [selectedYear, setSelectedYear] = useState<string>(new Date().getFullYear() + "");
+  const role = useRole();
+  
+  const isSuperAdmin = role === "SUPER_ADMIN";
+  
+  useEffect(() => {
+    if (!isSuperAdmin && 
+        activeTab !== "overview" && 
+        activeTab !== "employees") {
+      setActiveTab("overview");
+    }
+  }, [role, activeTab, isSuperAdmin]);
   
   const { data: outletsResponse, isLoading: outletsLoading } = useQuery({
     queryKey: ["outlets"],
@@ -32,10 +45,21 @@ const ReportDashboard: React.FC = () => {
     data: reportData,
     loading: reportLoading,
     error: reportError,
-  } = useReportData(outletId, timeframe, "comprehensive", dateRange);
+  } = useReportData(
+    outletId, 
+    timeframe, 
+    "comprehensive", 
+    dateRange,
+    !isSuperAdmin
+  );
 
-  const { data: comparisonData, loading: comparisonLoading } =
-    useOutletComparison(timeframe);
+  const { 
+    data: comparisonData, 
+    loading: comparisonLoading 
+  } = useOutletComparison(
+    timeframe,
+    !isSuperAdmin
+  );
 
   const handleTimeframeChange = (value: string) => {
     setTimeframe(value as ReportTimeframe);
@@ -63,7 +87,11 @@ const ReportDashboard: React.FC = () => {
     }
   };
 
-  if ((reportLoading && !reportData) || outletsLoading) {
+  const isLoading = !isSuperAdmin 
+    ? outletsLoading 
+    : ((reportLoading && !reportData) || outletsLoading);
+
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="animate-pulse flex flex-col items-center">
@@ -75,7 +103,7 @@ const ReportDashboard: React.FC = () => {
     );
   }
 
-  if (reportError) {
+  if (isSuperAdmin && reportError) {
     return (
       <div className="flex items-center justify-center h-64 text-red-500 p-4 mx-auto max-w-md">
         <div className="bg-red-50 shadow-md rounded-lg p-6 w-full">
@@ -103,6 +131,7 @@ const ReportDashboard: React.FC = () => {
         onTimeframeChange={handleTimeframeChange}
         onOutletChange={handleOutletChange}
         onDateRangeChange={handleDateRangeChange}
+        role={role || undefined}
       />
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
@@ -111,18 +140,24 @@ const ReportDashboard: React.FC = () => {
             <TabsTrigger value="overview" className="flex-1 min-w-[100px]">
               Overview
             </TabsTrigger>
-            <TabsTrigger value="transactions" className="flex-1 min-w-[100px]">
-              Transactions
-            </TabsTrigger>
-            <TabsTrigger value="orders" className="flex-1 min-w-[100px]">
-              Orders
-            </TabsTrigger>
-            <TabsTrigger value="customers" className="flex-1 min-w-[100px]">
-              Customers
-            </TabsTrigger>
-            <TabsTrigger value="comparison" className="flex-1 min-w-[100px]">
-              Outlet Comparison
-            </TabsTrigger>
+            
+            {isSuperAdmin && (
+              <>
+                <TabsTrigger value="transactions" className="flex-1 min-w-[100px]">
+                  Transactions
+                </TabsTrigger>
+                <TabsTrigger value="orders" className="flex-1 min-w-[100px]">
+                  Orders
+                </TabsTrigger>
+                <TabsTrigger value="customers" className="flex-1 min-w-[100px]">
+                  Customers
+                </TabsTrigger>
+                <TabsTrigger value="comparison" className="flex-1 min-w-[100px]">
+                  Outlet Comparison
+                </TabsTrigger>
+              </>
+            )}
+            
             <TabsTrigger value="employees" className="flex-1 min-w-[100px]">
               Employee Performance
             </TabsTrigger>
@@ -130,32 +165,45 @@ const ReportDashboard: React.FC = () => {
         </div>
 
         <TabsContent value="overview">
-          <OverviewTab 
-            reportData={reportData} 
-            outletId={outletId?.toString() || "all"} 
-            selectedMonth={selectedMonth}
-            selectedYear={selectedYear}
-          />
+          {isSuperAdmin ? (
+            <OverviewTab 
+              reportData={reportData} 
+              outletId={outletId?.toString() || "all"} 
+              selectedMonth={selectedMonth}
+              selectedYear={selectedYear}
+            />
+          ) : (
+            <OverviewOutletTab 
+              outletId={outletId?.toString() || "all"} 
+              filterMonth={selectedMonth}
+              filterYear={selectedYear}
+              filterOutlet={outletId?.toString() || "all"}
+            />
+          )}
         </TabsContent>
 
-        <TabsContent value="transactions">
-          <TransactionsTab reportData={reportData} />
-        </TabsContent>
+        {isSuperAdmin && (
+          <>
+            <TabsContent value="transactions">
+              <TransactionsTab reportData={reportData} />
+            </TabsContent>
 
-        <TabsContent value="orders">
-          <OrdersTab reportData={reportData} />
-        </TabsContent>
+            <TabsContent value="orders">
+              <OrdersTab reportData={reportData} />
+            </TabsContent>
 
-        <TabsContent value="customers">
-          <CustomersTab reportData={reportData} />
-        </TabsContent>
+            <TabsContent value="customers">
+              <CustomersTab reportData={reportData} />
+            </TabsContent>
 
-        <TabsContent value="comparison">
-          <ComparisonTab 
-            comparisonData={comparisonData} 
-            comparisonLoading={comparisonLoading} 
-          />
-        </TabsContent>
+            <TabsContent value="comparison">
+              <ComparisonTab 
+                comparisonData={comparisonData} 
+                comparisonLoading={comparisonLoading} 
+              />
+            </TabsContent>
+          </>
+        )}
 
         <TabsContent value="employees">
           <EmployeePerformanceTab

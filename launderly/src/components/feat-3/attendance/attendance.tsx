@@ -1,5 +1,5 @@
 "use client";
-import { clockOut, fetchAttendanceStatus } from "@/api/attendance";
+import { clockOut, fetchAttendanceStatus } from "@/app/api/attendance";
 import formatDate from "@/helpers/dateFormatter";
 import formatId from "@/helpers/idFormatter";
 import useSession from "@/hooks/useSession";
@@ -27,13 +27,18 @@ export default function WorkerAttendance({ token }: { token: string }) {
     try {
       const res = await fetch(`${BASE_URL}/attendance/check-in`, {
         method: "POST",
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       });
-     if(!res.ok){
-      toast.error("Failed to Clock-in");
-     }
+      if (!res.ok) {
+        toast.error("Failed to Clock-in");
+      }
       setAttendanceStatus("ACTIVE");
-      toast.success("Clock-in successful! Let's work! Make sure to clock out before the shift ends");
+      toast.success(
+        "Clock-in successful! Let's work! Make sure to clock out before the shift ends"
+      );
     } catch (error) {
       toast.error("Failed to Clock-in" + error);
     }
@@ -42,7 +47,9 @@ export default function WorkerAttendance({ token }: { token: string }) {
   const handleCheckOut = async () => {
     try {
       const response = await clockOut(token);
-      if (response.message == "You are not clocked in or Already clockled Out") {
+      if (
+        response.message == "You are not clocked in or Already clockled Out"
+      ) {
         toast.error("You are not clocked in or Already clockled Out");
         return;
       }
@@ -61,14 +68,21 @@ export default function WorkerAttendance({ token }: { token: string }) {
   return (
     <div className="flex bg-neutral-100 lg:py-8 p-3 lg:px-10 rounded-xl justify-evenly items-center shadow-md lg:mx-2">
       <div className="flex flex-col justify-center items-start h-full w-full">
-        <p className="text-white border-blue-600 w-full bg-blue-400 px-2 rounded-xl mb-1">{formatDate(new Date().toISOString())}</p>
+        <p className="text-white border-blue-600 w-full bg-blue-400 px-2 rounded-xl mb-1">
+          {formatDate(new Date().toISOString())}
+        </p>
         <div className="grid grid-cols-[50px_auto] gap-1">
           <span className="font-semibold">ID </span>
           <span>: {formatId(worker?.id!)}</span>
           <span className="font-semibold">Name </span>
           <span className="line-clamp-2">: {worker?.fullName}</span>
           <span className="font-semibold">Role </span>
-          <span>: {worker?.role === "WORKER" ? worker?.employee!.station.toLowerCase() : worker?.role!.toLowerCase()}</span>
+          <span>
+            :{" "}
+            {worker?.role === "WORKER"
+              ? worker?.employee!.station.toLowerCase()
+              : worker?.role!.toLowerCase()}
+          </span>
         </div>
         <button
           onClick={() => {
@@ -78,13 +92,23 @@ export default function WorkerAttendance({ token }: { token: string }) {
               handleCheckOut();
             }
           }}
-          className={`py-2 mt-2 px-5 rounded-xl text-white ${attendanceStatus == "INACTIVE" ? "bg-[#1678F2]  hover:bg-[#4b87cc]" : "bg-red-500 hover:bg-red-400"}`}
+          className={`py-2 mt-2 px-5 rounded-xl text-white ${
+            attendanceStatus == "INACTIVE"
+              ? "bg-[#1678F2]  hover:bg-[#4b87cc]"
+              : "bg-red-500 hover:bg-red-400"
+          }`}
         >
           {attendanceStatus == "INACTIVE" ? "Clock In" : "Clock Out"}
         </button>
       </div>
       <div className="w-[150px] h-[100px] bg-black rounded-full overflow-hidden">
-        <Image src={worker?.avatar || "/user.png"} alt="Profile" width={600} height={600} className="rounded-full" />
+        <Image
+          src={worker?.avatar || "/user.png"}
+          alt="Profile"
+          width={600}
+          height={600}
+          className="rounded-full"
+        />
       </div>
     </div>
   );

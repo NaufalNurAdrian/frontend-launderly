@@ -77,7 +77,6 @@ const AddressPage = () => {
             View, create, and edit your address here.
           </p>
         </div>
-
         {/* Create Address Button */}
         <div className="w-full max-w-[800px] flex justify-end">
           <CreateAddressDialog onAddressCreated={fetchUserAddress} />

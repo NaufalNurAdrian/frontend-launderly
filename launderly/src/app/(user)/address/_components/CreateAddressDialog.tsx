@@ -240,7 +240,6 @@ const CreateAddressDialog: React.FC<CreateAddressDialogProps> = ({
                   className="text-red-500 text-sm mt-1"
                 />
               </div>
-
               {/* Map */}
               <div>
                 <label className="block text-sm font-medium">

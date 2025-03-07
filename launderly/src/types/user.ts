@@ -4,8 +4,15 @@ export interface IUser {
   email: string;
   avatar: string | null;
   isVerify: boolean;
-  role: string;
+  role: "DRIVER" | "WORKER" |"OUTLET_ADMIN" |"SUPER_ADMIN" | "CUSTOMER"
   createdAt: string;
   isDelete: boolean;
   authProvider: "email" | "google";
+  employee : IEmployee
+}
+
+export interface IEmployee {
+  station: string
+  workShift: string
+  outletId: number
 }

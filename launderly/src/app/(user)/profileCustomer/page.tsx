@@ -15,7 +15,6 @@ const ProfileCustomer: React.FC = () => {
 
   console.log("User state in ProfileCustomer:", user);
 
-
   const editAvatar = async (file: File) => {
     if (!file || !user) return;
 
@@ -138,10 +137,11 @@ const ProfileCustomer: React.FC = () => {
               {user?.authProvider === "google" && (
                 <div className="mt-6 text-center">
                   <p className="text-gray-500 text-sm">
-                    Anda login menggunakan akun Google.
+                    You are logged in using a Google account.
                   </p>
                   <p className="text-gray-500 text-sm">
-                    Untuk mengubah informasi akun, silakan lakukan di Google.
+                    To update your account information, please sign up with a
+                    regular email.
                   </p>
                 </div>
               )}

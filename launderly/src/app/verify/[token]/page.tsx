@@ -1,7 +1,7 @@
 "use client";
 
 import axios from "axios";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 
@@ -13,11 +13,7 @@ export default function VerifyPage({ params }: { params: { token: string } }) {
 
   const onVerify = async () => {
     try {
-      let res;
-
-      res = await axios.patch(
-        `${base_url}/auth/verify/${token}`
-      );
+      const res = await axios.patch(`${base_url}/auth/verify/${token}`);
 
       const result = res.data;
       toast.success(result.message);

@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useFormik } from "formik";
 import { ResetPasswordSchema } from "@/libs/schema";
-import { resetPassword } from "@/api/user";
+import { resetPassword } from "@/app/api/user";
 
 interface ResetPasswordFormProps {
   onClose: () => void;
@@ -21,7 +21,8 @@ const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ onClose }) => {
     validationSchema: ResetPasswordSchema,
     onSubmit: async (values) => {
       try {
-        await resetPassword(values);
+        await resetPassword(values.password, values.confirmPassword);
+
         onClose();
       } catch (err) {
         console.error("Reset password failed:", err);

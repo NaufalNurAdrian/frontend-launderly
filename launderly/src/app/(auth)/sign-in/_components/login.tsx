@@ -1,16 +1,17 @@
 "use client";
 
-import { loginUser } from "@/api/auth";
+import { loginUser } from "@/app/api/auth";
 import useSession from "@/hooks/useSession";
 import { LoginSchema } from "@/libs/schema";
 import { LoginValues } from "@/types/auth";
 import axios from "axios";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import LoginGoogle from "./loginGoggle";
+import { ArrowBigLeftDash } from "lucide-react";
 
 const Login = () => {
   const initialValues: LoginValues = {
@@ -21,26 +22,34 @@ const Login = () => {
   const { setIsAuth, setUser } = useSession();
   const router = useRouter();
 
-  const handleLogin = async (values: LoginValues, { setSubmitting }: any) => {
+  const handleLogin = async (
+    values: LoginValues,
+    { setSubmitting }: FormikHelpers<LoginValues>
+  ) => {
     try {
       const { customer, token, message } = await loginUser(values);
-
+  
       localStorage.setItem("token", token);
-
+  
       setIsAuth(true);
       setUser(customer);
-
+  
       toast.success(message || "Login successful!");
-
-      router.push("/dashboardCustomer");
+      const { role } = customer;
+  
+      if (role === "WORKER" || role === "DRIVER") {
+        router.push("/attendance");
+      } else if (role === "CUSTOMER") {
+        router.push("/dashboardCustomer");
+      } else if (role === "SUPER_ADMIN" || role === "OUTLET_ADMIN") {
+        router.push("/dashboard");
+      }
     } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        const errorMessage =
-          err.response?.data?.message ||
-          err.message ||
-          "An error occurred during login.";
-        toast.error(errorMessage);
+      if (err instanceof Error) {
+        console.error(err.message);
+        toast.error(err.message);
       } else {
+        console.error("An unexpected error occurred.");
         toast.error("An unexpected error occurred.");
       }
     } finally {
@@ -49,18 +58,21 @@ const Login = () => {
   };
 
   return (
-    <div className="h-[100vh] flex flex-col lg:flex-row bg-blue-100 text-white">
-      <div className="w-full relative md:flex md:items-center md:w-1/2 bg-blue-400">
+    <div className="h-screen flex flex-col lg:flex-row bg-blue-300 text-white">
+      {/* Bagian Kiri - Background Gambar (Hidden di Mobile) */}
+      <div className="hidden lg:flex lg:w-1/2 relative bg-blue-400">
         <Image
-          src="/sign-in.jpeg"
+          src="/homepage.jpeg"
           alt="Login background"
           layout="fill"
           objectFit="cover"
-          className="absolute inset-0 object-cover"
+          className="rounded-lg"
         />
       </div>
-      <div className="lg:w-1/2 w-full flex flex-col items-center justify-center p-8 lg:p-12 bg-blue-200">
-        <div className="bg-white w-full max-w-lg p-8 rounded-lg shadow-lg">
+
+      {/* Bagian Kanan - Form Login (Full-Screen di Mobile) */}
+      <div className="w-full lg:w-1/2 flex flex-col items-center justify-center p-6 md:p-12 shadow-lg rounded-lg h-screen">
+        <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
           <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">
             Welcome Back!
           </h2>
@@ -86,7 +98,7 @@ const Login = () => {
                     name="email"
                     type="text"
                     placeholder="Enter your email"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className="w-full px-4 py-2 border text-white bg-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   />
                   <ErrorMessage
                     name="email"
@@ -106,7 +118,7 @@ const Login = () => {
                     name="password"
                     type="password"
                     placeholder="Enter your password"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className="w-full px-4 py-2 border text-white bg-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   />
                   <ErrorMessage
                     name="password"
@@ -117,11 +129,11 @@ const Login = () => {
 
                 {/* Forgot Password Link */}
                 <div className="mb-6 flex justify-between text-sm">
-                  <Link
-                    href="/"
-                    className="text-blue-900 hover:underline"
-                  >
-                    Back Home
+                  <Link href="/" className=" text-fuchsia-600 hover:underline">
+                    <div className="flex">
+                      <ArrowBigLeftDash />
+                      Back Home
+                    </div>
                   </Link>
                   <Link
                     href="/forgot-password"
@@ -133,7 +145,7 @@ const Login = () => {
 
                 <button
                   type="submit"
-                  className="w-full bg-black text-white py-2 rounded-lg hover:bg-gray-800 transition duration-200"
+                  className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-200"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? "Signing In..." : "Sign In"}
@@ -151,7 +163,20 @@ const Login = () => {
             </p>
           </div>
 
-          <LoginGoogle />
+          {/* Divider */}
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="bg-white px-2 text-gray-500">or</span>
+            </div>
+          </div>
+
+          {/* Login dengan Google */}
+          <div className="w-full">
+            <LoginGoogle />
+          </div>
         </div>
       </div>
     </div>

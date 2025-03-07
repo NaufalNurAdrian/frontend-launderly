@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useEffect, useState } from "react";
 import { Formik, Form, Field, FormikHelpers } from "formik";
 import {
@@ -10,17 +9,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/feat-1/dialog";
-import { Button } from "@/components/feat-1/button";
-import { createRequestOrder } from "@/api/order";
+import { createRequestOrder, getOutletNearby } from "@/app/api/order";
 import { toast } from "react-toastify";
 import useSession from "@/hooks/useSession";
-import { getUserAddresses } from "@/api/address";
-
-interface IRequestOrderForm {
-  addressId: number;
-  latitude?: number;
-  longitude?: number;
-}
+import { getUserAddresses } from "@/app/api/address";
+import { calculateDistance } from "@/helpers/calculateDistance";
+import { IRequestOrderForm } from "@/types/request";
+import { Button } from "@/components/ui/button";
 
 interface AddressResult {
   id: number;
@@ -29,6 +24,13 @@ interface AddressResult {
   latitude: number;
   longitude: number;
   isPrimary: boolean;
+}
+
+interface OutletResult {
+  id: number;
+  outletName: string;
+  outletType: string;
+  address: AddressResult[];
 }
 
 interface CreateRequestOrderDialogProps {
@@ -41,6 +43,14 @@ const CreateRequestOrderDialog: React.FC<CreateRequestOrderDialogProps> = ({
   const { user } = useSession();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [addresses, setAddresses] = useState<AddressResult[]>([]);
+  const [outlets, setOutlets] = useState<OutletResult[]>([]);
+  const [selectedAddress, setSelectedAddress] = useState<AddressResult | null>(
+    null
+  );
+  const [selectedOutlet, setSelectedOutlet] = useState<OutletResult | null>(
+    null
+  );
+  const [computedDistance, setComputedDistance] = useState<number>(0);
 
   // Fetch alamat user ketika modal dibuka
   useEffect(() => {
@@ -48,9 +58,9 @@ const CreateRequestOrderDialog: React.FC<CreateRequestOrderDialogProps> = ({
       getUserAddresses()
         .then((data) => {
           if (Array.isArray(data)) {
-            setAddresses(data); // Jika `data` sudah array
+            setAddresses(data);
           } else if (Array.isArray(data.addresses)) {
-            setAddresses(data.addresses); // Jika `data` berbentuk `{ addresses: [...] }`
+            setAddresses(data.addresses);
           } else {
             throw new Error("Unexpected data format");
           }
@@ -61,13 +71,67 @@ const CreateRequestOrderDialog: React.FC<CreateRequestOrderDialogProps> = ({
     }
   }, [isDialogOpen]);
 
+  // Fetch outlet setelah user memilih alamat
+  const fetchNearbyOutlets = async (address: AddressResult) => {
+    try {
+      const data = await getOutletNearby(address.latitude, address.longitude);
+      setOutlets(data.nearbyOutlets);
+    } catch (error) {
+      toast.error("Failed to fetch nearby outlets");
+    }
+  };
+
+  // Perlu memasukkan setFieldValue sebagai parameter
+  const handleAddressChange = (
+    event: React.ChangeEvent<HTMLSelectElement>,
+    setFieldValue: (
+      field: string,
+      value: number,
+      shouldValidate?: boolean
+    ) => void
+  ) => {
+    const addressId = parseInt(event.target.value, 10);
+    const selected = addresses.find((addr) => addr.id === addressId) || null;
+    setSelectedAddress(selected);
+    setSelectedOutlet(null);
+    setFieldValue("addressId", selected ? selected.id : 0);
+    if (selected) {
+      fetchNearbyOutlets(selected);
+    }
+  };
+
+  const handleOutletSelect = (outlet: OutletResult) => {
+    setSelectedOutlet(outlet);
+    if (selectedAddress && outlet.address[0]) {
+      const dist = calculateDistance(
+        selectedAddress.latitude,
+        selectedAddress.longitude,
+        outlet.address[0].latitude,
+        outlet.address[0].longitude
+      );
+      setComputedDistance(dist);
+    }
+  };
+
   const handleSubmit = async (
     values: IRequestOrderForm,
     { setSubmitting, resetForm }: FormikHelpers<IRequestOrderForm>
   ) => {
+    if (!selectedAddress) {
+      toast.error("Please select an address.");
+      return;
+    }
+    if (!selectedOutlet) {
+      toast.error("Please select an outlet.");
+      return;
+    }
     try {
-      const result = await createRequestOrder(values);
-
+      const result = await createRequestOrder({
+        userId: user?.id!,
+        userAddressId: selectedAddress.id,
+        outletId: selectedOutlet.id,
+        distance: computedDistance,
+      });
       if (result) {
         toast.success("Request order successfully created!");
         onRequestOrderCreated();
@@ -84,98 +148,87 @@ const CreateRequestOrderDialog: React.FC<CreateRequestOrderDialogProps> = ({
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
-        <Button className="px-6 py-2 rounded-lg shadow bg-teal-200">
-          Request Pickup
+        <Button onClick={() => setIsDialogOpen(true)}>
+          Create Request Order
         </Button>
       </DialogTrigger>
-      <DialogContent className="w-full max-w-xs sm:max-w-md md:max-w-lg lg:max-w-xl max-h-[80vh] overflow-y-auto">
+      <DialogContent>
         <DialogHeader>
-          <DialogTitle className="text-2xl font-semibold">
-            Request Pickup
-          </DialogTitle>
-          <DialogDescription className="text-sm">
-            Select your address and confirm your pickup request.
+          <DialogTitle>Create Request Order</DialogTitle>
+          <DialogDescription>
+            Select your address and nearby outlets
           </DialogDescription>
         </DialogHeader>
 
-        <Formik<IRequestOrderForm>
+        <Formik
           initialValues={{
-            addressId: 0,
-            latitude: undefined,
-            longitude: undefined,
+            userId: user?.id!,
+            userAddressId: 0,
+            outletId: 0,
+            distance: 0,
           }}
           onSubmit={handleSubmit}
         >
-          {({ isSubmitting, setFieldValue, values }) => (
-            <Form className="space-y-4 mt-4">
-              {/* Address Selector */}
+          {({ isSubmitting, setFieldValue }) => (
+            <Form className="space-y-4">
+              {/* Pilih alamat */}
               <div>
-                <label className="block text-sm font-medium">
-                  Select Address <span className="text-red-500">*</span>
+                <label
+                  htmlFor=" userAddressId"
+                  className="block text-sm font-medium"
+                >
+                  Select Address
                 </label>
                 <Field
                   as="select"
-                  name="addressId"
-                  className="w-full p-2 border rounded-md bg-white"
-                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                    const selectedAddress = addresses.find(
-                      (addr) => addr.id === Number(e.target.value)
-                    );
-                    setFieldValue("addressId", selectedAddress?.id || 0);
-                    setFieldValue("latitude", selectedAddress?.latitude);
-                    setFieldValue("longitude", selectedAddress?.longitude);
-                  }}
+                  name=" userAddressId"
+                  id=" userAddressId"
+                  className="mt-1 block w-full border p-2 rounded bg-white"
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                    handleAddressChange(e, setFieldValue)
+                  }
+                  value={selectedAddress?.id || ""}
                 >
-                  <option value="">Choose an address</option>
-                  {Array.isArray(addresses) && addresses.length > 0 ? (
-                    addresses.map((address) => (
-                      <option key={address.id} value={address.id}>
-                        {address.addressLine}, {address.city}
-                      </option>
-                    ))
-                  ) : (
-                    <option disabled>No addresses available</option>
-                  )}
+                  <option value="">-- Select Address --</option>
+                  {addresses.map((address) => (
+                    <option key={address.id} value={address.id}>
+                      {address.addressLine}, {address.city}
+                    </option>
+                  ))}
                 </Field>
               </div>
 
-              {/* Latitude & Longitude Display */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium">Latitude</label>
-                  <Field
-                    as="input"
-                    name="latitude"
-                    className="w-full p-2 border rounded-md bg-white"
-                    value={values.latitude || ""}
-                    readOnly
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium">Longitude</label>
-                  <Field
-                    as="input"
-                    name="longitude"
-                    className="w-full p-2 border rounded-md bg-white"
-                    value={values.longitude || ""}
-                    readOnly
-                  />
-                </div>
-              </div>
+              {/* Tampilkan outlet dalam radius 5km */}
+              {selectedAddress &&
+              Array.isArray(outlets) &&
+              outlets.length > 0 ? (
+                <ul className="mt-2 p-2 border rounded">
+                  <p>Our Outlet</p>
+                  {outlets.map((outlet) => (
+                    <label
+                      key={outlet.id}
+                      className="block p-2 border-b last:border-b-0 cursor-pointer"
+                    >
+                      <input
+                        type="radio"
+                        name="selectedOutlet"
+                        value={outlet.id}
+                        onChange={() => handleOutletSelect(outlet)}
+                        checked={selectedOutlet?.id === outlet.id}
+                      />
+                      {outlet.outletName} ({outlet.outletType})
+                    </label>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-sm text-gray-500">
+                  No outlets available within 5km.
+                </p>
+              )}
 
-              {/* Buttons */}
-              <div className="flex flex-col sm:flex-row justify-end sm:space-x-4 space-y-2 sm:space-y-0 mt-6">
-                <Button
-                  type="button"
-                  onClick={() => setIsDialogOpen(false)}
-                  variant="destructive"
-                >
-                  Cancel
-                </Button>
-                <Button type="submit" disabled={isSubmitting} variant="primary">
-                  {isSubmitting ? "Submitting..." : "Request Pickup"}
-                </Button>
-              </div>
+              <Button type="submit" disabled={isSubmitting || !selectedOutlet}>
+                {isSubmitting ? "Submitting..." : "Create Request Order"}
+              </Button>
             </Form>
           )}
         </Formik>

@@ -1,8 +1,8 @@
 "use client";
 
-import { requestForgetPassword } from "@/api/user";
+import { requestForgetPassword } from "@/app/api/user";
 import { ForgotPasswordSchema } from "@/libs/schema";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
 import Link from "next/link";
 import { toast } from "react-toastify";
 
@@ -11,15 +11,19 @@ const ForgotPassword = () => {
 
   const handleSubmit = async (
     values: { email: string },
-    { setSubmitting }: any
+    { setSubmitting }: FormikHelpers<{ email: string }>
   ) => {
     try {
       const response = await requestForgetPassword(values.email);
       toast.success(
         response?.message || "Password reset link sent! Check your email."
       );
-    } catch (error: any) {
-      toast.error(error.message); // Menggunakan pesan dari API
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message); // Jika error memiliki message
+      } else {
+        toast.error("An unexpected error occurred."); // Jika error bukan instance Error
+      }
     } finally {
       setSubmitting(false);
     }

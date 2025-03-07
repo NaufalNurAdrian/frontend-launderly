@@ -9,7 +9,6 @@ import {
   ChevronRight,
   LayoutDashboard,
   Calendar,
-  Receipt,
   UserCircle,
   LogOut,
   House,
@@ -60,24 +59,19 @@ const CustomerSidebar = () => {
       href: "/dashboardCustomer",
     },
     {
+      icon: <House size={24} />,
+      text: "My Address",
+      href: "/address",
+    },
+    {
       icon: <Calendar size={24} />,
       text: "My Laundry",
       href: "/myLaundry",
     },
     {
-      icon: <Receipt size={24} />,
-      text: "Payment",
-      href: "/myPayment",
-    },
-    {
       icon: <UserCircle size={24} />,
       text: "My Profile",
       href: "/profileCustomer",
-    },
-    {
-      icon: <House size={24} />,
-      text: "My Address",
-      href: "/address",
     },
   ];
 

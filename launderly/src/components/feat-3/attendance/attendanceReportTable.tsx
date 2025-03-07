@@ -11,7 +11,7 @@ import { useToken } from "@/hooks/useToken";
 import NotFound from "../notFound";
 import FilterDropdown from "../filterButton";
 
-export default function OrderMobileHistoryTable() {
+export default function AttendanceReportTableForOutlet() {
   const [loading, setLoading] = useState(true);
   const [report, setReport] = useState<IAttendance[]>([]);
   const [currentPage, setCurrentPage] = useState(1);

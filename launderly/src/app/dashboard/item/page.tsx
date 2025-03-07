@@ -15,12 +15,14 @@ import AddItemForm from '@/components/dashboard/item/addItemForm';
 import ItemList from '@/components/dashboard/item/itemList';
 import DeleteConfirmDialog from '@/components/dashboard/item/deleteConfirmationDialog';
 import { withSuperAdmin } from '@/hoc/adminAuthorizaton';
+import { useRole } from '@/hooks/useRole';
 
 function ItemManagementPage() {
   const [items, setItems] = useState<LaundryItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [currentItem, setCurrentItem] = useState<Item | null>(null);
+  const role = useRole();
   const [alert, setAlert] = useState({
     open: false,
     message: '',
@@ -138,6 +140,10 @@ function ItemManagementPage() {
       updatedAt: item.updatedAt
     }));
   };
+
+  if (role !== "SUPER_ADMIN") {
+    return null;
+  }
 
   return (
     <Container maxWidth="lg">

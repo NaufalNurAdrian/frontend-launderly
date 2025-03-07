@@ -10,10 +10,16 @@ import {
   TableRow,
 } from "@/components/feat-1/table";
 import { getUserAddresses } from "@/app/api/address";
-import CreateAddressDialog from "./_components/CreateAddressDialog";
+
 import CustomerSidebar from "@/components/ui/sidebar";
-import UpdateAddressDialog from "./_components/UpdateAddressDialog";
-import DeleteAddressDialog from "./_components/DeleteAddressDialog";
+
+
+import dynamic from "next/dynamic";
+
+const CreateAddressDialog = dynamic(() => import("./_components/CreateAddressDialog"), { ssr: false });
+const UpdateAddressDialog = dynamic(() => import("./_components/UpdateAddressDialog"), { ssr: false });
+const DeleteAddressDialog = dynamic(() => import("./_components/DeleteAddressDialog"), { ssr: false });
+
 
 interface UserResult {
   fullname: string;
@@ -30,19 +36,21 @@ interface AddressResult {
   user: UserResult;
 }
 
-
 const AddressPage = () => {
   const [addresses, setAddresses] = useState<AddressResult[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  
 
   const fetchUserAddress = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
       const data = await getUserAddresses();
-      setAddresses(data.addresses || []);
+      setAddresses(data?.addresses || []); // Pastikan data tidak null
     } catch (err) {
+      console.error("Error fetching addresses:", err);
       setError("Failed to fetch addresses. Please try again later.");
     } finally {
       setLoading(false);
@@ -50,9 +58,7 @@ const AddressPage = () => {
   }, []);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      fetchUserAddress();
-    }
+    fetchUserAddress();
   }, [fetchUserAddress]);
 
   return (

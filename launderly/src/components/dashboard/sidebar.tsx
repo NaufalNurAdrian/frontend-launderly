@@ -49,11 +49,13 @@ function Sidebar({ currentPath }: SidebarProps) {
           { href: "/dashboard/employee", icon: "/customer.svg", label: "Employee" },
           { href: "/dashboard/item", icon: "/item.svg", label: "Item" },
           { href: "/dashboard/order", icon: "/Shopping Trolley.svg", label: "Orders" },
-          { href: "/dashboard/bypass", icon: "/Settings.svg", label: "Bypass" }
+          { href: "/dashboard/bypass", icon: "/Settings.svg", label: "Bypass" },
+          { href: "/dashboard/attendance", icon: "/Attendance.svg", label: "Attendance" }
         ].map((item) => {
           const active = isActive(item.href);
           
           return (
+            
             <Link 
               key={item.href} 
               href={item.href}

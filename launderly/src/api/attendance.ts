@@ -15,9 +15,9 @@ export async function fetchAttendanceHistory(token: string, page: number, sortBy
   }
 }
 
-export async function fetchAllAttendanceHistory(token: string, page: number, sortBy: string, order: "asc" | "desc", filter: string) {
+export async function fetchAllAttendanceHistory(token: string, page: number, sortBy: string, order: "asc" | "desc", filter: string, outletId: number) {
   try {
-    const res = await axios.get(`${BASE_URL}/attendance/all-history/?page=${page}&sortBy=${sortBy}&order=${order}&role=${filter}`, {
+    const res = await axios.get(`${BASE_URL}/attendance/all-history/?page=${page}&sortBy=${sortBy}&order=${order}&role=${filter}&outletId=${outletId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return res.data;

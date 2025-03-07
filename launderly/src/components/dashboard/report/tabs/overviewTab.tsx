@@ -132,30 +132,6 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
         filterYear={selectedYear}
       />
 
-      {reportData.revenue.daily && (
-        <Card className="overflow-hidden">
-          <CardHeader className="border-b">
-            <CardTitle>Revenue Trend</CardTitle>
-          </CardHeader>
-          <CardContent className="pt-6">
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={reportData.revenue.daily}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis 
-                  tickFormatter={(value) => currencyFormatter(value)} 
-                  width={100}
-                />
-                <Tooltip 
-                  formatter={(value) => [currencyFormatter(value as number), 'Revenue']} 
-                />
-                <Line type="monotone" dataKey="amount" stroke="#3B82F6" />
-              </LineChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      )}
-
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="overflow-hidden">
           <CardHeader className="border-b">

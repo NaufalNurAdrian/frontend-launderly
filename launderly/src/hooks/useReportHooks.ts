@@ -10,29 +10,31 @@ import {
 import {
   ReportData,
   OutletComparisonData,
-  TransactionTrendsData,
-  CustomerAnalyticsData,
-  EmployeePerformanceData,
-  SalesReportData,
   ReportTimeframe,
-  ReportType,
-  DateRange
+  ReportType
 } from '@/types/report.types';
 
 /**
- * Hook for fetching report data
+ * Hook for fetching report data with an option to skip fetching
  */
 export const useReportData = (
   outletId?: number,
   timeframe: ReportTimeframe = 'monthly',
   reportType: ReportType = 'comprehensive',
-  dateRange?: DateRange
+  dateRange?: { from: Date; to: Date },
+  skipFetch: boolean = false
 ) => {
   const [data, setData] = useState<ReportData | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(!skipFetch);
   const [error, setError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
+    // Skip API call if skipFetch is true
+    if (skipFetch) {
+      setLoading(false);
+      return;
+    }
+    
     setLoading(true);
     setError(null);
 
@@ -58,7 +60,7 @@ export const useReportData = (
     } finally {
       setLoading(false);
     }
-  }, [outletId, timeframe, reportType, dateRange]);
+  }, [outletId, timeframe, reportType, dateRange, skipFetch]);
 
   useEffect(() => {
     fetchData();
@@ -68,14 +70,35 @@ export const useReportData = (
 };
 
 /**
- * Hook for fetching outlet comparison data
+ * Mock function to return empty data without making API call
  */
-export const useOutletComparison = (timeframe: ReportTimeframe = 'monthly') => {
+export const useEmptyReportData = () => {
+  return { 
+    data: null, 
+    loading: false, 
+    error: null, 
+    refetch: () => Promise.resolve() 
+  };
+};
+
+/**
+ * Hook for fetching outlet comparison data with an option to skip fetching
+ */
+export const useOutletComparison = (
+  timeframe: ReportTimeframe = 'monthly',
+  skipFetch: boolean = false
+) => {
   const [data, setData] = useState<OutletComparisonData | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(!skipFetch);
   const [error, setError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
+    // Skip API call if skipFetch is true
+    if (skipFetch) {
+      setLoading(false);
+      return;
+    }
+    
     setLoading(true);
     setError(null);
 
@@ -87,7 +110,7 @@ export const useOutletComparison = (timeframe: ReportTimeframe = 'monthly') => {
     } finally {
       setLoading(false);
     }
-  }, [timeframe]);
+  }, [timeframe, skipFetch]);
 
   useEffect(() => {
     fetchData();
@@ -97,18 +120,25 @@ export const useOutletComparison = (timeframe: ReportTimeframe = 'monthly') => {
 };
 
 /**
- * Hook for fetching transaction trend data
+ * Hook for fetching transaction trend data with an option to skip fetching
  */
 export const useTransactionTrends = (
   outletId?: number,
   period: string = 'daily',
-  dateRange?: DateRange
+  dateRange?: { from: Date; to: Date },
+  skipFetch: boolean = false
 ) => {
-  const [data, setData] = useState<TransactionTrendsData | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(!skipFetch);
   const [error, setError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
+    // Skip API call if skipFetch is true
+    if (skipFetch) {
+      setLoading(false);
+      return;
+    }
+    
     setLoading(true);
     setError(null);
 
@@ -133,7 +163,7 @@ export const useTransactionTrends = (
     } finally {
       setLoading(false);
     }
-  }, [outletId, period, dateRange]);
+  }, [outletId, period, dateRange, skipFetch]);
 
   useEffect(() => {
     fetchData();
@@ -143,17 +173,24 @@ export const useTransactionTrends = (
 };
 
 /**
- * Hook for fetching customer analytics data
+ * Hook for fetching customer analytics data with an option to skip fetching
  */
 export const useCustomerAnalytics = (
   outletId?: number,
-  timeframe: ReportTimeframe = 'monthly'
+  timeframe: ReportTimeframe = 'monthly',
+  skipFetch: boolean = false
 ) => {
-  const [data, setData] = useState<CustomerAnalyticsData | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(!skipFetch);
   const [error, setError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
+    // Skip API call if skipFetch is true
+    if (skipFetch) {
+      setLoading(false);
+      return;
+    }
+    
     setLoading(true);
     setError(null);
 
@@ -173,7 +210,7 @@ export const useCustomerAnalytics = (
     } finally {
       setLoading(false);
     }
-  }, [outletId, timeframe]);
+  }, [outletId, timeframe, skipFetch]);
 
   useEffect(() => {
     fetchData();
@@ -190,7 +227,7 @@ export const useEmployeePerformance = (
   filterMonth?: string,
   filterYear?: string
 ) => {
-  const [data, setData] = useState<EmployeePerformanceData[] | null>(null);
+  const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -237,7 +274,7 @@ export const useSalesReport = (
   filterMonth?: string,
   filterYear?: string
 ) => {
-  const [data, setData] = useState<SalesReportData | null>(null);
+  const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 

@@ -6,10 +6,10 @@ const base_url = process.env.NEXT_PUBLIC_BASE_URL_BE;
 
 export async function registerUser(values: RegisterValues): Promise<any> {
   try {
-    const res = await axios.post(`${base_url}/auth/register`, values, {});
+    const res = await axios.post(`${base_url}/auth/register`, values);
     toast.success("Registration successful!");
     return res.data;
-  } catch (err: any) {
+  } catch (err: unknown) {
     if (axios.isAxiosError(err)) {
       const errorMessage =
         err.response?.data?.message || "Registration failed.";
@@ -32,6 +32,7 @@ export async function registerUser(values: RegisterValues): Promise<any> {
   }
 }
 
+
 export async function loginUser(values: { email: string; password: string }) {
   try {
     const payload = { email: values.email, password: values.password };
@@ -43,25 +44,27 @@ export async function loginUser(values: { email: string; password: string }) {
 
     toast.success("Login successful!");
     return res.data;
-  } catch (error: any) {
-    console.error("Login failed", error);
+  } catch (err: unknown) {
+    console.error("Login failed", err);
 
-    // Ambil pesan error dari backend
-    const errorMessage = error.response?.data || "";
+    if (axios.isAxiosError(err)) {
+      const errorMessage = err.response?.data || "";
 
-    // Tampilkan toast hanya jika error terkait Google login
-    if (
-      error.response &&
-      error.response.status === 400 &&
-      typeof errorMessage === "string" &&
-      errorMessage.includes("Google")
-    ) {
-      toast.error(
-        "This email is registered via Google. Please log in using Google."
-      );
+      if (
+        err.response &&
+        err.response.status === 400 &&
+        typeof errorMessage === "string" &&
+        errorMessage.includes("Google")
+      ) {
+        toast.error(
+          "This email is registered via Google. Please log in using Google."
+        );
+      }
+    } else {
+      toast.error("An unexpected error occurred.");
     }
 
-    throw error; // Pastikan error tetap dilempar agar bisa ditangani di tempat lain jika diperlukan
+    throw err; // Tetap lempar error agar bisa ditangani di tempat lain
   }
 }
 

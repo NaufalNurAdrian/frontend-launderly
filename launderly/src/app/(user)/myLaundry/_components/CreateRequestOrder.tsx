@@ -1,4 +1,3 @@
-
 "use client";
 import React, { useEffect, useState } from "react";
 import { Formik, Form, Field, FormikHelpers } from "formik";
@@ -10,10 +9,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/feat-1/dialog";
-import { createRequestOrder, getOutletNearby } from "@/api/order";
+import { createRequestOrder, getOutletNearby } from "@/app/api/order";
 import { toast } from "react-toastify";
 import useSession from "@/hooks/useSession";
-import { getUserAddresses } from "@/api/address";
+import { getUserAddresses } from "@/app/api/address";
 import { calculateDistance } from "@/helpers/calculateDistance";
 import { IRequestOrderForm } from "@/types/request";
 import { Button } from "@/components/ui/button";
@@ -85,9 +84,13 @@ const CreateRequestOrderDialog: React.FC<CreateRequestOrderDialogProps> = ({
   // Perlu memasukkan setFieldValue sebagai parameter
   const handleAddressChange = (
     event: React.ChangeEvent<HTMLSelectElement>,
-    setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void
+    setFieldValue: (
+      field: string,
+      value: number,
+      shouldValidate?: boolean
+    ) => void
   ) => {
-    const addressId = parseInt(event.target.value);
+    const addressId = parseInt(event.target.value, 10);
     const selected = addresses.find((addr) => addr.id === addressId) || null;
     setSelectedAddress(selected);
     setSelectedOutlet(null);

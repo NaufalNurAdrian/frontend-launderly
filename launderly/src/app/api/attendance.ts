@@ -50,8 +50,8 @@ export async function fetchAttendanceStatus(token: string): Promise<{ status: st
     const lastAttendance = lastPageData.data[lastPageData.data.length - 1].attendanceStatus;
 
     return { status: lastAttendance };
-  } catch (error: any) {
-    toast.error(error.response?.data?.message || "Failed to fetch attendance status");
+  } catch (error) {
+    toast.error("Failed to fetch attendance status");
     throw error;
   }
 }
@@ -60,7 +60,7 @@ export async function clockOut(token: string) {
   try {
     const res = await axios.patch(`${BASE_URL}/attendance/check-out`, {}, { headers: { Authorization: `Bearer ${token}` } });
     return res.data;
-  } catch (error: any) {
-    toast.error(error.response?.data?.message || "Failed to clock out");
+  } catch (error) {
+    toast.error( "Failed to clock out");
   }
 }

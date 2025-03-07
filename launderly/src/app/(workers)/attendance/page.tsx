@@ -12,7 +12,7 @@ import Navbar from "@/components/feat-3/navbar";
 import { useToken } from "@/hooks/useToken";
 import WorkerSidebar from "@/components/feat-3/workerSidebar";
 import ProtectedPage from "@/helpers/protectedRoutes";
-import { fetchAttendanceHistory } from "@/api/attendance";
+import { fetchAttendanceHistory } from "@/app/api/attendance";
 
 export default function Attendance() {
   const [attendanceData, setAttendanceData] = useState<IAttendance[]>([]);
@@ -26,10 +26,19 @@ export default function Attendance() {
   });
   const token = useToken();
 
-  const getData = async (page: number, sortBy: string, order: "asc" | "desc") => {
+  const getData = async (
+    page: number,
+    sortBy: string,
+    order: "asc" | "desc"
+  ) => {
     if (!token) return;
     try {
-      const result: IApiResponse = await fetchAttendanceHistory(token, page, sortBy, order);
+      const result: IApiResponse = await fetchAttendanceHistory(
+        token,
+        page,
+        sortBy,
+        order
+      );
 
       setAttendanceData(result.data);
       setTotalPages(result.pagination.totalPages);
@@ -74,10 +83,22 @@ export default function Attendance() {
             <WorkerAttendance token={token!} />
           </div>
           <div className="flex  flex-col max-md:gap-2 lg:gap-5 lg:flex-row justify-between mx-10">
-            <h1 className="text-blue-500 text-2xl font-bold">Your Attendance Log: </h1>
+            <h1 className="text-blue-500 text-2xl font-bold">
+              Your Attendance Log:{" "}
+            </h1>
             <div className="flex gap-2">
-              <SortButton sortBy="workHour" label="Sort By Work Hour" order={order.workHour} onSort={handleSort} />
-              <SortButton sortBy="createdAt" label="Sort By Date" order={order.createdAt} onSort={handleSort} />
+              <SortButton
+                sortBy="workHour"
+                label="Sort By Work Hour"
+                order={order.workHour}
+                onSort={handleSort}
+              />
+              <SortButton
+                sortBy="createdAt"
+                label="Sort By Date"
+                order={order.createdAt}
+                onSort={handleSort}
+              />
             </div>
           </div>
           {loading ? (
@@ -91,9 +112,21 @@ export default function Attendance() {
           ) : (
             <div className="w-full lg:px-10 px-5">
               {attendanceData.map((data: IAttendance, index: number) => (
-                <Table key={index} date={data.createdAt} checkIn={new Date(data.checkIn)} checkOut={data.checkOut == null ? null : new Date(data.checkOut)} workHour={data.workHour} />
+                <Table
+                  key={index}
+                  date={data.createdAt}
+                  checkIn={new Date(data.checkIn)}
+                  checkOut={
+                    data.checkOut == null ? null : new Date(data.checkOut)
+                  }
+                  workHour={data.workHour}
+                />
               ))}
-              <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+              />
             </div>
           )}
         </div>

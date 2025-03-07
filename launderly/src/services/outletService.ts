@@ -15,10 +15,9 @@ export const getOutletById = async (id: number): Promise<OutletById> => {
   try {
     const response = await api.get<OutletById>(`/outlet/${id}`);
     return response.data;
-  } catch (error: any) {
+  } catch (error) {
     console.error(
       "Failed to fetch outlet:",
-      error.response?.data || error.message
     );
     throw Error("Failed to fetch outlet details");
   }
@@ -33,10 +32,9 @@ export const createOutlet = async (outletData: {
   try {
     const response = await api.patch<OutletById>("/outlet/", outletData);
     return response.data;
-  } catch (error: any) {
+  } catch (error) {
     console.error(
       "Failed to create outlet:",
-      error.response?.data || error.message
     );
     throw Error("Failed to create outlet");
   }
@@ -56,8 +54,8 @@ export const updateOutlet = async (outletData: {
     console.log("Data yang dikirim ke backend:", response.data);
 
     return response.data;
-  } catch (error: any) {
-    console.error("Failed to update outlet:", error.response?.data || error.message);
+  } catch (error) {
+    console.error("Failed to update outlet:");
     throw new Error("Failed to update outlet");
   }
 };

@@ -24,7 +24,11 @@ export default function Navbar() {
 
   const worker = user as IUser;
   const navItems = [
-    { name: "Attendance", path: `/attendance`, icon: <CalendarCheck size={20} /> },
+    {
+      name: "Attendance",
+      path: `/attendance`,
+      icon: <CalendarCheck size={20} />,
+    },
     { name: "Notifications", path: `/notifications`, icon: <Bell size={20} /> },
     { name: "Requests", path: `/requests`, icon: <FileText size={20} /> },
     { name: "History", path: `/history`, icon: <FolderClock size={20} /> },
@@ -36,23 +40,41 @@ export default function Navbar() {
 
   const handleMarkAsRead = async (notificationId: number) => {
     try {
-      const response = await fetch(`${BASE_URL}/notification/?notificationId=${notificationId}`, {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await fetch(
+        `${BASE_URL}/notification/?notificationId=${notificationId}`,
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (!response.ok) {
-        throw new Error("Failed to mark notification as read");
+        const errorData = await response.json();
+        throw new Error(
+          errorData.message || "Failed to mark notification as read"
+        );
       }
 
-      setNotifications((prevNotifications) => prevNotifications.map((notification) => (notification.id === notificationId ? { ...notification, isRead: true } : notification)));
+      setNotifications((prevNotifications) =>
+        prevNotifications.map((notification) =>
+          notification.id === notificationId
+            ? { ...notification, isRead: true }
+            : notification
+        )
+      );
 
-      setUnreadCount((prevCount) => prevCount - 1);
-    } catch (err: any) {
-      toast.error("Fetch failed: " + err);
+      setUnreadCount((prevCount) => Math.max(prevCount - 1, 0));
+    } catch (err: unknown) {
+      console.error("Failed to mark notification as read:", err);
+
+      if (err instanceof Error) {
+        toast.error(err.message);
+      } else {
+        toast.error("An unexpected error occurred.");
+      }
     }
   };
 
@@ -70,7 +92,12 @@ export default function Navbar() {
         throw new Error("Failed to mark all notifications as read");
       }
 
-      setNotifications((prevNotifications) => prevNotifications.map((notification) => ({ ...notification, isRead: true })));
+      setNotifications((prevNotifications) =>
+        prevNotifications.map((notification) => ({
+          ...notification,
+          isRead: true,
+        }))
+      );
 
       setUnreadCount(0);
 
@@ -85,7 +112,10 @@ export default function Navbar() {
       try {
         const res = await fetch(`${BASE_URL}/notification/`, {
           method: "GET",
-          headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         });
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
@@ -105,7 +135,10 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+      if (
+        modalRef.current &&
+        !modalRef.current.contains(event.target as Node)
+      ) {
         setIsNotificationOpen(false);
       }
     };
@@ -131,12 +164,20 @@ export default function Navbar() {
                         router.push(item.path);
                       }
                 }
-                className={`p-2 rounded-lg ${pathname === item.path ? "bg-[#1678F2] text-white" : "text-[#1678F2] hover:bg-blue-100"} cursor-pointer`}
+                className={`p-2 rounded-lg ${
+                  pathname === item.path
+                    ? "bg-[#1678F2] text-white"
+                    : "text-[#1678F2] hover:bg-blue-100"
+                } cursor-pointer`}
               >
                 {item.name === "Notifications" ? (
                   <div className="relative">
                     {item.icon}
-                    {unreadCount > 0 && <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5">{unreadCount}</span>}
+                    {unreadCount > 0 && (
+                      <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5">
+                        {unreadCount}
+                      </span>
+                    )}
                   </div>
                 ) : (
                   item.icon
@@ -144,13 +185,25 @@ export default function Navbar() {
               </div>
             ))}
             <Link href="/profile">
-            <Image src={worker?.avatar || "/user.png"} alt="Profile" width={32} height={32} className="rounded-full" />
+              <Image
+                src={worker?.avatar || "/user.png"}
+                alt="Profile"
+                width={32}
+                height={32}
+                className="rounded-full"
+              />
             </Link>
           </div>
         </div>
       </div>
 
-      <NotificationModal isOpen={isNotificationOpen} onClose={() => setIsNotificationOpen(false)} notifications={notifications} onMarkAsRead={handleMarkAsRead} onMarkAllAsRead={handleMarkAllAsRead} />
+      <NotificationModal
+        isOpen={isNotificationOpen}
+        onClose={() => setIsNotificationOpen(false)}
+        notifications={notifications}
+        onMarkAsRead={handleMarkAsRead}
+        onMarkAllAsRead={handleMarkAllAsRead}
+      />
     </>
   );
 }

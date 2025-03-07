@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import CreateRequestOrderDialog from "../_components/CreateRequestOrder";
-import { getUserRequestOrder } from "@/api/order";
+import { getUserRequestOrder } from "@/app/api/order";
 import { PickupStatus } from "@/types/request";
 import {
   Table,

@@ -89,7 +89,7 @@ const Login = () => {
                     name="email"
                     type="text"
                     placeholder="Enter your email"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className="w-full px-4 py-2 border text-white bg-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   />
                   <ErrorMessage
                     name="email"
@@ -109,7 +109,7 @@ const Login = () => {
                     name="password"
                     type="password"
                     placeholder="Enter your password"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className="w-full px-4 py-2 border text-white bg-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   />
                   <ErrorMessage
                     name="password"

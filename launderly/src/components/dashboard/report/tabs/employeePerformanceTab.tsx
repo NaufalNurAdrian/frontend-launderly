@@ -7,7 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { BarChart } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import {
   Table,
   TableHeader,
@@ -218,8 +218,9 @@ const EmployeePerformanceTab: React.FC<EmployeePerformanceTabProps> = ({
                   <CardTitle>Top Performers</CardTitle>
                 </CardHeader>
                 <CardContent className="pt-6">
-                  <div className="h-80">
+                  <ResponsiveContainer width="100%" height={300}>
                     <BarChart
+                      layout="horizontal"
                       data={employeePerformanceData
                         .sort((a, b) => b.taskCompleted - a.taskCompleted)
                         .slice(0, 5)
@@ -227,13 +228,27 @@ const EmployeePerformanceTab: React.FC<EmployeePerformanceTabProps> = ({
                           name: emp.fullName,
                           tasks: emp.taskCompleted
                         }))}
-                      index="name"
-                      categories={["tasks"]}
-                      colors={["blue"]}
-                      layout="vertical"
-                      valueFormatter={(value: number) => value.toString()}
-                    />
-                  </div>
+                    >
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" />
+                      <YAxis 
+                        tickFormatter={(value) => 
+                          typeof value === 'number' 
+                            ? value.toString() 
+                            : String(value)
+                        } 
+                      />
+                      <Tooltip 
+                        formatter={(value) => [
+                          typeof value === 'number' 
+                            ? value.toString() 
+                            : value, 
+                          'Tasks'
+                        ]} 
+                      />
+                      <Bar dataKey="tasks" fill="#3B82F6" />
+                    </BarChart>
+                  </ResponsiveContainer>
                 </CardContent>
               </Card>
 
@@ -263,15 +278,27 @@ const EmployeePerformanceTab: React.FC<EmployeePerformanceTabProps> = ({
                     }));
                     
                     return (
-                      <div className="h-80">
-                        <BarChart
+                      <ResponsiveContainer width="100%" height={300}>
+                        <BarChart 
+                          layout="horizontal"
                           data={shiftData}
-                          index="shift"
-                          categories={["average"]}
-                          colors={["teal"]}
-                          valueFormatter={(value: number) => value.toFixed(1)}
-                        />
-                      </div>
+                        >
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="shift" />
+                          <YAxis 
+                            tickFormatter={(value) => value.toFixed(1)} 
+                          />
+                          <Tooltip 
+                            formatter={(value) => [
+                              typeof value === 'number' 
+                                ? value.toFixed(1) 
+                                : value, 
+                              'Avg Tasks'
+                            ]} 
+                          />
+                          <Bar dataKey="average" fill="#14B8A6" />
+                        </BarChart>
+                      </ResponsiveContainer>
                     );
                   })()}
                 </CardContent>

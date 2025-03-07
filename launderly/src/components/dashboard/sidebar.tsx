@@ -7,6 +7,7 @@ import useSession from "@/hooks/useSession";
 import { IUser } from "@/types/user";
 import { useRouter } from "next/navigation";
 import { deleteCookie } from "@/libs/action";
+import { toTitleCase } from "@/helpers/toTitleCase";
 
 interface SidebarProps {
   currentPath?: string;
@@ -96,10 +97,10 @@ function Sidebar({ currentPath }: SidebarProps) {
           </div>
           <div className="flex-col hidden md:block">
             <div className="text-base font-normal text-white">
-              {customer.fullName}
+              {toTitleCase(customer.fullName)}
             </div>
             <div className="text-base font-normal text-white">
-              {customer.role}
+              {toTitleCase(customer.role)}
             </div>
           </div>
         </div>

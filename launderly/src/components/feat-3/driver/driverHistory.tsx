@@ -15,7 +15,6 @@ function roundDistance(distance: number): number {
   return Math.round(distance * 10) / 10;
 }
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL_BE;
 export default function HistoryTable() {
   const token = useToken();
   const [loading, setLoading] = useState(true);

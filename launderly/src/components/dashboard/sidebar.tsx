@@ -58,7 +58,8 @@ function Sidebar({ currentPath }: SidebarProps) {
       return [
         ...baseItems,
         { href: "/dashboard/order", icon: "/Shopping Trolley.svg", label: "Orders" },
-        { href: "/dashboard/bypass", icon: "/Settings.svg", label: "Bypass" }
+        { href: "/dashboard/bypass", icon: "/Settings.svg", label: "Bypass" },
+        { href: "/dashboard/attendance", icon: "/Attendance.svg", label: "Attendance" }
       ];
     }
 
@@ -77,6 +78,7 @@ function Sidebar({ currentPath }: SidebarProps) {
           const active = isActive(item.href);
           
           return (
+            
             <Link 
               key={item.href} 
               href={item.href}

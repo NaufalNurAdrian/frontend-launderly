@@ -17,10 +17,10 @@ export default function FilterTabs({ onFilterChange, option1, option2 }: FilterT
   };
 
   const options = [
-    { label: "All", value: "" },
-    { label: option1, value: option1 },
+    { label: "all", value: "" },
+    { label: option1.toLowerCase(), value: option1 },
   ];
-  if (option2) options.push({ label: option2, value: option2 });
+  if (option2) options.push({ label: option2.toLowerCase(), value: option2 });
 
   return (
     <div className="relative w-full flex justify-center border-b border-gray-300">

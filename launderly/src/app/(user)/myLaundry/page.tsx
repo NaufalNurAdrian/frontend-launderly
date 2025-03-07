@@ -1,6 +1,7 @@
 import CustomerSidebar from "@/components/ui/sidebar";
 import RequestOrderPage from "./_components/TableRequestOrde";
 import OrderPage from "./_components/TableOrder";
+import AttendanceReportTableForOutlet from "@/components/feat-3/attendance/attendanceReportTable";
 
 export default function TablePage() {
   return (
@@ -9,6 +10,7 @@ export default function TablePage() {
       <div className="flex-1 p-4 md:p-8 flex flex-col gap-6">
         <RequestOrderPage />
         <OrderPage />
+        <AttendanceReportTableForOutlet/>
       </div>
     </main>
   );

@@ -66,8 +66,9 @@ export default function AttendanceReportTableForOutlet() {
   }, [sortBy, order, currentPage, token, filter]);
 
   return (
-    <div className="flex flex-col justify-center z-0 bg-white shadow-md w-full lg:w-[1200px] rounded-lg p-5 my-4">
-      <div className="flex max-sm:flex-col justify-end gap-3 mb-4">
+    <div className="flex flex-col justify-center z-0 bg-white shadow-md w-full lg:w-[1200px] rounded-lg p-5 mb-4">
+      <h1 className="text-2xl md:text-3xl font-bold text-blue-800">Attendance Report</h1>
+      <div className="flex max-sm:flex-col justify-end mb-4">
         <span className="flex gap-3 justify-center">
           <SortButton sortBy="createdAt" label="Sort By Date" order={order.createdAt} onSort={handleSort} />
           <SortButton sortBy="workHour" label="Sort By Work Hour" order={order.workHour} onSort={handleSort} />
@@ -84,9 +85,10 @@ export default function AttendanceReportTableForOutlet() {
           <thead className="text-center bg-[#BFDFFF] text-blue-900 font-medium">
             <tr className="text-blue-900 bg-blue-300">
               <th className="py-2 px-4 border-b border-blue-300">Employee Name</th>
+              <th className="py-2 px-4 border-b border-blue-300">Role</th>
               <th className="py-2 px-4 border-b border-blue-300">Date</th>
               <th className="py-2 px-4 border-b border-blue-300">Clock in time</th>
-              <th className="py-2 px-4 border-b border-blue-300">Clock in time</th>
+              <th className="py-2 px-4 border-b border-blue-300">Clock out time</th>
               <th className="py-2 px-4 border-b border-blue-300">Workhour</th>
             </tr>
           </thead>
@@ -95,9 +97,12 @@ export default function AttendanceReportTableForOutlet() {
               report.map((report: IAttendance) => (
                 <tr key={report.id} className="hover:bg-blue-50 transition-colors border-b border-blue-200">
                   <td className="py-2 px-4">{report.user.fullName}</td>
+                  <td className="py-2 px-4">
+                    <span className="bg-blue-100 text-blue-700 text-xs font-medium px-2 py-1 rounded-full">{report.user.role}</span>
+                  </td>
                   <td className="py-2 px-4">{formatDate(report.createdAt)}</td>
                   <td className="py-2 px-4">{formatTime(new Date(report.checkIn))}</td>
-                  <td className="py-2 px-4">{formatTime(new Date(report.checkOut))}</td>
+                  <td className="py-2 px-4">{report.checkOut? formatTime(new Date(report.checkOut)) : "-"}</td>
                   <td className="py-2 px-4">{report.workHour}</td>
                 </tr>
               ))

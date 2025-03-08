@@ -23,30 +23,17 @@ export default function OrderMobileHistoryTable() {
   });
   const token = useToken();
 
-  const fetchRequests = async (
-    page: number,
-    sortBy: string,
-    order: "asc" | "desc"
-  ) => {
+  const fetchRequests = async (page: number, sortBy: string, order: "asc" | "desc") => {
     if (!token) return;
     try {
       const pageSize = 5;
       setLoading(true);
-      const result = await getWorkerHistory(
-        token,
-        page,
-        sortBy,
-        order,
-        pageSize
-      );
+      const result = await getWorkerHistory(token, page, sortBy, order, pageSize);
       setRequests(result.data);
       setTotalPages(result.pagination.totalPages);
       setCurrentPage(result.pagination.page);
-    } catch (err) {
-      toast.error(
-        "Fetch failed: " +
-          (err instanceof Error ? err.message : "Unknown error")
-      );
+    } catch (err: any) {
+      toast.error("Fetch failed: " + (err instanceof Error ? err.message : "Unknown error"));
     } finally {
       setLoading(false);
     }
@@ -74,18 +61,8 @@ export default function OrderMobileHistoryTable() {
     <div className="p-4">
       <div className="flex flex-col gap-3 mb-4">
         <span className="flex justify-between gap-3 mx-2">
-          <SortButton
-            sortBy="distance"
-            label="Sort By Distance"
-            order={order.distance}
-            onSort={handleSort}
-          />
-          <SortButton
-            sortBy="createdAt"
-            label="Sort By Date"
-            order={order.createdAt}
-            onSort={handleSort}
-          />
+          <SortButton sortBy="distance" label="Sort By Distance" order={order.distance} onSort={handleSort} />
+          <SortButton sortBy="createdAt" label="Sort By Date" order={order.createdAt} onSort={handleSort} />
         </span>
       </div>
 
@@ -100,28 +77,20 @@ export default function OrderMobileHistoryTable() {
           </div>
         ) : (
           requests.map((request) => (
-            <div
-              key={request.id}
-              className="flex bg-white w-full justify-between h-[100px] border-2 p-4 py-2 rounded-lg shadow-sm"
-            >
+            <div key={request.id} className="flex bg-white w-full justify-between h-[100px] border-2 p-4 py-2 rounded-lg shadow-sm">
               <div className="flex flex-col">
                 <p className="text-sm text-blue-600 bg-blue-300 px-2 rounded-full">
-                  {formatDate(request.updatedAt)} :{" "}
-                  {formatTime(new Date(request.updatedAt))}
+                  {formatDate(request.updatedAt)} : {formatTime(new Date(request.updatedAt))}
                 </p>
                 <div className="mt-1">
-                  <h1 className="text-lg text-blue-500 font-bold">
-                    {request.orderNumber}
-                  </h1>
+                  <h1 className="text-lg text-blue-500 font-bold">{request.orderNumber}</h1>
                   <h1 className="text-sm">{request.weight} kg</h1>
                 </div>
               </div>
 
               <div className="flex flex-col justify-center items-center">
                 <h1 className="font-medium text-sm">income: </h1>
-                <h1 className="font-semibold text-sm text-blue-400">
-                  {request.laundryPrice}
-                </h1>
+                <h1 className="font-semibold text-sm text-blue-400">{request.laundryPrice}</h1>
               </div>
             </div>
           ))
@@ -129,11 +98,7 @@ export default function OrderMobileHistoryTable() {
       </div>
 
       <div className="mt-4">
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
+        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
       </div>
     </div>
   );

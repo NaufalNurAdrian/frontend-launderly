@@ -10,8 +10,8 @@ export async function getWorkerHistory(token: string, page: number, sortBy: stri
     });
     return res.data;
   } catch (error: any) {
-    toast.error("Fetch failed: " + error.message);
-    throw error;
+    const errorMessage = error.response?.data?.message || "Failed to fetch";
+    toast.error(errorMessage);
   }
 }
 
@@ -22,8 +22,8 @@ export async function getWorkerRequests(page: number, sortBy: string, order: "as
     });
     return res.data;
   } catch (error: any) {
-    toast.error("Fetch failed: " + error.message);
-    throw error;
+    const errorMessage = error.response?.data?.message || "Failed to fetch";
+    toast.error(errorMessage);
   }
 }
 
@@ -32,8 +32,8 @@ export async function getWorkerRequest(orderId: any) {
     const res = await axios.get(`${BASE_URL}/order/orders/${orderId}`);
     return res.data;
   } catch (error: any) {
-    toast.error("Fetch failed: " + error.message);
-    throw error;
+    const errorMessage = error.response?.data?.message || "Failed to fetch";
+    toast.error(errorMessage);
   }
 }
 
@@ -48,8 +48,7 @@ export async function bypassRequest(token: string, notes: string, orderId: any) 
     );
     return res.data;
   } catch (error: any) {
-    toast.error("Bypass request failed: " + error.message);
-    throw error;
+    const errorMessage = error.response?.data?.message || "Failed to send Bypass Request";
+    toast.error(errorMessage);
   }
 }
-

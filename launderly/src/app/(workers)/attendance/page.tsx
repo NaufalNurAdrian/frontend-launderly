@@ -43,8 +43,8 @@ export default function Attendance() {
       setAttendanceData(result.data);
       setTotalPages(result.pagination.totalPages);
       setCurrentPage(result.pagination.page);
-    } catch (err) {
-      toast.error("Fetch failed: " + err);
+    } catch (err: any) {
+      toast.error("Fetch failed: " + err.message);
     } finally {
       setLoading(false);
     }
@@ -110,7 +110,7 @@ export default function Attendance() {
               <NotFound text="No attendance data found." />
             </div>
           ) : (
-            <div className="w-full lg:px-10 px-5">
+            <div className="w-full lg:px-10 px-5 max-sm:mb-5">
               {attendanceData.map((data: IAttendance, index: number) => (
                 <Table
                   key={index}

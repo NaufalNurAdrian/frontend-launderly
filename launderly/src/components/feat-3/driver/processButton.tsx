@@ -13,13 +13,7 @@ interface RequestButtonProps {
   updateRequestStatus: (requestId: number, newStatus: string) => void;
 }
 
-export default function RequestButton({
-  status,
-  onSuccess,
-  type,
-  requestId,
-  updateRequestStatus,
-}: RequestButtonProps) {
+export default function RequestButton({ status, onSuccess, type, requestId, updateRequestStatus }: RequestButtonProps) {
   const [loading, setLoading] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -33,10 +27,7 @@ export default function RequestButton({
     try {
       const response = await processDriverOrder(token, requestId, type);
       toast.success(`${type === "delivery" ? "Delivery" : "Pickup"} proceed`);
-      const newStatus =
-        type === "pickup"
-          ? getNextPickupStatus(status)
-          : getNextDeliveryStatus(status);
+      const newStatus = type === "pickup" ? getNextPickupStatus(status) : getNextDeliveryStatus(status);
       updateRequestStatus(requestId, newStatus);
       onSuccess();
     } catch (error: any) {
@@ -108,11 +99,7 @@ export default function RequestButton({
       <button
         onClick={handleRequest}
         disabled={loading || isProcessing}
-        className={`px-4 py-2 w-full rounded-lg ${
-          loading || isProcessing
-            ? "bg-gradient-to-r from-blue-300 to-green-400 animate-gradient cursor-not-allowed"
-            : getButtonStyle()
-        } text-white`}
+        className={`px-4 py-2 w-full rounded-lg ${loading || isProcessing ? "bg-gradient-to-r from-blue-300 to-green-400 animate-gradient cursor-not-allowed" : getButtonStyle()} text-white`}
       >
         {loading ? "Processing..." : getButtonText()}
       </button>

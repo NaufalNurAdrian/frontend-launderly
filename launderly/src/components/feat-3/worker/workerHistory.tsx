@@ -22,28 +22,17 @@ export default function OrderHistoryTable() {
   });
   const token = useToken();
 
-  const fetchHistory = async (
-    token: string,
-    page: number,
-    sortBy: string,
-    order: "asc" | "desc"
-  ) => {
+  const fetchHistory = async (token: string, page: number, sortBy: string, order: "asc" | "desc") => {
     if (!token) return;
     try {
       const pageSize = 7;
       setLoading(true);
-      const result = await getWorkerHistory(
-        token,
-        page,
-        sortBy,
-        order,
-        pageSize
-      );
+      const result = await getWorkerHistory(token, page, sortBy, order, pageSize);
       setRequests(result.data);
       setTotalPages(result.pagination.totalPages);
       setCurrentPage(result.pagination.page);
-    } catch (err) {
-      toast.error("Fetch failed: " + err);
+    } catch (err: any) {
+      toast.error("Fetch failed: " + err.message);
     } finally {
       setLoading(false);
     }
@@ -70,46 +59,27 @@ export default function OrderHistoryTable() {
   return (
     <div className="flex flex-col justify-center z-0 bg-white shadow-md w-full lg:w-[1200px] rounded-lg p-5 my-4">
       <div className="flex justify-end gap-3 mb-4">
-        <SortButton
-          sortBy="weight"
-          label="Sort By Weight"
-          order={order.weight}
-          onSort={handleSort}
-        />
-        <SortButton
-          sortBy="createdAt"
-          label="Sort By Date"
-          order={order.createdAt}
-          onSort={handleSort}
-        />
+        <SortButton sortBy="weight" label="Sort By Weight" order={order.weight} onSort={handleSort} />
+        <SortButton sortBy="createdAt" label="Sort By Date" order={order.createdAt} onSort={handleSort} />
       </div>
       <div className="w-full bg-white z-10 relative border border-blue-200 rounded-md">
         <table className="table-auto w-full text-sm text-blue-900">
           <thead className="text-center bg-[#BFDFFF] text-blue-900 font-medium">
             <tr className="text-blue-900 bg-blue-300">
-              <th className="py-2 px-4 border-b border-blue-300">
-                Order Number
-              </th>
+              <th className="py-2 px-4 border-b border-blue-300">Order Number</th>
               <th className="py-2 px-4 border-b border-blue-300">Date</th>
               <th className="py-2 px-4 border-b border-blue-300">Time</th>
-              <th className="py-2 px-4 border-b border-blue-300">
-                Weight (kg)
-              </th>
+              <th className="py-2 px-4 border-b border-blue-300">Weight (kg)</th>
               <th className="py-2 px-4 border-b border-blue-300">Income</th>
             </tr>
           </thead>
           <tbody className="text-center">
             {requests.length > 0 ? (
               requests.map((request: IOrder) => (
-                <tr
-                  key={request.id}
-                  className="hover:bg-blue-50 transition-colors border-b border-blue-200"
-                >
+                <tr key={request.id} className="hover:bg-blue-50 transition-colors border-b border-blue-200">
                   <td className="py-2 px-4">{request.orderNumber}</td>
                   <td className="py-2 px-4">{formatDate(request.createdAt)}</td>
-                  <td className="py-2 px-4">
-                    {formatTime(new Date(request.updatedAt))}
-                  </td>
+                  <td className="py-2 px-4">{formatTime(new Date(request.updatedAt))}</td>
                   <td className="py-2 px-4">{request.weight}</td>
                   <td className="py-2 px-4">{request.laundryPrice}</td>
                 </tr>
@@ -127,11 +97,7 @@ export default function OrderHistoryTable() {
         </table>
       </div>
       <div className="mt-auto">
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
+        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
       </div>
     </div>
   );

@@ -10,21 +10,24 @@ export async function getDriverHistory(token: string, page: number, sortBy: stri
     });
     return res.data;
   } catch (error: any) {
-    toast.error("Fetch failed: " + error.message);
-    throw error;
+    const errorMessage = error.response?.data?.message || "Failed to fetch";
+    toast.error(errorMessage);
   }
 }
 
 export async function processDriverOrder(token: string, requestId: number, type: "pickup" | "delivery") {
   try {
-    const res = await axios.patch(`${BASE_URL}/request`,
-      { requestId: requestId, type: type}, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const res = await axios.patch(
+      `${BASE_URL}/request`,
+      { requestId: requestId, type: type },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
     return res.data;
   } catch (error: any) {
-    toast.error("Process failed: " + error.message);
-    throw error;
+    const errorMessage = error.response?.data?.message || "Failed to fetch";
+    toast.error(errorMessage);
   }
 }
 
@@ -35,7 +38,7 @@ export async function getDriverRequests(page: number, sortBy: string, order: "as
     });
     return res.data;
   } catch (error: any) {
-    toast.error("Fetch failed: " + error.message);
-    throw error;
+    const errorMessage = error.response?.data?.message || "Failed to fetch";
+    toast.error(errorMessage);
   }
 }

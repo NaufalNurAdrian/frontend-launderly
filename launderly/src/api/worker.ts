@@ -9,8 +9,8 @@ export async function getWorkerHistory(token: string, page: number, sortBy: stri
       headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
     });
     return res.data;
-  } catch (error) {
-    toast.error("Fetch failed: " + error);
+  } catch (error: any) {
+    toast.error("Fetch failed: " + error.message);
     throw error;
   }
 }
@@ -21,8 +21,8 @@ export async function getWorkerRequests(page: number, sortBy: string, order: "as
       headers: { Authorization: `Bearer ${token}` },
     });
     return res.data;
-  } catch (error) {
-    toast.error("Fetch failed: " + error);
+  } catch (error: any) {
+    toast.error("Fetch failed: " + error.message);
     throw error;
   }
 }
@@ -31,8 +31,8 @@ export async function getWorkerRequest(orderId: any) {
   try {
     const res = await axios.get(`${BASE_URL}/order/orders/${orderId}`);
     return res.data;
-  } catch (error) {
-    toast.error("Fetch failed: " + error);
+  } catch (error: any) {
+    toast.error("Fetch failed: " + error.message);
     throw error;
   }
 }
@@ -47,8 +47,8 @@ export async function bypassRequest(token: string, notes: string, orderId: any) 
       }
     );
     return res.data;
-  } catch (error) {
-    toast.error("Bypass request failed: " + error);
+  } catch (error: any) {
+    toast.error("Bypass request failed: " + error.message);
     throw error;
   }
 }

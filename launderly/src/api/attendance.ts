@@ -9,8 +9,8 @@ export async function fetchAttendanceHistory(token: string, page: number, sortBy
       headers: { Authorization: `Bearer ${token}` },
     });
     return res.data;
-  } catch (error) {
-    toast.error("Fetch failed: " + error);
+  } catch (error : any) {
+    toast.error("Fetch failed: " + error.message);
     throw error;
   }
 }
@@ -21,8 +21,8 @@ export async function fetchAllAttendanceHistory(token: string, page: number, sor
       headers: { Authorization: `Bearer ${token}` },
     });
     return res.data;
-  } catch (error) {
-    toast.error("Fetch failed: " + error);
+  } catch (error : any) {
+    toast.error("Fetch failed: " + error.message);
     throw error;
   }
 }

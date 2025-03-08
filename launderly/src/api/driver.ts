@@ -1,5 +1,4 @@
 import axios from "axios";
-import { request } from "http";
 import toast from "react-hot-toast";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL_BE;
@@ -10,8 +9,8 @@ export async function getDriverHistory(token: string, page: number, sortBy: stri
       headers: { Authorization: `Bearer ${token}` },
     });
     return res.data;
-  } catch (error) {
-    toast.error("Fetch failed: " + error);
+  } catch (error: any) {
+    toast.error("Fetch failed: " + error.message);
     throw error;
   }
 }
@@ -23,8 +22,8 @@ export async function processDriverOrder(token: string, requestId: number, type:
       headers: { Authorization: `Bearer ${token}` },
     });
     return res.data;
-  } catch (error) {
-    toast.error("Process failed: " + error);
+  } catch (error: any) {
+    toast.error("Process failed: " + error.message);
     throw error;
   }
 }
@@ -35,8 +34,8 @@ export async function getDriverRequests(page: number, sortBy: string, order: "as
       headers: { Authorization: `Bearer ${token}` },
     });
     return res.data;
-  } catch (error) {
-    toast.error("Fetch failed: " + error);
+  } catch (error: any) {
+    toast.error("Fetch failed: " + error.message);
     throw error;
   }
 }

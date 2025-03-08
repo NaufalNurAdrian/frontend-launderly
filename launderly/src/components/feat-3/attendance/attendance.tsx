@@ -29,13 +29,14 @@ export default function WorkerAttendance({ token }: { token: string }) {
         method: "POST",
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
       });
-     if(!res.ok){
-      toast.error("Failed to Clock-in");
-     }
+      if (!res.ok) {
+        const errorData = await res.json();
+        toast.error("Failed to Clock-in" + errorData);
+      }
       setAttendanceStatus("ACTIVE");
       toast.success("Clock-in successful! Let's work! Make sure to clock out before the shift ends");
-    } catch (error) {
-      toast.error("Failed to Clock-in" + error);
+    } catch (error: any) {
+      toast.error("Failed to Clock-in" + error.message);
     }
   };
 

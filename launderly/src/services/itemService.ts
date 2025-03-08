@@ -7,8 +7,8 @@ export const getItem = async (): Promise<ItemApiResponse> => {
   try {
     const response = await api.get<ItemApiResponse>(`/item`);
     return response.data;
-  } catch (error: any) {
-    console.error("Failed to fetch laundry item:", error.response?.data || error.message);
+  } catch (error) {
+    console.error("Failed to fetch laundry item:");
     throw Error("Failed to fetch laundry item");
   }
 };

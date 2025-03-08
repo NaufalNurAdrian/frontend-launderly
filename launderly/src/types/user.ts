@@ -14,4 +14,5 @@ export interface IUser {
 export interface IEmployee {
   station: string
   workShift: string
+  outletId: number
 }

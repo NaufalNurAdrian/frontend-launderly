@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useFormik } from "formik";
 import { ResetPasswordSchema } from "@/libs/schema";
-import { resetPassword } from "@/api/user";
+import { resetPassword } from "@/app/api/user";
 
 interface ResetPasswordFormProps {
   onClose: () => void;

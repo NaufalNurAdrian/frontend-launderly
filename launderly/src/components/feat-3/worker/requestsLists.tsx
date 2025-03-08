@@ -9,7 +9,7 @@ import Pagination from "../paginationButton";
 import { Shirt } from "lucide-react";
 import { IOrder } from "@/types/worker";
 import { useToken } from "@/hooks/useToken";
-import { getWorkerRequests } from "@/api/worker";
+import { getWorkerRequests } from "@/app/api/worker";
 import ProcessOrderModal from "./requestModal";
 
 export default function WorkerRequestLists() {
@@ -70,11 +70,23 @@ export default function WorkerRequestLists() {
   return (
     <div className="max-w-[500px] lg:w-[800px] mb-20 rounded-xl bg-white shadow-md py-3 px-4 lg:px-8 min-h-[30rem] flex flex-col items-center ">
       <div className="max-w-[500px] lg:flex lg:flex-col lg:w-[600px] lg:px-10">
-        <h2 className="text-xl lg:text-2xl font-bold text-blue-500 mb-2 my-2 text-center lg:text-left">Order Requests</h2>
+        <h2 className="text-xl lg:text-2xl font-bold text-blue-500 mb-2 my-2 text-center lg:text-left">
+          Order Requests
+        </h2>
 
         <div className="flex justify-between gap-3 mb-2">
-          <SortButton sortBy="createdAt" label="Sort By Date" order={order.createdAt} onSort={handleSort} />
-          <SortButton sortBy="weight" label="Sort By Weight" order={order.weight} onSort={handleSort} />
+          <SortButton
+            sortBy="createdAt"
+            label="Sort By Date"
+            order={order.createdAt}
+            onSort={handleSort}
+          />
+          <SortButton
+            sortBy="weight"
+            label="Sort By Weight"
+            order={order.weight}
+            onSort={handleSort}
+          />
         </div>
       </div>
       <div className="grid grid-cols-1 gap-4 w-full">
@@ -89,18 +101,32 @@ export default function WorkerRequestLists() {
         ) : (
           <div className="space-y-4">
             {requests.map((request: IOrder) => (
-              <div key={request.id} className="bg-blue-400/30 w-full px-4 lg:px-6 py-3 rounded-xl border border-blue-600">
-                <p className="text-blue-500 font-bold text-lg lg:text-xl">{request.pickupOrder.user.fullName || "Unknown User"}</p>
+              <div
+                key={request.id}
+                className="bg-blue-400/30 w-full px-4 lg:px-6 py-3 rounded-xl border border-blue-600"
+              >
+                <p className="text-blue-500 font-bold text-lg lg:text-xl">
+                  {request.pickupOrder.user.fullName || "Unknown User"}
+                </p>
                 <div>
-                  <p className="text-blue-600 text-sm lg:text-md">{request.orderNumber}</p>
+                  <p className="text-blue-600 text-sm lg:text-md">
+                    {request.orderNumber}
+                  </p>
                 </div>
-                <p className="text-xs lg:text-sm text-gray-500">Requested {calculateTimeDifference(request.createdAt)}</p>
+                <p className="text-xs lg:text-sm text-gray-500">
+                  Requested {calculateTimeDifference(request.createdAt)}
+                </p>
                 <div className="flex items-center mt-2">
                   <Shirt size={16} className="text-blue-500" />
-                  <span className="ml-2 text-sm lg:text-md">{request.weight || "Unknown Weight"} Kg</span>
+                  <span className="ml-2 text-sm lg:text-md">
+                    {request.weight || "Unknown Weight"} Kg
+                  </span>
                 </div>
                 <div className="lg:mt-3 mt-1">
-                  <button onClick={() => openProcessModal(request)} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
+                  <button
+                    onClick={() => openProcessModal(request)}
+                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
+                  >
                     Process Request
                   </button>
                 </div>
@@ -111,7 +137,11 @@ export default function WorkerRequestLists() {
       </div>
 
       <div className=" w-full flex justify-center mt-auto">
-        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
       </div>
       {selectedOrder && (
         <ProcessOrderModal

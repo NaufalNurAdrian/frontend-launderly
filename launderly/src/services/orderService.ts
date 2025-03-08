@@ -48,10 +48,9 @@ export const createOrder = async (orderData: CreateOrderData): Promise<Order> =>
   try {
     const response = await api.post<Order>(`/orders/create`, orderData);
     return response.data;
-  } catch (error: any) {
+  } catch (error) {
     console.error(
       "Failed to create order:",
-      error.response?.data || error.message
     );
     throw Error("Failed to create order");
   }
@@ -61,9 +60,9 @@ export const bypassOrder = async (data: { orderWorkerId: number; action: string 
   try {
     const response = await api.post(`/orders/bypass`, data);
     return response.data;
-  } catch (error: any) {
-    console.error("Bypass order error:", error.response?.data || error.message);
-    throw new Error(error.response?.data?.message || "Failed to bypass order");
+  } catch (error) {
+    console.error("Bypass order error:");
+    throw new Error("Failed to bypass order");
   }
 };
 

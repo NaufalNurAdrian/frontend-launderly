@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import useSession from "@/hooks/useSession";
-import { getUserOrders } from "@/api/order";
-import { confirmOrder } from "@/api/user";
+import { getUserOrders } from "@/app/api/order";
+import { confirmOrder } from "@/app/api/user";
 import { toTitleCase } from "@/helpers/toTitleCase";
 import PayButton from "@/components/feat-1/payButton";
 import { toast } from "react-toastify";
@@ -40,7 +40,9 @@ const OrderPage = () => {
     setError(null);
     try {
       const response = await getUserOrders(user?.id!);
-      const sortedOrders = (response.data || []).sort((a: { id: number; }, b: { id: number; }) => a.id - b.id);
+      const sortedOrders = (response.data || []).sort(
+        (a: { id: number }, b: { id: number }) => a.id - b.id
+      );
       setOrders(sortedOrders);
     } catch (err) {
       setError("Failed to fetch orders. Please try again later.");
@@ -48,7 +50,6 @@ const OrderPage = () => {
       setLoading(false);
     }
   };
-  
 
   useEffect(() => {
     fetchUserOrders();

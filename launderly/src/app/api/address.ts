@@ -7,7 +7,10 @@ import { toast } from "react-toastify";
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL_BE;
 
 function getToken() {
-  const token = localStorage.getItem("token");
+  if (typeof window === "undefined") {
+    return null; // Mencegah error saat SSR
+  }
+  const token = window.localStorage.getItem("token");
   if (!token) {
     toast.error("No token found. Please log in again.");
     return null;
@@ -16,15 +19,21 @@ function getToken() {
 }
 
 export async function getUserAddresses() {
+  const token = getToken();
+  if (!token) return null; // Hentikan eksekusi jika token tidak ada
+
   try {
-    const token = getToken();
     const response = await axios.get(`${BASE_URL}/address/user`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
   } catch (error) {
-    console.error("Error Fetching address:", error);
-    throw error;
+    console.error("Error fetching address:", error);
+
+    // Menampilkan error ke user
+    toast.error("Failed to fetch addresses. Please try again.");
+
+    return null; // Mengembalikan null agar tidak crash
   }
 }
 

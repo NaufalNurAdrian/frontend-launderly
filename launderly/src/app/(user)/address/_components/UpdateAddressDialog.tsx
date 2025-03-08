@@ -1,3 +1,5 @@
+"use client"
+
 import React, { useState, useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
 import {
@@ -10,13 +12,27 @@ import {
 } from "@/components/feat-1/dialog";
 import { Button } from "@/components/feat-1/button";
 import { Input } from "@/components/feat-1/input";
-import { updateUserAddress } from "@/api/address";
+import { updateUserAddress } from "@/app/api/address";
 import { AddressSchema } from "@/libs/schema";
 import { toast } from "react-toastify";
-import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
+import { useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { customIcon } from "@/components/feat-1/customIcon";
 import { Edit2 } from "lucide-react";
+import dynamic from "next/dynamic";
+
+const MapContainer = dynamic(
+  () => import("react-leaflet").then((mod) => mod.MapContainer),
+  { ssr: false }
+);
+const TileLayer = dynamic(
+  () => import("react-leaflet").then((mod) => mod.TileLayer),
+  { ssr: false }
+);
+const Marker = dynamic(
+  () => import("react-leaflet").then((mod) => mod.Marker),
+  { ssr: false }
+);
 
 interface AddressFormValues {
   street: string;
@@ -36,7 +52,10 @@ interface UpdateAddressDialogProps {
   onAddressUpdated: () => void;
 }
 
-const UpdateAddressDialog: React.FC<UpdateAddressDialogProps> = ({ address, onAddressUpdated }) => {
+const UpdateAddressDialog: React.FC<UpdateAddressDialogProps> = ({
+  address,
+  onAddressUpdated,
+}) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [formValues, setFormValues] = useState<AddressFormValues>({
     street: address.addressLine,
@@ -56,7 +75,11 @@ const UpdateAddressDialog: React.FC<UpdateAddressDialogProps> = ({ address, onAd
     }
   }, [isDialogOpen, address]);
 
-  const LocationMarker = ({ setFieldValue }: { setFieldValue: (field: string, value: any) => void }) => {
+  const LocationMarker = ({
+    setFieldValue,
+  }: {
+    setFieldValue: (field: string, value: string | number) => void;
+  }) => {
     useMapEvents({
       click(e) {
         setFieldValue("latitude", e.latlng.lat);
@@ -64,10 +87,18 @@ const UpdateAddressDialog: React.FC<UpdateAddressDialogProps> = ({ address, onAd
       },
     });
 
-    return <Marker position={[formValues.latitude, formValues.longitude]} icon={customIcon} />;
+    return (
+      <Marker
+        position={[formValues.latitude, formValues.longitude]}
+        icon={customIcon}
+      />
+    );
   };
 
-  const handleSubmit = async (values: AddressFormValues, { setSubmitting }: FormikHelpers<AddressFormValues>) => {
+  const handleSubmit = async (
+    values: AddressFormValues,
+    { setSubmitting }: FormikHelpers<AddressFormValues>
+  ) => {
     try {
       const payload = {
         addressLine: values.street,
@@ -91,13 +122,18 @@ const UpdateAddressDialog: React.FC<UpdateAddressDialogProps> = ({ address, onAd
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
-        <Button ><Edit2/></Button>
+        <Button>
+          <Edit2 />
+        </Button>
       </DialogTrigger>
       <DialogContent className="w-[400px] md:w-[600px]">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-semibold">Edit Address</DialogTitle>
+          <DialogTitle className="text-2xl font-semibold">
+            Edit Address
+          </DialogTitle>
           <DialogDescription className="text-sm">
-            Update your address details. <span className="text-red-500 font-bold">*</span> is required.
+            Update your address details.{" "}
+            <span className="text-red-500 font-bold">*</span> is required.
           </DialogDescription>
         </DialogHeader>
 
@@ -116,7 +152,11 @@ const UpdateAddressDialog: React.FC<UpdateAddressDialogProps> = ({ address, onAd
                   Street Address <span className="text-red-500">*</span>
                 </label>
                 <Field as={Input} name="street" className="w-full" />
-                <ErrorMessage name="street" component="div" className="text-red-500 text-sm mt-1" />
+                <ErrorMessage
+                  name="street"
+                  component="div"
+                  className="text-red-500 text-sm mt-1"
+                />
               </div>
 
               <div>
@@ -124,34 +164,66 @@ const UpdateAddressDialog: React.FC<UpdateAddressDialogProps> = ({ address, onAd
                   City <span className="text-red-500">*</span>
                 </label>
                 <Field as={Input} name="city" className="w-full" />
-                <ErrorMessage name="city" component="div" className="text-red-500 text-sm mt-1" />
+                <ErrorMessage
+                  name="city"
+                  component="div"
+                  className="text-red-500 text-sm mt-1"
+                />
               </div>
 
               <div>
-                <label className="block text-sm font-medium">Select Location</label>
-                <MapContainer center={[values.latitude, values.longitude]} zoom={13} style={{ height: "250px", width: "100%" }}>
+                <label className="block text-sm font-medium">
+                  Select Location
+                </label>
+                <MapContainer
+                  center={[values.latitude, values.longitude]}
+                  zoom={13}
+                  style={{ height: "250px", width: "100%" }}
+                >
                   <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                   <LocationMarker setFieldValue={setFieldValue} />
-                  <Marker position={[values.latitude, values.longitude]} icon={customIcon} />
+                  <Marker
+                    position={[values.latitude, values.longitude]}
+                    icon={customIcon}
+                  />
                 </MapContainer>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium">Latitude</label>
-                  <Field as={Input} name="latitude" className="w-full" disabled />
+                  <Field
+                    as={Input}
+                    name="latitude"
+                    className="w-full"
+                    disabled
+                  />
                 </div>
                 <div>
                   <label className="block text-sm font-medium">Longitude</label>
-                  <Field as={Input} name="longitude" className="w-full" disabled />
+                  <Field
+                    as={Input}
+                    name="longitude"
+                    className="w-full"
+                    disabled
+                  />
                 </div>
               </div>
 
               <div className="flex justify-end mt-6 space-x-4">
-                <Button type="button" onClick={() => setIsDialogOpen(false)} variant="destructive" className="px-6 py-2 rounded-lg">
+                <Button
+                  type="button"
+                  onClick={() => setIsDialogOpen(false)}
+                  variant="destructive"
+                  className="px-6 py-2 rounded-lg"
+                >
                   Cancel
                 </Button>
-                <Button type="submit" disabled={isSubmitting} className="rounded-lg shadow">
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="rounded-lg shadow"
+                >
                   {isSubmitting ? "Updating..." : "Update"}
                 </Button>
               </div>

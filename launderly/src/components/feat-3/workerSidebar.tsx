@@ -55,7 +55,7 @@ export default function Sidebar() {
       setNotifications((prevNotifications) => prevNotifications.map((notification) => (notification.id === notificationId ? { ...notification, isRead: true } : notification)));
 
       setUnreadCount((prevCount) => prevCount - 1);
-    } catch (err: any) {
+    } catch (err) {
       toast.error("Fetch failed: " + err);
     }
   };

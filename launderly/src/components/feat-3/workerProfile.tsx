@@ -66,7 +66,7 @@ export default function WorkerProfile() {
 
               <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mt-4"> {worker?.fullName}</h2>
               <p className="text-gray-500 text-md">{worker?.employee.station ? `${worker?.employee.station.toLocaleLowerCase()} station` : worker?.role.toLocaleLowerCase()}</p>
-              <p className="text-gray-500 text-md">{worker?.employee.workShift == "DAY" ? "Shift : (06.00 - 15.00)" : "Shift : (15.00 - 00.00)"}</p>
+              <p className="text-gray-500 text-md">{worker?.employee.workShift == "DAY" ? "Shift : (06.00 - 15.00)" : "Shift : (15.00 - 23.00)"}</p>
               <p className="text-gray-500 text-sm">{worker?.email}</p>
 
               {worker?.authProvider === "email" && (

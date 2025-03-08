@@ -9,9 +9,9 @@ export async function getWorkerHistory(token: string, page: number, sortBy: stri
       headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
     });
     return res.data;
-  } catch (error) {
-    toast.error("Fetch failed: " + error);
-    throw error;
+  } catch (error: any) {
+    const errorMessage = error.response?.data?.message || "Failed to fetch";
+    toast.error(errorMessage);
   }
 }
 
@@ -21,9 +21,9 @@ export async function getWorkerRequests(page: number, sortBy: string, order: "as
       headers: { Authorization: `Bearer ${token}` },
     });
     return res.data;
-  } catch (error) {
-    toast.error("Fetch failed: " + error);
-    throw error;
+  } catch (error: any) {
+    const errorMessage = error.response?.data?.message || "Failed to fetch";
+    toast.error(errorMessage);
   }
 }
 
@@ -31,9 +31,9 @@ export async function getWorkerRequest(orderId: any) {
   try {
     const res = await axios.get(`${BASE_URL}/order/orders/${orderId}`);
     return res.data;
-  } catch (error) {
-    toast.error("Fetch failed: " + error);
-    throw error;
+  } catch (error: any) {
+    const errorMessage = error.response?.data?.message || "Failed to fetch";
+    toast.error(errorMessage);
   }
 }
 
@@ -47,9 +47,8 @@ export async function bypassRequest(token: string, notes: string, orderId: any) 
       }
     );
     return res.data;
-  } catch (error) {
-    toast.error("Bypass request failed: " + error);
-    throw error;
+  } catch (error: any) {
+    const errorMessage = error.response?.data?.message || "Failed to send Bypass Request";
+    toast.error(errorMessage);
   }
 }
-

@@ -1,5 +1,4 @@
 import axios from "axios";
-import { request } from "http";
 import toast from "react-hot-toast";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL_BE;
@@ -10,22 +9,25 @@ export async function getDriverHistory(token: string, page: number, sortBy: stri
       headers: { Authorization: `Bearer ${token}` },
     });
     return res.data;
-  } catch (error) {
-    toast.error("Fetch failed: " + error);
-    throw error;
+  } catch (error: any) {
+    const errorMessage = error.response?.data?.message || "Failed to fetch";
+    toast.error(errorMessage);
   }
 }
 
 export async function processDriverOrder(token: string, requestId: number, type: "pickup" | "delivery") {
   try {
-    const res = await axios.patch(`${BASE_URL}/request`,
-      { requestId: requestId, type: type}, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const res = await axios.patch(
+      `${BASE_URL}/request`,
+      { requestId: requestId, type: type },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
     return res.data;
-  } catch (error) {
-    toast.error("Process failed: " + error);
-    throw error;
+  } catch (error: any) {
+    const errorMessage = error.response?.data?.message || "Failed to fetch";
+    toast.error(errorMessage);
   }
 }
 
@@ -35,8 +37,8 @@ export async function getDriverRequests(page: number, sortBy: string, order: "as
       headers: { Authorization: `Bearer ${token}` },
     });
     return res.data;
-  } catch (error) {
-    toast.error("Fetch failed: " + error);
-    throw error;
+  } catch (error: any) {
+    const errorMessage = error.response?.data?.message || "Failed to fetch";
+    toast.error(errorMessage);
   }
 }

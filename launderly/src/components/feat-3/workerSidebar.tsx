@@ -78,9 +78,9 @@ export default function Sidebar() {
 
       setUnreadCount(0);
 
-      console.log("All notifications marked as read");
-    } catch (error) {
-      console.error("Error marking all notifications as read:", error);
+      toast.success("All notifications marked as read");
+    } catch (err : any) {
+      toast.error("Error marking all notifications as read:", err.message);
     }
   };
 
@@ -97,8 +97,8 @@ export default function Sidebar() {
         const result: IApiResponse = await res.json();
         setNotifications(result.data);
         setUnreadCount(result.pagination.total);
-      } catch (err) {
-        toast.error("Fetch failed: " + err);
+      } catch (err : any) {
+        toast.error("Fetch failed: " + err.message);
       }
     };
 

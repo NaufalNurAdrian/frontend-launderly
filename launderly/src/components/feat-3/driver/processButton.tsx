@@ -1,5 +1,5 @@
 "use client";
-import { processDriverOrder } from "@/api/driver";
+import { processDriverOrder } from "@/app/api/driver";
 import { getNextDeliveryStatus, getNextPickupStatus } from "@/helpers/status";
 import { useToken } from "@/hooks/useToken";
 import { useState } from "react";
@@ -13,7 +13,13 @@ interface RequestButtonProps {
   updateRequestStatus: (requestId: number, newStatus: string) => void;
 }
 
-export default function RequestButton({ status, onSuccess, type, requestId, updateRequestStatus }: RequestButtonProps) {
+export default function RequestButton({
+  status,
+  onSuccess,
+  type,
+  requestId,
+  updateRequestStatus,
+}: RequestButtonProps) {
   const [loading, setLoading] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -27,8 +33,11 @@ export default function RequestButton({ status, onSuccess, type, requestId, upda
     try {
       const response = await processDriverOrder(token, requestId, type);
       toast.success(`${type === "delivery" ? "Delivery" : "Pickup"} proceed`);
-      const newStatus = type === "pickup" ? getNextPickupStatus(status) : getNextDeliveryStatus(status);
-      updateRequestStatus(requestId, newStatus); 
+      const newStatus =
+        type === "pickup"
+          ? getNextPickupStatus(status)
+          : getNextDeliveryStatus(status);
+      updateRequestStatus(requestId, newStatus);
       onSuccess();
     } catch (error: any) {
       toast.error(`Failed to update ${type} status: ${error.message}`);
@@ -96,7 +105,15 @@ export default function RequestButton({ status, onSuccess, type, requestId, upda
 
   return (
     <div>
-      <button onClick={handleRequest} disabled={loading || isProcessing} className={`px-4 py-2 w-full rounded-lg ${loading || isProcessing ? "bg-gradient-to-r from-blue-300 to-green-400 animate-gradient cursor-not-allowed" : getButtonStyle()} text-white`}>
+      <button
+        onClick={handleRequest}
+        disabled={loading || isProcessing}
+        className={`px-4 py-2 w-full rounded-lg ${
+          loading || isProcessing
+            ? "bg-gradient-to-r from-blue-300 to-green-400 animate-gradient cursor-not-allowed"
+            : getButtonStyle()
+        } text-white`}
+      >
         {loading ? "Processing..." : getButtonText()}
       </button>
       {error && <p className="text-red-500 mt-2">{error}</p>}

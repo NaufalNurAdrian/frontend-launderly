@@ -1,6 +1,6 @@
 "use client";
 
-import { getOutletAddress } from "@/api/address";
+import { getOutletAddress } from "@/app/api/address";
 import { IOutletAddress } from "@/types/address";
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";

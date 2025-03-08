@@ -1,11 +1,11 @@
 "use client";
 
-import { loginUser } from "@/api/auth";
+import { loginUser } from "@/app/api/auth";
 import useSession from "@/hooks/useSession";
 import { LoginSchema } from "@/libs/schema";
 import { LoginValues } from "@/types/auth";
 import axios from "axios";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -22,27 +22,36 @@ const Login = () => {
   const { setIsAuth, setUser } = useSession();
   const router = useRouter();
 
-  const handleLogin = async (values: LoginValues, { setSubmitting }: any) => {
+  const handleLogin = async (
+    values: LoginValues,
+    { setSubmitting }: FormikHelpers<LoginValues>
+  ) => {
     try {
       const { customer, token, message } = await loginUser(values);
-
+  
       localStorage.setItem("token", token);
-
+  
       setIsAuth(true);
       setUser(customer);
-
+  
       toast.success(message || "Login successful!");
       const { role } = customer;
-
+  
       if (role === "WORKER" || role === "DRIVER") {
         router.push("/attendance");
       } else if (role === "CUSTOMER") {
         router.push("/dashboardCustomer");
-      } else if (role === "SUPER_ADMIN" || "OUTLET_ADMIN") {
+      } else if (role === "SUPER_ADMIN" || role === "OUTLET_ADMIN") {
         router.push("/dashboard");
       }
-    } catch (err) {
-      console.log(err);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.error(err.message);
+        toast.error(err.message);
+      } else {
+        console.error("An unexpected error occurred.");
+        toast.error("An unexpected error occurred.");
+      }
     } finally {
       setSubmitting(false);
     }

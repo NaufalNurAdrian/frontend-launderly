@@ -6,9 +6,9 @@ export const getReportSales = async (filterOutlet: string, filterMonth: string, 
   try {
     const response = await api.get<SalesReportApiResponse>(`report/sales-report?filterOutlet=${filterOutlet || "all"}&filterMonth=${filterMonth || ""}&filterYear=${filterYear || ""}`);
     return response.data;
-  } catch (error: any) {
-    console.error("Get Report Sales error:", error.response?.data || error.message);
-    throw new Error(error.response?.data?.message || "Failed to fetch report sales");
+  } catch (error) {
+    console.error("Get Report Sales error:");
+    throw new Error("Failed to fetch report sales");
   }
 };
 
@@ -16,9 +16,9 @@ export const getReportEmployeePerformance = async ( filterOutlet?: string, filte
   try {
     const response = await api.get(`report/employee-performance?filterOutlet=${filterOutlet || "all"}&filterMonth=${filterMonth || ""}&filterYear=${filterYear || ""}`);
     return response.data;
-  } catch (error: any) {
-    console.error("Get Report Employee Performance error:", error.response?.data || error.message);
-    throw new Error(error.response?.data?.message || "Failed to fetch report employee performance");
+  } catch (error) {
+    console.error("Get Report Employee Performance error:");
+    throw new Error("Failed to fetch report employee performance");
   }
 }
 
@@ -56,8 +56,8 @@ export const fetchReportData = async (params: ReportParams): Promise<ReportData>
       params 
     });
     return response.data.data;
-  } catch (error: any) {
-    console.error("Failed to fetch report data:", error.response?.data || error.message);
+  } catch (error) {
+    console.error("Failed to fetch report data:");
     throw new Error("Failed to load report data");
   }
 };
@@ -71,8 +71,8 @@ export const fetchComparisonData = async (params: ComparisonParams): Promise<Out
       params
     });
     return response.data.data;
-  } catch (error: any) {
-    console.error("Failed to fetch comparison data:", error.response?.data || error.message);
+  } catch (error) {
+    console.error("Failed to fetch comparison data:");
     throw new Error("Failed to load outlet comparison data");
   }
 };
@@ -86,8 +86,8 @@ export const fetchTransactionTrends = async (params: TrendsParams): Promise<any>
       params
     });
     return response.data.data;
-  } catch (error: any) {
-    console.error("Failed to fetch trends data:", error.response?.data || error.message);
+  } catch (error) {
+    console.error("Failed to fetch trends data:");
     throw new Error("Failed to load transaction trends");
   }
 };
@@ -101,8 +101,8 @@ export const fetchCustomerAnalytics = async (params: CustomerAnalyticsParams): P
       params
     });
     return response.data.data;
-  } catch (error: any) {
-    console.error("Failed to fetch customer analytics:", error.response?.data || error.message);
+  } catch (error) {
+    console.error("Failed to fetch customer analytics:");
     throw new Error("Failed to load customer analytics");
   }
 };
@@ -139,8 +139,8 @@ export const fetchSalesReportData = async (params: {
       params
     });
     return response.data.result;
-  } catch (error: any) {
-    console.error("Failed to fetch sales report:", error.response?.data || error.message);
+  } catch (erro) {
+    console.error("Failed to fetch sales report:");
     throw new Error("Failed to load sales report data");
   }
 };

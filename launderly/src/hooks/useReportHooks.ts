@@ -55,8 +55,8 @@ export const useReportData = (
 
       const reportData = await fetchReportData(params);
       setData(reportData);
-    } catch (err: any) {
-      setError(err.message || 'Failed to fetch report data');
+    } catch (err) {
+      setError('Failed to fetch report data');
     } finally {
       setLoading(false);
     }
@@ -105,8 +105,8 @@ export const useOutletComparison = (
     try {
       const comparisonData = await fetchComparisonData({ timeframe });
       setData(comparisonData);
-    } catch (err: any) {
-      setError(err.message || 'Failed to fetch comparison data');
+    } catch (err) {
+      setError('Failed to fetch comparison data');
     } finally {
       setLoading(false);
     }
@@ -158,8 +158,8 @@ export const useTransactionTrends = (
 
       const trendsData = await fetchTransactionTrends(params);
       setData(trendsData);
-    } catch (err: any) {
-      setError(err.message || 'Failed to fetch transaction trends');
+    } catch (err) {
+      setError('Failed to fetch transaction trends');
     } finally {
       setLoading(false);
     }
@@ -205,8 +205,8 @@ export const useCustomerAnalytics = (
 
       const analyticsData = await fetchCustomerAnalytics(params);
       setData(analyticsData);
-    } catch (err: any) {
-      setError(err.message || 'Failed to fetch customer analytics');
+    } catch (err) {
+      setError('Failed to fetch customer analytics');
     } finally {
       setLoading(false);
     }
@@ -252,8 +252,8 @@ export const useEmployeePerformance = (
 
       const performanceData = await fetchEmployeePerformanceData(params);
       setData(performanceData);
-    } catch (err: any) {
-      setError(err.message || 'Failed to fetch employee performance data');
+    } catch (err) {
+      setError('Failed to fetch employee performance data');
     } finally {
       setLoading(false);
     }

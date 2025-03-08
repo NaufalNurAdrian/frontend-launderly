@@ -1,10 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import HeaderOutlet from "@/components/dashboard/outlet/headeroutlet";
-import OutletTable from "@/components/dashboard/outlet/outlettable";
+
 import { withSuperAdmin } from "@/hoc/adminAuthorizaton";
 import { useRole } from "@/hooks/useRole";
+
+import dynamic from "next/dynamic";
+
+const HeaderOutlet = dynamic(() => import("@/components/dashboard/outlet/headeroutlet"), { ssr: false });
+const OutletTable = dynamic(() => import("@/components/dashboard/outlet/outlettable"), { ssr: false });
+
 
 function Outlet() {
   const [searchQuery, setSearchQuery] = useState("");

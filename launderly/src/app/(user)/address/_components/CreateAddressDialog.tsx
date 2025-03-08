@@ -11,20 +11,28 @@ import {
   DialogTrigger,
 } from "@/components/feat-1/dialog";
 import { Input } from "@/components/feat-1/input";
-import { createUserAddress } from "@/api/address";
+import { createUserAddress } from "@/app/api/address";
 import { AddressSchema } from "@/libs/schema";
 import { toast } from "react-toastify";
 import useSession from "@/hooks/useSession";
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  useMapEvents,
-  useMap,
-} from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { customIcon } from "@/components/feat-1/customIcon";
 import { Button } from "@/components/ui/button";
+import dynamic from "next/dynamic";
+import { useMapEvents, useMap } from "react-leaflet";
+
+const MapContainer = dynamic(
+  () => import("react-leaflet").then((mod) => mod.MapContainer),
+  { ssr: false }
+);
+const TileLayer = dynamic(
+  () => import("react-leaflet").then((mod) => mod.TileLayer),
+  { ssr: false }
+);
+const Marker = dynamic(
+  () => import("react-leaflet").then((mod) => mod.Marker),
+  { ssr: false }
+);
 
 interface AddressFormValues {
   street: string;
@@ -33,9 +41,38 @@ interface AddressFormValues {
   longitude: number;
 }
 
+interface LocationMarkerProps {
+  setFieldValue: (field: string, value: string | number) => void;
+  userLocation: { lat: number; lng: number };
+}
+
 interface CreateAddressDialogProps {
   onAddressCreated: () => void;
 }
+
+const LocationMarker: React.FC<LocationMarkerProps> = ({
+  setFieldValue,
+  userLocation,
+}) => {
+  useMapEvents({
+    click(e) {
+      setFieldValue("latitude", e.latlng.lat);
+      setFieldValue("longitude", e.latlng.lng);
+    },
+  });
+
+  const map = useMap();
+
+  useEffect(() => {
+    if (userLocation.lat && userLocation.lng) {
+      map.setView([userLocation.lat, userLocation.lng], 13);
+    }
+  }, [userLocation.lat, userLocation.lng]);
+
+  return (
+    <Marker position={[userLocation.lat, userLocation.lng]} icon={customIcon} />
+  );
+};
 
 const CreateAddressDialog: React.FC<CreateAddressDialogProps> = ({
   onAddressCreated,
@@ -43,7 +80,10 @@ const CreateAddressDialog: React.FC<CreateAddressDialogProps> = ({
   const { user } = useSession();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
-  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number }>({
+  const [userLocation, setUserLocation] = useState<{
+    lat: number;
+    lng: number;
+  }>({
     lat: -6.9203,
     lng: 107.6074,
   });
@@ -53,7 +93,7 @@ const CreateAddressDialog: React.FC<CreateAddressDialogProps> = ({
   }, []);
 
   useEffect(() => {
-    if ("geolocation" in navigator) {
+    if (typeof window !== "undefined" && "geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           setUserLocation({
@@ -68,35 +108,9 @@ const CreateAddressDialog: React.FC<CreateAddressDialogProps> = ({
     }
   }, []);
 
-  const LocationMarker = ({
-    setFieldValue,
-    userLocation, // Tambahkan userLocation di sini
-  }: {
-    setFieldValue: (field: string, value: any) => void;
-    userLocation: { lat: number; lng: number }; // Tambahkan tipe userLocation di sini
-  }) => {
-    useMapEvents({
-      click(e) {
-        setFieldValue("latitude", e.latlng.lat);
-        setFieldValue("longitude", e.latlng.lng);
-      },
-    });
-  
-    const map = useMap();
-  
-    useEffect(() => {
-      if (userLocation.lat && userLocation.lng) {
-        map.setView([userLocation.lat, userLocation.lng], 13);
-      }
-    }, [userLocation, map]);
-  
-    return (
-      <Marker position={[userLocation.lat, userLocation.lng]} icon={customIcon} />
-    );
-  };
-  
-
-  const handleUseCurrentLocation = (setFieldValue: any) => {
+  const handleUseCurrentLocation = (
+    setFieldValue: (field: string, value: string | number) => void
+  ) => {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -149,12 +163,12 @@ const CreateAddressDialog: React.FC<CreateAddressDialogProps> = ({
       const result = await createUserAddress(payload);
 
       if (result) {
-        toast.success(`Address successfully added`);
+        toast.success("Address successfully added");
         onAddressCreated();
         resetForm();
         setIsDialogOpen(false);
       }
-    } catch (error) {
+    } catch (error: unknown) {
       toast.error("Failed to add address.");
     } finally {
       setSubmitting(false);
@@ -162,13 +176,11 @@ const CreateAddressDialog: React.FC<CreateAddressDialogProps> = ({
   };
 
   if (!isClient) return <p>Loading...</p>;
-  
+
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
-        <Button className="px-6 py-2 rounded-lg shadow">
-          Add New Address
-        </Button>
+        <Button className="px-6 py-2 rounded-lg shadow">Add New Address</Button>
       </DialogTrigger>
       <DialogContent className="w-full max-w-xs sm:max-w-md md:max-w-lg lg:max-w-xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
@@ -228,7 +240,6 @@ const CreateAddressDialog: React.FC<CreateAddressDialogProps> = ({
                   className="text-red-500 text-sm mt-1"
                 />
               </div>
-
               {/* Map */}
               <div>
                 <label className="block text-sm font-medium">

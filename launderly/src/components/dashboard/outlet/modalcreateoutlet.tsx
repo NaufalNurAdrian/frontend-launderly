@@ -24,14 +24,21 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import axios from "axios";
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaflet";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  useMapEvents,
+} from "react-leaflet";
 import Swal from "sweetalert2";
 import api from "@/libs/api";
 
 // Replace the existing icon configuration with this:
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+  iconRetinaUrl:
+    "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
   iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
   shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
 });
@@ -46,8 +53,14 @@ interface NominatimResponse {
   };
 }
 
-export default function ModalCreateOutlet({ onClose }: { onClose: () => void }) {
-  const [position, setPosition] = useState<[number, number]>([-6.2088, 106.8456]);
+export default function ModalCreateOutlet({
+  onClose,
+}: {
+  onClose: () => void;
+}) {
+  const [position, setPosition] = useState<[number, number]>([
+    -6.2088, 106.8456,
+  ]);
 
   // Fetch address from coordinates
   async function fetchAddress(lat: number, lng: number) {
@@ -58,7 +71,10 @@ export default function ModalCreateOutlet({ onClose }: { onClose: () => void }) 
 
       const address = response.data.address;
       formik.setFieldValue("addressline", address.road || "Unknown Street");
-      formik.setFieldValue("city", address.city || address.town || "Unknown City");
+      formik.setFieldValue(
+        "city",
+        address.city || address.town || "Unknown City"
+      );
     } catch (error) {
       console.error("Geocoding error: ", error);
     }
@@ -69,8 +85,8 @@ export default function ModalCreateOutlet({ onClose }: { onClose: () => void }) 
     initialValues: {
       name: "",
       type: "",
-      latitude:  -6.914744,
-      longitude: 107.609810,
+      latitude: -6.914744,
+      longitude: 107.60981,
       addressline: "",
       city: "",
     },
@@ -79,10 +95,18 @@ export default function ModalCreateOutlet({ onClose }: { onClose: () => void }) 
       type: Yup.string().required("Outlet type is required"),
       latitude: Yup.string()
         .required("Latitude is required")
-        .test("is-number", "Must be a valid number", (value) => !isNaN(Number(value))),
+        .test(
+          "is-number",
+          "Must be a valid number",
+          (value) => !isNaN(Number(value))
+        ),
       longitude: Yup.string()
         .required("Longitude is required")
-        .test("is-number", "Must be a valid number", (value) => !isNaN(Number(value))),
+        .test(
+          "is-number",
+          "Must be a valid number",
+          (value) => !isNaN(Number(value))
+        ),
       addressline: Yup.string().required("Address is required"),
       city: Yup.string().required("City is required"),
     }),
@@ -157,7 +181,10 @@ export default function ModalCreateOutlet({ onClose }: { onClose: () => void }) 
         <CardHeader>
           <div className="flex justify-between items-center">
             <CardTitle>Create Outlet</CardTitle>
-            <button onClick={onClose} className="text-gray-500 hover:text-gray-700 text-lg">
+            <button
+              onClick={onClose}
+              className="text-gray-500 hover:text-gray-700 text-lg"
+            >
               ✕
             </button>
           </div>
@@ -175,7 +202,9 @@ export default function ModalCreateOutlet({ onClose }: { onClose: () => void }) 
               <Label htmlFor="type">Type</Label>
               <Select
                 value={formik.values.type}
-                onValueChange={(value: string) => formik.setFieldValue("type", value)}
+                onValueChange={(value: string) =>
+                  formik.setFieldValue("type", value)
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select outlet type" />
@@ -189,7 +218,10 @@ export default function ModalCreateOutlet({ onClose }: { onClose: () => void }) 
 
             <div className="mb-6">
               <MapContainer
-                center={[formik.values.latitude || 0, formik.values.longitude || 0]}
+                center={[
+                  formik.values.latitude || 0,
+                  formik.values.longitude || 0,
+                ]}
                 zoom={13}
                 style={{ height: "300px", width: "100%" }}
               >
@@ -199,7 +231,10 @@ export default function ModalCreateOutlet({ onClose }: { onClose: () => void }) 
                 />
                 {formik.values.latitude && formik.values.longitude && (
                   <Marker
-                    position={[Number(formik.values.latitude), Number(formik.values.longitude)]}
+                    position={[
+                      Number(formik.values.latitude),
+                      Number(formik.values.longitude),
+                    ]}
                     icon={new L.Icon.Default()}
                   >
                     <Popup>
@@ -224,7 +259,10 @@ export default function ModalCreateOutlet({ onClose }: { onClose: () => void }) 
 
             <div className="space-y-2">
               <Label htmlFor="addressline">Address Line</Label>
-              <Input id="addressline" {...formik.getFieldProps("addressline")} />
+              <Input
+                id="addressline"
+                {...formik.getFieldProps("addressline")}
+              />
             </div>
 
             <div className="space-y-2">

@@ -9,9 +9,9 @@ export async function fetchAttendanceHistory(token: string, page: number, sortBy
       headers: { Authorization: `Bearer ${token}` },
     });
     return res.data;
-  } catch (error) {
-    toast.error("Fetch failed: " + error);
-    throw error;
+  } catch (error: any) {
+    const errorMessage = error.response?.data?.message || "Failed to fetch";
+    toast.error(errorMessage);
   }
 }
 
@@ -21,9 +21,9 @@ export async function fetchAllAttendanceHistory(token: string, page: number, sor
       headers: { Authorization: `Bearer ${token}` },
     });
     return res.data;
-  } catch (error) {
-    toast.error("Fetch failed: " + error);
-    throw error;
+  } catch (error: any) {
+    const errorMessage = error.response?.data?.message || "Failed to fetch";
+    toast.error(errorMessage);
   }
 }
 
@@ -50,8 +50,9 @@ export async function fetchAttendanceStatus(token: string): Promise<{ status: st
     const lastAttendance = lastPageData.data[lastPageData.data.length - 1].attendanceStatus;
 
     return { status: lastAttendance };
-  } catch (error) {
-    toast.error("Failed to fetch attendance status");
+  } catch (error: any) {
+    const errorMessage = error.response?.data?.message || "Failed to fetch";
+    toast.error(errorMessage);
     throw error;
   }
 }
@@ -60,7 +61,8 @@ export async function clockOut(token: string) {
   try {
     const res = await axios.patch(`${BASE_URL}/attendance/check-out`, {}, { headers: { Authorization: `Bearer ${token}` } });
     return res.data;
-  } catch (error) {
-    toast.error( "Failed to clock out");
+  } catch (error: any) {
+    const errorMessage = error.response?.data?.message || "Failed to clock out";
+    toast.error(errorMessage);
   }
 }

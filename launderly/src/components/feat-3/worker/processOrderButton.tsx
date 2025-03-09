@@ -23,13 +23,13 @@ export default function ProcessOrderButton({ orderId }: ProcessOrderButtonProps)
       return;
     }
     try {
-      const res = await fetch(`${BASE_URL}/order/create/${orderId}`,  {
+      const res = await fetch(`${BASE_URL}/order/create/${orderId}`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
       });
-     if(!res.ok){
-      toast.error("Failed to process");
-     }
+      if (!res.ok) {
+        toast.error("Failed to process");
+      }
       router.push(`/requests/${orderId}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error");

@@ -35,8 +35,8 @@ export default function WorkerRequestLists() {
         setRequests(result.data);
         setTotalPages(result.pagination.totalPages);
         setCurrentPage(result.pagination.page);
-      } catch (err) {
-        toast.error("Fetch failed: " + err);
+      } catch (err : any) {
+        toast.error("Fetch failed: " + err.message);
       } finally {
         setLoading(false);
       }

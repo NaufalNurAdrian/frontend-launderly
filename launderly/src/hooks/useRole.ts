@@ -26,8 +26,8 @@ export const useRole = () => {
           const decodedToken = jwtDecode<JwtPayload>(storedToken);
           const userRole = decodedToken.role;
           setRole(userRole);
-        } catch (error) {
-          toast.error("Invalid token!");
+        } catch (error :any) {
+          toast.error(error.message ? error.message : "Invalid token!");
           router.push("/sign-in");
         }
       }

@@ -20,8 +20,11 @@ export default function CompleteOrder({ orderId }: CompleteOrderProps) {
         method: "PATCH",
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
       });
+      const responseData = await res.json(); 
+
       if (!res.ok) {
-        toast.error("Failed to process");
+        toast.error(`Failed to process: ${responseData.message || "Unknown error"}`);
+        return;
       }
     } catch (err) {
       throw err;

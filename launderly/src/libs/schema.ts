@@ -35,10 +35,16 @@ export const ForgotPasswordSchema = Yup.object().shape({
 });
 
 export const AddressSchema = Yup.object().shape({
-  street: Yup.string().required("Alamat jalan wajib diisi"),
-  city: Yup.string().required("Kota wajib diisi"),
+  street: Yup.string().required("Street required"),
+  city: Yup.string().required("City required"),
 });
 
 export const RequestOrderSchema = Yup.object().shape({
-  addressId: Yup.number().required("Wajib diisi")
-})
+  addressId: Yup.number().required("Reuired"),
+});
+
+export const UpdateEmailSchema = Yup.object().shape({
+  newEmail: Yup.string()
+    .email("Invalid email format")
+    .required("Email is required"),
+});

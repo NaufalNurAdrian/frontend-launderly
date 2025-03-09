@@ -79,7 +79,7 @@ export async function updateEmail(newEmail: string) {
     const token = getToken();
     const response = await axios.patch(
       `${base_url}/user/update-email`,
-      { email: newEmail },
+      { newEmail: newEmail },
       { headers: { Authorization: `Bearer ${token}` } }
     );
 
@@ -93,20 +93,17 @@ export async function updateEmail(newEmail: string) {
 }
 
 // Verify Email
-export async function verifyEmail(verificationCode: string) {
+export async function verifyEmail(token: string) {
   try {
-    const token = getToken();
-    const response = await axios.patch(
-      `${base_url}/user/verify-email`,
-      { code: verificationCode },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
+    const response = await axios.patch(`${base_url}/user/verify-email`, {
+      token,
+    });
 
-    toast.success("Email verified successfully!");
+    toast.success("Email has been change successfully!");
     return response.data;
   } catch (error) {
-    toast.error("Failed to verify email. Please try again.");
-    console.error("Error verifying email:", error);
+    toast.error("Failed to change email. Please try again.");
+    console.error("Error confirming change email:", error);
     throw error;
   }
 }

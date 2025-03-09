@@ -1,5 +1,5 @@
 import axios from "axios";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 
 const base_url = process.env.NEXT_PUBLIC_BASE_URL_BE;
 

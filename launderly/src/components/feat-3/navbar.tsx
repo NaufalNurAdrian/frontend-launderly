@@ -100,8 +100,8 @@ export default function Navbar() {
       );
 
       setUnreadCount(0);
-    } catch (error) {
-      toast.error("Error marking all notifications as read:", error);
+    } catch (error: any) {
+      toast.error("Error marking all notifications as read:", error.message);
     }
   };
 

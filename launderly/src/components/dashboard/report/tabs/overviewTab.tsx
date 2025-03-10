@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LineChart, BarChart, PieChart, Line, Bar, Pie, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from "recharts";
 import {
@@ -12,13 +12,75 @@ import {
 import { ReportSalesChart } from "../reportSalesChart";
 import { currencyFormatter, numberFormatter } from "@/utils/formatters";
 import { OverviewTabProps } from "@/types/report.types";
+import { useReportData } from "@/hooks/useReportHooks";
 
 const OverviewTab: React.FC<OverviewTabProps> = ({
-  reportData,
+  reportData: initialReportData,
   outletId,
   selectedMonth,
   selectedYear,
+  timeframe = "monthly",
+  onTimeframeChange
 }) => {
+  const [shouldFetchData, setShouldFetchData] = useState(false);
+
+  const getDateRange = () => {
+    if (timeframe === "custom" && selectedMonth && selectedYear) {
+      const year = parseInt(selectedYear);
+      const month = parseInt(selectedMonth) - 1; 
+      
+      const startDate = new Date(year, month, 1);
+      const endDate = new Date(year, month + 1, 0); 
+      
+      return { from: startDate, to: endDate };
+    }
+    return undefined;
+  };
+
+  const {
+    data: freshReportData,
+    loading,
+    error
+  } = useReportData(
+    outletId === "all" ? undefined : parseInt(outletId),
+    timeframe,
+    "comprehensive",
+    getDateRange(),
+    !shouldFetchData 
+  );
+
+  const reportData = freshReportData || initialReportData;
+
+  useEffect(() => {
+    setShouldFetchData(true);
+  }, [outletId, selectedMonth, selectedYear, timeframe]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-pulse flex flex-col items-center">
+          <div className="h-12 w-12 bg-blue-400 rounded-full mb-4"></div>
+          <div className="h-4 w-48 bg-gray-300 rounded"></div>
+          <div className="mt-2 text-gray-500">Refreshing report data...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="bg-red-50 rounded-lg p-8 text-center max-w-md border border-red-200">
+          <svg className="w-12 h-12 text-red-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <h3 className="text-lg font-semibold text-red-800 mb-2">Error Loading Data</h3>
+          <p className="text-sm text-red-700">{error}</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!reportData) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -45,6 +107,17 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
 
   const COLORS = ['#3B82F6', '#10B981', '#8B5CF6'];
 
+  const getTimeframeLabel = () => {
+    switch(timeframe) {
+      case "daily": return "today";
+      case "weekly": return "last 7 days";
+      case "monthly": return "this month";
+      case "yearly": return "this year";
+      case "custom": return "selected period";
+      default: return reportData.metadata.timeframe + " report";
+    }
+  };
+
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -59,7 +132,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
               {formatCurrency(reportData.revenue.total)}
             </div>
             <p className="text-xs text-gray-500 mt-1">
-              {reportData.metadata.timeframe} report
+              {getTimeframeLabel()}
             </p>
           </CardContent>
         </Card>
@@ -130,6 +203,8 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
         filterOutlet={outletId?.toString() || "all"}
         filterMonth={selectedMonth}
         filterYear={selectedYear}
+        timeframe={timeframe}
+        onTimeframeChange={onTimeframeChange}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

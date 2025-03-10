@@ -1,3 +1,5 @@
+export type ReportTimeframe = "daily" | "weekly" | "monthly" | "yearly" | "custom";
+
 export interface SalesReportResult {
   totalIncome: number;
   totalTransaction: number;
@@ -16,6 +18,8 @@ export interface SalesReportResult {
   incomeYearly: number[];
   transactionYearly: number[];
   weightYearly: number[];
+  dateLabels: string[];
+  timeframe: ReportTimeframe;
 }
 
 export interface SalesReportApiResponse {

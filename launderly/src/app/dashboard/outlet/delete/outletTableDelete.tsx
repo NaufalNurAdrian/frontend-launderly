@@ -13,7 +13,7 @@ interface OutletTableProps {
   searchQuery?: string;
 }
 
-export default function OutletTable({ searchQuery = "" }: OutletTableProps) {
+export default function OutletTableDelete({ searchQuery = "" }: OutletTableProps) {
   const [outlets, setOutlets] = useState<Outlet[]>([]);
   const [allOutlets, setAllOutlets] = useState<Outlet[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -30,7 +30,7 @@ export default function OutletTable({ searchQuery = "" }: OutletTableProps) {
         const response = await api.get<OutletApiResponse>(`/outlet?page=${page}&limit=${limit}`);
         
         const outletData = response.data.outlets ?? [];
-        const activeOutlets = outletData.filter(outlet => outlet.isDelete === false);
+        const activeOutlets = outletData.filter(outlet => outlet.isDelete === true);
         
         setOutlets(activeOutlets);
         setAllOutlets(activeOutlets);
@@ -177,6 +177,7 @@ export default function OutletTable({ searchQuery = "" }: OutletTableProps) {
         </div>
       </div>
 
+      {/* Pagination Controls */}
       {outlets.length > 0 && (
         <div className="flex justify-between items-center p-4 bg-blue-50 border-t border-blue-100">
           <button

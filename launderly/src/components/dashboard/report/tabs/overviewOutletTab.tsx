@@ -1,35 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { LineChart, BarChart, PieChart, Line, Bar, Pie, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from "recharts";
-import {
-  Table,
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
-} from "@/components/ui/table";
+import { BarChart, PieChart, Bar, Pie, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from "recharts";
 import { ReportSalesChart } from "../reportSalesChart";
-import { SalesReportApiResponse, SalesReportResult } from "@/types/reportSales.type";
+import { SalesReportApiResponse, ReportTimeframe } from "@/types/reportSales.type";
 import { getReportSales } from "@/services/reportService";
 
 const OverviewOutletTab = ({
   outletId,
   filterOutlet,
   filterMonth,
-  filterYear
+  filterYear,
+  timeframe = "daily",
+  onTimeframeChange
 }: {
   outletId: string
   filterOutlet: string;
   filterMonth: string;
   filterYear: string;
+  timeframe?: ReportTimeframe;
+  onTimeframeChange?: (value: string) => void;
 }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [report, setReport] = useState<SalesReportApiResponse | undefined>();
-  const [timeRange, setTimeRange] = useState<"daily" | "monthly" | "yearly">("daily");
 
-  // Get report data (safely)
   const reportData = report?.result?.result;
 
   useEffect(() => {
@@ -38,7 +32,12 @@ const OverviewOutletTab = ({
       setError(null);
       
       try {
-        const data: SalesReportApiResponse = await getReportSales(filterOutlet, filterMonth, filterYear);
+        const data: SalesReportApiResponse = await getReportSales(
+          filterOutlet, 
+          filterMonth, 
+          filterYear,
+          timeframe
+        );
         setReport(data);
       } catch (err: any) {
         console.error("Error fetching sales report:", err);
@@ -49,7 +48,7 @@ const OverviewOutletTab = ({
     };
 
     fetchData();
-  }, [timeRange, filterOutlet, filterMonth, filterYear]);
+  }, [timeframe, filterOutlet, filterMonth, filterYear]);
 
   if (loading) {
     return (
@@ -101,20 +100,28 @@ const OverviewOutletTab = ({
     }).format(amount);
   };
 
-  // Prepare data for daily chart
-  const dailyData = reportData.incomeDaily.map((amount, index) => ({
-    date: `Day ${index + 1}`,
-    amount: amount,
-  }));
+  const dailyData = reportData.incomeDaily.map((amount, index) => {
+    let dateLabel = `Day ${index + 1}`;
+    
+    if (reportData.dateLabels && index < reportData.dateLabels.length) {
+      const date = new Date(reportData.dateLabels[index]);
+      const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+                         "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      dateLabel = `${date.getDate()} ${monthNames[date.getMonth()]}`;
+    }
+    
+    return {
+      date: dateLabel,
+      amount: amount,
+    };
+  });
 
-  // Prepare data for payment methods (dummy data since not available in new API)
   const paymentMethodsData = [
     { method: "Cash", count: Math.floor(reportData.totalTransaction * 0.4) },
     { method: "Transfer", count: Math.floor(reportData.totalTransaction * 0.35) },
     { method: "E-Wallet", count: Math.floor(reportData.totalTransaction * 0.25) },
   ];
 
-  // Prepare data for revenue breakdown (create example data since not available in new API)
   const revenueBreakdownData = [
     { name: "Laundry", value: Math.floor(reportData.totalIncome * 0.7) },
     { name: "Pickup", value: Math.floor(reportData.totalIncome * 0.15) },
@@ -122,6 +129,16 @@ const OverviewOutletTab = ({
   ];
 
   const COLORS = ['#3B82F6', '#10B981', '#8B5CF6'];
+
+  const getTimeframeLabel = () => {
+    switch(timeframe) {
+      case "daily": return "today";
+      case "weekly": return "last 7 days";
+      case "monthly": return "this month";
+      case "yearly": return "this year";
+      default: return "selected period";
+    }
+  };
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
@@ -137,7 +154,7 @@ const OverviewOutletTab = ({
               {formatCurrency(reportData.totalIncome)}
             </div>
             <p className="text-xs text-gray-500 mt-1">
-              {timeRange} report
+              {getTimeframeLabel()}
             </p>
           </CardContent>
         </Card>
@@ -178,7 +195,9 @@ const OverviewOutletTab = ({
             </div>
             <div className="flex flex-wrap text-xs text-gray-500 mt-1">
               <span className="text-purple-500">
-                {formatCurrency(reportData.totalIncome / reportData.totalOrders)} avg. value
+                {reportData.totalTransaction > 0 
+                  ? formatCurrency(reportData.totalIncome / reportData.totalTransaction) 
+                  : formatCurrency(0)} avg. value
               </span>
             </div>
           </CardContent>
@@ -195,7 +214,7 @@ const OverviewOutletTab = ({
               {reportData.totalWeight.toFixed(1)} kg
             </div>
             <p className="text-xs text-gray-500 mt-1">
-              All processed laundry
+              {getTimeframeLabel()}
             </p>
           </CardContent>
         </Card>
@@ -205,6 +224,8 @@ const OverviewOutletTab = ({
         filterOutlet={outletId?.toString() || "all"}
         filterMonth={filterMonth}
         filterYear={filterYear}
+        timeframe={timeframe}
+        onTimeframeChange={onTimeframeChange}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -271,7 +292,7 @@ const OverviewOutletTab = ({
             <div className="flex-1 h-1 bg-gray-200 relative">
               <div 
                 className="absolute h-1 bg-blue-500" 
-                style={{ width: `${(reportData.receivedAtOutlet / reportData.totalTransaction) * 100}%` }}
+                style={{ width: `${(reportData.receivedAtOutlet / Math.max(reportData.totalTransaction, 1)) * 100}%` }}
               ></div>
             </div>
             <div className="text-center">
@@ -281,7 +302,7 @@ const OverviewOutletTab = ({
             <div className="flex-1 h-1 bg-gray-200 relative">
               <div 
                 className="absolute h-1 bg-yellow-500" 
-                style={{ width: `${(reportData.onProgress / reportData.totalTransaction) * 100}%` }}
+                style={{ width: `${(reportData.onProgress / Math.max(reportData.totalTransaction, 1)) * 100}%` }}
               ></div>
             </div>
             <div className="text-center">

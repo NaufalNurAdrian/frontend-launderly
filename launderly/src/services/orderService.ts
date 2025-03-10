@@ -2,20 +2,20 @@ import api from "@/libs/api";
 import { Order, OrderApiResponse } from "@/types/order.type";
 
 export const fetchOrders = async (
-  page?: number,
-  searchQuery?: string,
-  filterOutlet?: string,
-  filterStatus?: string,
-  filterDate?: string,
-  filterCategory?: string,
-  filterCustomerName?: string
+  page: number = 1,
+  searchQuery: string = "",
+  filterOutlet: string = "",
+  filterStatus: string = "",
+  filterDate: string = "",
+  filterCategory: string = "",
+  filterCustomerName: string = "",
+  itemsPerPage: number = 15
 ): Promise<OrderApiResponse> => {
   try {
     const params = new URLSearchParams();
 
-    // Tambahkan parameter hanya jika tidak kosong
-    params.append("page", page!.toString());
-    params.append("take", "15");
+    params.append("page", page.toString());
+    params.append("take", itemsPerPage.toString());
     params.append("sortBy", "id");
     params.append("sortOrder", "desc");
 
@@ -31,9 +31,10 @@ export const fetchOrders = async (
     const response = await api.get<OrderApiResponse>(
       `/orders/?${params.toString()}`
     );
-    console.log(response.data);
+    
     return response.data;
   } catch (error) {
+    console.error("Failed to fetch orders:", error);
     throw new Error("Failed to fetch orders");
   }
 };

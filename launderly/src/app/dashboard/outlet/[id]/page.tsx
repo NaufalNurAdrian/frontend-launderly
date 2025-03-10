@@ -5,15 +5,53 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useRouter } from "next/navigation";
 import * as Yup from "yup";
 import axios from "axios";
-import { getOutletById, updateOutlet } from "@/services/outletService";
+import { deleteOutlet, getOutletById, updateOutlet } from "@/services/outletService";
 import { OutletById } from "@/types/outlet.type";
-import { Card } from "@/components/ui/card";
+import { 
+  Card, 
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardFooter
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Address } from "@/types/address.type";
 import { Switch } from "@/components/ui/switch";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { 
+  Accordion, 
+  AccordionContent, 
+  AccordionItem, 
+  AccordionTrigger 
+} from "@/components/ui/accordion";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { 
+  Building2, 
+  MapPin, 
+  Edit, 
+  Save, 
+  Trash2, 
+  ArrowLeft, 
+  Store, 
+  MapIcon, 
+  AlertTriangle,
+  CheckCircle2,
+  X
+} from "lucide-react";
 
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -25,6 +63,17 @@ L.Icon.Default.mergeOptions({
   iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
   iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
   shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+});
+
+const customIcon = new L.Icon({
+  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41],
+  className: 'pulse-marker',
 });
 
 function MapClickHandler({ setFieldValue }: { setFieldValue: (field: string, value: any) => void }) {
@@ -59,6 +108,8 @@ export default function EditOutletPage({ params }: { params: { id: string } }) {
   });
   
   const [originalData, setOriginalData] = useState<OutletById | null>(null);
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   
   const [initialValues, setInitialValues] = useState({
     outletName: "",
@@ -159,14 +210,16 @@ export default function EditOutletPage({ params }: { params: { id: string } }) {
         payload.address.longitude = Number(values.address.longitude);
       }
     }
-  
-    console.log("Data yang dikirim ke backend:", payload);
-  
+
     try {
       setLoading(true);
       await updateOutlet(payload);
+      setSuccessMessage("Outlet berhasil diperbarui");
       toast.success("Outlet berhasil diperbarui");
-      router.push("/dashboard/outlet");
+      
+      setTimeout(() => {
+        router.push("/dashboard/outlet");
+      }, 1500);
     } catch (error: any) {
       console.error("Gagal memperbarui outlet:", error);
       setError(error instanceof Error ? error.message : "Gagal memperbarui outlet");
@@ -176,214 +229,450 @@ export default function EditOutletPage({ params }: { params: { id: string } }) {
     }
   };
 
-  if (loading) return <div className="flex justify-center items-center h-screen">Loading outlet data...</div>;
-  if (error) return <div className="text-red-500 p-4">Error: {error}</div>;
+  const handleDelete = async () => {
+    try {
+      setLoading(true);
+      await deleteOutlet({ id: params.id });
+      setSuccessMessage("Outlet berhasil dihapus");
+      toast.success("Outlet berhasil dihapus");
+      
+      setTimeout(() => {
+        router.push("/dashboard/outlet");
+      }, 1500);
+    } catch (error: any) {
+      console.error("Gagal delete outlet:", error);
+      setError(error instanceof Error ? error.message : "Gagal delete outlet");
+      toast.error(error.message || "Gagal delete outlet");
+    } finally {
+      setLoading(false);
+      setAlertOpen(false); 
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen bg-gray-50">
+        <div className="animate-pulse flex flex-col items-center">
+          <div className="h-16 w-16 bg-blue-400 rounded-full mb-4 flex items-center justify-center">
+            <Store className="h-8 w-8 text-white animate-bounce" />
+          </div>
+          <div className="h-5 w-48 bg-blue-200 rounded mb-2"></div>
+          <div className="h-4 w-36 bg-blue-100 rounded"></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error && !successMessage) {
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-md">
+        <Card className="border-red-200 shadow-lg">
+          <CardHeader className="bg-red-50 border-b border-red-100">
+            <div className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-red-500" />
+              <CardTitle className="text-red-700">Error</CardTitle>
+            </div>
+            <CardDescription className="text-red-600">
+              We encountered a problem while loading the outlet data
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="pt-6">
+            <p className="text-red-600 mb-4">{error}</p>
+            <Button 
+              variant="outline" 
+              className="w-full"
+              onClick={() => router.push("/dashboard/outlet")}
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Return to Outlets
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (successMessage) {
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-md">
+        <Card className="border-green-200 shadow-lg">
+          <CardHeader className="bg-green-50 border-b border-green-100">
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="h-5 w-5 text-green-500" />
+              <CardTitle className="text-green-700">Success</CardTitle>
+            </div>
+            <CardDescription className="text-green-600">
+              {successMessage}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="pt-6">
+            <p className="text-green-600 mb-4">Redirecting you back to the outlet list...</p>
+            <div className="w-full bg-gray-200 rounded-full h-2.5">
+              <div className="bg-green-500 h-2.5 rounded-full animate-progress"></div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
-    <div className="container px-4 py-6 mx-auto max-w-md">
-      <Card className="p-4 shadow-md">
-        <h1 className="text-xl font-bold mb-4">Edit Outlet</h1>
-        <p className="text-sm text-gray-500 mb-4">Pilih field yang ingin diperbarui</p>
-        
-        <div className="space-y-3 mb-6">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="toggle-name" className="cursor-pointer">Nama Outlet</Label>
-            <Switch
-              id="toggle-name"
-              checked={enabledFields.outletName}
-              onCheckedChange={(checked) => 
-                setEnabledFields({...enabledFields, outletName: checked})
-              }
-            />
-          </div>
-          
-          <div className="flex items-center justify-between">
-            <Label htmlFor="toggle-type" className="cursor-pointer">Tipe Outlet</Label>
-            <Switch
-              id="toggle-type"
-              checked={enabledFields.outletType}
-              onCheckedChange={(checked) => 
-                setEnabledFields({...enabledFields, outletType: checked})
-              }
-            />
-          </div>
-          
-          <div className="flex items-center justify-between">
-            <Label htmlFor="toggle-address" className="cursor-pointer">Alamat</Label>
-            <Switch
-              id="toggle-address"
-              checked={enabledFields.address}
-              onCheckedChange={(checked) => 
-                setEnabledFields({...enabledFields, address: checked})
-              }
-            />
-          </div>
-          
-          <div className="flex items-center justify-between">
-            <Label htmlFor="toggle-location" className="cursor-pointer">Lokasi (Peta)</Label>
-            <Switch
-              id="toggle-location"
-              checked={enabledFields.location}
-              onCheckedChange={(checked) => 
-                setEnabledFields({...enabledFields, location: checked})
-              }
-            />
-          </div>
-        </div>
-
-        <Formik
-          initialValues={initialValues}
-          validationSchema={validationSchema}
-          onSubmit={handleSubmit}
-          enableReinitialize
-          validateOnChange={false}
-          validateOnBlur={true}
-          validationContext={{ enabledFields }}
-        >
-          {({ isSubmitting, values, setFieldValue }) => (
-            <Form className="space-y-4">
-              <Accordion type="single" collapsible className="w-full">
-                {enabledFields.outletName && (
-                  <AccordionItem value="name">
-                    <AccordionTrigger className="text-sm font-medium">Nama Outlet</AccordionTrigger>
-                    <AccordionContent>
-                      <div className="space-y-2 pt-2">
-                        <Field as={Input} name="outletName" placeholder="Nama Outlet" />
-                        <ErrorMessage name="outletName" component="p" className="text-red-500 text-xs" />
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-                )}
-
-                {enabledFields.outletType && (
-                  <AccordionItem value="type">
-                    <AccordionTrigger className="text-sm font-medium">Tipe Outlet</AccordionTrigger>
-                    <AccordionContent>
-                      <div className="space-y-2 pt-2">
-                        <Field 
-                          as="select" 
-                          name="outletType" 
-                          className="w-full p-2 border rounded-md text-sm"
-                        >
-                          <option value="MAIN">Main</option>
-                          <option value="BRANCH">Branch</option>
-                        </Field>
-                        <ErrorMessage name="outletType" component="p" className="text-red-500 text-xs" />
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-                )}
-
-                {enabledFields.address && (
-                  <AccordionItem value="address">
-                    <AccordionTrigger className="text-sm font-medium">Alamat</AccordionTrigger>
-                    <AccordionContent>
-                      <div className="space-y-3 pt-2">
-                        <div>
-                          <Label className="text-xs mb-1">Alamat Lengkap</Label>
-                          <Field as={Input} name="address.addressLine" placeholder="Alamat Lengkap" />
-                          <ErrorMessage name="address.addressLine" component="p" className="text-red-500 text-xs" />
-                        </div>
-                        <div>
-                          <Label className="text-xs mb-1">Kota</Label>
-                          <Field as={Input} name="address.city" placeholder="Kota" />
-                          <ErrorMessage name="address.city" component="p" className="text-red-500 text-xs" />
-                        </div>
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-                )}
-
-                {enabledFields.location && (
-                  <AccordionItem value="location">
-                    <AccordionTrigger className="text-sm font-medium">Lokasi Peta</AccordionTrigger>
-                    <AccordionContent>
-                      <div className="space-y-4 pt-2">
-                        <div className="h-48 w-full rounded-md overflow-hidden border">
-                          <MapContainer
-                            center={[
-                              values.address.latitude ? Number(values.address.latitude) : -6.2088,
-                              values.address.longitude ? Number(values.address.longitude) : 106.8456,
-                            ]}
-                            zoom={13}
-                            style={{ height: "100%", width: "100%" }}
-                          >
-                            <TileLayer
-                              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                            />
-                            {values.address.latitude && values.address.longitude && (
-                              <Marker
-                                position={[
-                                  Number(values.address.latitude),
-                                  Number(values.address.longitude),
-                                ]}
-                                icon={new L.Icon.Default()}
-                              >
-                                <Popup>
-                                  <span>Lokasi Outlet</span>
-                                </Popup>
-                              </Marker>
-                            )}
-                            <MapClickHandler setFieldValue={setFieldValue} />
-                          </MapContainer>
-                        </div>
-                        
-                        <p className="text-xs text-gray-500">Klik pada peta untuk menentukan lokasi</p>
-
-                        <div className="grid grid-cols-2 gap-2">
-                          <div>
-                            <Label className="text-xs">Latitude</Label>
-                            <Field
-                              as={Input}
-                              type="number"
-                              step="any"
-                              name="address.latitude"
-                              placeholder="Latitude"
-                              className="text-sm"
-                            />
-                            <ErrorMessage name="address.latitude" component="p" className="text-red-500 text-xs" />
-                          </div>
-                          <div>
-                            <Label className="text-xs">Longitude</Label>
-                            <Field
-                              as={Input}
-                              type="number"
-                              step="any"
-                              name="address.longitude"
-                              placeholder="Longitude"
-                              className="text-sm"
-                            />
-                            <ErrorMessage name="address.longitude" component="p" className="text-red-500 text-xs" />
-                          </div>
-                        </div>
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-                )}
-              </Accordion>
-
-              <div className="flex flex-col gap-2 pt-4">
-                <Button 
-                  type="submit" 
-                  className="w-full" 
-                  disabled={isSubmitting || !Object.values(enabledFields).some(v => v)}
-                >
-                  {isSubmitting ? "Memperbarui..." : "Simpan Perubahan"}
-                </Button>
-                
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  className="w-full" 
-                  onClick={() => router.push("/dashboard/outlet")}
-                >
-                  Kembali
-                </Button>
+    <div className="container mx-auto px-4 py-8 max-w-2xl">
+      <Card className="shadow-lg border-0 overflow-hidden">
+        <CardHeader className="bg-gradient-to-r from-blue-500 to-blue-600 text-white pb-6">
+          <div className="flex items-start justify-between">
+            <div>
+              <CardTitle className="text-2xl font-bold flex items-center gap-2">
+                <Edit className="h-5 w-5" />
+                Edit Outlet
+              </CardTitle>
+              <CardDescription className="text-blue-100 mt-1">
+                {initialValues.outletName} • ID: {params.id}
+              </CardDescription>
+              <div className="mt-2">
+                <Badge variant="outline" className="text-xs font-normal bg-white/10 text-white border-white/20">
+                  {initialValues.outletType}
+                </Badge>
               </div>
-            </Form>
-          )}
-        </Formik>
+            </div>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="text-white hover:bg-blue-400 hover:bg-opacity-20"
+              onClick={() => router.push("/dashboard/outlet")}
+              aria-label="Back to outlets"
+            >
+              <X className="h-5 w-5" />
+            </Button>
+          </div>
+        </CardHeader>
+
+        <CardContent className="pt-6">
+          <div className="mb-6">
+            <h3 className="text-sm font-medium text-gray-700 mb-3">Pilih field yang ingin diperbarui</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="p-3 rounded-lg border border-gray-100 hover:border-blue-200 transition-colors bg-white shadow-sm">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Store className="w-4 h-4 text-blue-500" />
+                    <Label htmlFor="toggle-name" className="cursor-pointer text-sm font-medium">Nama Outlet</Label>
+                  </div>
+                  <Switch
+                    id="toggle-name"
+                    checked={enabledFields.outletName}
+                    onCheckedChange={(checked) => 
+                      setEnabledFields({...enabledFields, outletName: checked})
+                    }
+                  />
+                </div>
+              </div>
+              
+              <div className="p-3 rounded-lg border border-gray-100 hover:border-blue-200 transition-colors bg-white shadow-sm">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Building2 className="w-4 h-4 text-blue-500" />
+                    <Label htmlFor="toggle-type" className="cursor-pointer text-sm font-medium">Tipe Outlet</Label>
+                  </div>
+                  <Switch
+                    id="toggle-type"
+                    checked={enabledFields.outletType}
+                    onCheckedChange={(checked) => 
+                      setEnabledFields({...enabledFields, outletType: checked})
+                    }
+                  />
+                </div>
+              </div>
+              
+              <div className="p-3 rounded-lg border border-gray-100 hover:border-blue-200 transition-colors bg-white shadow-sm">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <MapPin className="w-4 h-4 text-blue-500" />
+                    <Label htmlFor="toggle-address" className="cursor-pointer text-sm font-medium">Alamat</Label>
+                  </div>
+                  <Switch
+                    id="toggle-address"
+                    checked={enabledFields.address}
+                    onCheckedChange={(checked) => 
+                      setEnabledFields({...enabledFields, address: checked})
+                    }
+                  />
+                </div>
+              </div>
+              
+              <div className="p-3 rounded-lg border border-gray-100 hover:border-blue-200 transition-colors bg-white shadow-sm">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <MapIcon className="w-4 h-4 text-blue-500" />
+                    <Label htmlFor="toggle-location" className="cursor-pointer text-sm font-medium">Lokasi (Peta)</Label>
+                  </div>
+                  <Switch
+                    id="toggle-location"
+                    checked={enabledFields.location}
+                    onCheckedChange={(checked) => 
+                      setEnabledFields({...enabledFields, location: checked})
+                    }
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <Separator className="my-6" />
+
+          <Formik
+            initialValues={initialValues}
+            validationSchema={validationSchema}
+            onSubmit={handleSubmit}
+            enableReinitialize
+            validateOnChange={false}
+            validateOnBlur={true}
+            validationContext={{ enabledFields }}
+          >
+            {({ isSubmitting, values, setFieldValue }) => (
+              <Form className="space-y-6">
+                <Accordion 
+                  type="single" 
+                  collapsible 
+                  className="w-full" 
+                  defaultValue={
+                    Object.entries(enabledFields).find(([_, value]) => value)?.[0]
+                  }
+                >
+                  {enabledFields.outletName && (
+                    <AccordionItem value="outletName" className="border border-gray-100 rounded-lg mb-3 shadow-sm">
+                      <AccordionTrigger className="px-4 py-3 hover:bg-gray-50 rounded-t-lg">
+                        <div className="flex items-center gap-2 text-sm font-medium">
+                          <Store className="w-4 h-4 text-blue-500" />
+                          <span>Nama Outlet</span>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="px-4 pb-4 pt-2">
+                        <div className="space-y-2">
+                          <div className="relative">
+                            <Field 
+                              as={Input} 
+                              name="outletName" 
+                              placeholder="Nama Outlet" 
+                              className="pl-8 focus-visible:ring-blue-500"
+                            />
+                            <Store className="w-4 h-4 text-gray-400 absolute left-2.5 top-2.5" />
+                          </div>
+                          <ErrorMessage name="outletName" component="p" className="text-red-500 text-xs" />
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  )}
+
+                  {enabledFields.outletType && (
+                    <AccordionItem value="outletType" className="border border-gray-100 rounded-lg mb-3 shadow-sm">
+                      <AccordionTrigger className="px-4 py-3 hover:bg-gray-50 rounded-t-lg">
+                        <div className="flex items-center gap-2 text-sm font-medium">
+                          <Building2 className="w-4 h-4 text-blue-500" />
+                          <span>Tipe Outlet</span>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="px-4 pb-4 pt-2">
+                        <div className="space-y-2">
+                          <div className="relative">
+                            <Field 
+                              as="select" 
+                              name="outletType" 
+                              className="w-full pl-8 h-10 px-3 py-2 rounded-md border border-input bg-background text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-blue-500"
+                            >
+                              <option value="MAIN">Main</option>
+                              <option value="BRANCH">Branch</option>
+                            </Field>
+                            <Building2 className="w-4 h-4 text-gray-400 absolute left-2.5 top-2.5" />
+                          </div>
+                          <ErrorMessage name="outletType" component="p" className="text-red-500 text-xs" />
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  )}
+
+                  {enabledFields.address && (
+                    <AccordionItem value="address" className="border border-gray-100 rounded-lg mb-3 shadow-sm">
+                      <AccordionTrigger className="px-4 py-3 hover:bg-gray-50 rounded-t-lg">
+                        <div className="flex items-center gap-2 text-sm font-medium">
+                          <MapPin className="w-4 h-4 text-blue-500" />
+                          <span>Alamat</span>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="px-4 pb-4 pt-2">
+                        <div className="space-y-3">
+                          <div>
+                            <Label className="text-xs mb-1 text-gray-600">Alamat Lengkap</Label>
+                            <div className="relative">
+                              <Field 
+                                as={Input} 
+                                name="address.addressLine" 
+                                placeholder="Alamat Lengkap" 
+                                className="pl-8 focus-visible:ring-blue-500"
+                              />
+                              <MapPin className="w-4 h-4 text-gray-400 absolute left-2.5 top-2.5" />
+                            </div>
+                            <ErrorMessage name="address.addressLine" component="p" className="text-red-500 text-xs mt-1" />
+                          </div>
+                          <div>
+                            <Label className="text-xs mb-1 text-gray-600">Kota</Label>
+                            <div className="relative">
+                              <Field 
+                                as={Input} 
+                                name="address.city" 
+                                placeholder="Kota" 
+                                className="pl-8 focus-visible:ring-blue-500"
+                              />
+                              <Building2 className="w-4 h-4 text-gray-400 absolute left-2.5 top-2.5" />
+                            </div>
+                            <ErrorMessage name="address.city" component="p" className="text-red-500 text-xs mt-1" />
+                          </div>
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  )}
+
+                  {enabledFields.location && (
+                    <AccordionItem value="location" className="border border-gray-100 rounded-lg mb-3 shadow-sm">
+                      <AccordionTrigger className="px-4 py-3 hover:bg-gray-50 rounded-t-lg">
+                        <div className="flex items-center gap-2 text-sm font-medium">
+                          <MapIcon className="w-4 h-4 text-blue-500" />
+                          <span>Lokasi Peta</span>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="px-4 pb-4 pt-2">
+                        <div className="space-y-4">
+                          <div className="h-60 w-full rounded-lg overflow-hidden border border-gray-200 shadow-sm">
+                            <MapContainer
+                              center={[
+                                values.address.latitude ? Number(values.address.latitude) : -6.2088,
+                                values.address.longitude ? Number(values.address.longitude) : 106.8456,
+                              ]}
+                              zoom={13}
+                              style={{ height: "100%", width: "100%" }}
+                              className="z-0"
+                            >
+                              <TileLayer
+                                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                              />
+                              {values.address.latitude && values.address.longitude && (
+                                <Marker
+                                  position={[
+                                    Number(values.address.latitude),
+                                    Number(values.address.longitude),
+                                  ]}
+                                  icon={customIcon}
+                                >
+                                  <Popup>
+                                    <span className="font-medium">{values.outletName}</span>
+                                    <p className="text-xs mt-1">{values.address.addressLine}</p>
+                                  </Popup>
+                                </Marker>
+                              )}
+                              <MapClickHandler setFieldValue={setFieldValue} />
+                            </MapContainer>
+                          </div>
+                          
+                          <div className="flex items-center gap-2 px-2 py-1.5 bg-blue-50 rounded-md text-xs text-blue-700">
+                            <MapPin className="w-3.5 h-3.5 text-blue-500 flex-shrink-0" />
+                            <span>Klik pada peta untuk menentukan lokasi</span>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-3">
+                            <div>
+                              <Label className="text-xs mb-1 text-gray-600">Latitude</Label>
+                              <div className="relative">
+                                <Field
+                                  as={Input}
+                                  type="number"
+                                  step="any"
+                                  name="address.latitude"
+                                  placeholder="Latitude"
+                                  className="text-sm pl-8 focus-visible:ring-blue-500"
+                                />
+                                <MapPin className="w-4 h-4 text-gray-400 absolute left-2.5 top-2.5" />
+                              </div>
+                              <ErrorMessage name="address.latitude" component="p" className="text-red-500 text-xs mt-1" />
+                            </div>
+                            <div>
+                              <Label className="text-xs mb-1 text-gray-600">Longitude</Label>
+                              <div className="relative">
+                                <Field
+                                  as={Input}
+                                  type="number"
+                                  step="any"
+                                  name="address.longitude"
+                                  placeholder="Longitude"
+                                  className="text-sm pl-8 focus-visible:ring-blue-500"
+                                />
+                                <MapPin className="w-4 h-4 text-gray-400 absolute left-2.5 top-2.5" />
+                              </div>
+                              <ErrorMessage name="address.longitude" component="p" className="text-red-500 text-xs mt-1" />
+                            </div>
+                          </div>
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  )}
+                </Accordion>
+
+                <Separator className="my-4" />
+
+                <div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
+                  <AlertDialog open={alertOpen} onOpenChange={setAlertOpen}>
+                    <AlertDialogTrigger asChild>
+                      <Button 
+                        type="button"
+                        variant="destructive" 
+                        className="w-full flex gap-2 items-center"
+                        disabled={loading || isSubmitting}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                        Delete Outlet
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Konfirmasi Penghapusan</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Apakah anda yakin ingin menghapus outlet ini? Tindakan ini tidak dapat dibatalkan.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Batal</AlertDialogCancel>
+                        <AlertDialogAction 
+                          onClick={handleDelete}
+                          className="bg-red-500 hover:bg-red-600 text-white"
+                        >
+                          Hapus
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                  
+                  <Button 
+                    type="submit" 
+                    className="w-full flex gap-2 items-center" 
+                    disabled={isSubmitting || !Object.values(enabledFields).some(v => v)}
+                  >
+                    <Save className="h-4 w-4" />
+                    {isSubmitting ? "Menyimpan..." : "Simpan Perubahan"}
+                  </Button>
+                  
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    className="w-full flex gap-2 items-center" 
+                    onClick={() => router.push("/dashboard/outlet")}
+                  >
+                    <ArrowLeft className="h-4 w-4" />
+                    Kembali
+                  </Button>
+                </div>
+              </Form>
+            )}
+          </Formik>
+        </CardContent>
       </Card>
     </div>
   );

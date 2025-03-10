@@ -1,5 +1,3 @@
-// src/types/report.types.ts
-
 export interface ReportData {
   transactions: {
     count: {
@@ -82,12 +80,13 @@ export interface OutletComparisonData {
   };
 }
 
-// Prop types with explicit null handling
 export interface OverviewTabProps {
   reportData: ReportData | null;
-  outletId?: number | string;
+  outletId: string;
   selectedMonth: string;
   selectedYear: string;
+  timeframe?: ReportTimeframe;
+  onTimeframeChange?: (value: string) => void;
 }
 
 export interface TransactionsTabProps {
@@ -115,11 +114,57 @@ export interface EmployeePerformanceTabProps {
   setSelectedYear: (year: string) => void;
 }
 
-// Existing additional type definitions
-export type ReportTimeframe = "daily" | "weekly" | "monthly" | "custom";
+export interface ReportSalesChartProps {
+  filterOutlet: string;
+  filterMonth: string;
+  filterYear: string;
+  timeframe?: ReportTimeframe;
+  onTimeframeChange?: (value: string) => void;
+}
+
+// Updated to include "yearly"
+export type ReportTimeframe = "daily" | "weekly" | "monthly" | "yearly" | "custom";
 export type ReportType = "transactions" | "revenue" | "customers" | "orders" | "comprehensive";
 
 export interface DateRange {
   from: Date;
   to: Date;
+}
+
+export interface ReportFilters {
+  outletId?: number;
+  startDate?: Date;
+  endDate?: Date;
+  timeframe?: ReportTimeframe;
+  reportType?: ReportType;
+}
+
+export interface SalesReportResult {
+  totalIncome: number;
+  totalTransaction: number;
+  totalOrders: number;
+  receivedAtOutlet: number;
+  onProgress: number;
+  completed: number;
+  totalWeight: number;
+  incomeDaily: number[];
+  transactionDaily: number[];
+  weightDaily: number[];
+  incomeMonthly: number[];
+  transactionMonthly: number[];
+  weightMonthly: number[];
+  pastYears: number[];
+  incomeYearly: number[];
+  transactionYearly: number[];
+  weightYearly: number[];
+  timeframe: "daily" | "weekly" | "monthly" | "yearly" | "custom";
+  dateLabels: string[];
+}
+
+export interface SalesReportApiResponse {
+  message: string;
+  result: {
+    message: string;
+    result: SalesReportResult;
+  };
 }

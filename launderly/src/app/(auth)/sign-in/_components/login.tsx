@@ -27,14 +27,13 @@ const Login = () => {
     { setSubmitting }: FormikHelpers<LoginValues>
   ) => {
     try {
-      const { customer, token, message } = await loginUser(values);
+      const { customer, token } = await loginUser(values);
   
       localStorage.setItem("token", token);
   
       setIsAuth(true);
       setUser(customer);
   
-      toast.success(message || "Login successful!");
       const { role } = customer;
   
       if (role === "WORKER" || role === "DRIVER") {
@@ -47,10 +46,8 @@ const Login = () => {
     } catch (err: unknown) {
       if (err instanceof Error) {
         console.error(err.message);
-        toast.error(err.message);
       } else {
         console.error("An unexpected error occurred.");
-        toast.error("An unexpected error occurred.");
       }
     } finally {
       setSubmitting(false);

@@ -7,11 +7,13 @@ import Image from "next/image";
 import { toast } from "react-toastify";
 import ResetPasswordForm from "@/components/resetPassword/resetPassword";
 import useSession from "@/hooks/useSession";
+import ChangeEmailForm from "@/components/changeEmailUser/changeEmail";
 
 const ProfileCustomer: React.FC = () => {
   const { user } = useSession();
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [showResetPasswordModal, setShowResetPasswordModal] = useState(false);
+  const [showUpdateEmailModal, setShowUpdateEmailModal] = useState(false);
 
   console.log("User state in ProfileCustomer:", user);
 
@@ -130,6 +132,19 @@ const ProfileCustomer: React.FC = () => {
                       </button>
                     </div>
                   </div>
+                  <div className="mt-8 space-y-6">
+                    <div>
+                      <label className="block text-gray-600 text-sm mb-2">
+                        Change Email
+                      </label>
+                      <button
+                        className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+                        onClick={() => setShowUpdateEmailModal(true)}
+                      >
+                        Change Email
+                      </button>
+                    </div>
+                  </div>
                 </>
               )}
 
@@ -152,6 +167,9 @@ const ProfileCustomer: React.FC = () => {
 
       {showResetPasswordModal && (
         <ResetPasswordForm onClose={() => setShowResetPasswordModal(false)} />
+      )}
+      {showUpdateEmailModal && (
+        <ChangeEmailForm onClose={() => setShowUpdateEmailModal(false)} />
       )}
     </div>
   );

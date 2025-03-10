@@ -50,28 +50,63 @@ interface CreateAddressDialogProps {
   onAddressCreated: () => void;
 }
 
+const fetchAddressFromCoordinates = async (lat: number, lng: number) => {
+  try {
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`
+    );
+    const data = await response.json();
+
+    if (data && data.address) {
+      return {
+        street: data.address.road || data.display_name || "Unknown Street",
+        city:
+          data.address.city ||
+          data.address.town ||
+          data.address.village ||
+          "Unknown City",
+      };
+    }
+  } catch (error) {
+    console.error("Error fetching address:", error);
+  }
+  return { street: "Unknown Street", city: "Unknown City" };
+};
+
 const LocationMarker: React.FC<LocationMarkerProps> = ({
   setFieldValue,
   userLocation,
 }) => {
-  useMapEvents({
-    click(e) {
-      setFieldValue("latitude", e.latlng.lat);
-      setFieldValue("longitude", e.latlng.lng);
-    },
-  });
-
+  const [position, setPosition] = useState<{ lat: number; lng: number }>(
+    userLocation
+  );
   const map = useMap();
 
   useEffect(() => {
     if (userLocation.lat && userLocation.lng) {
+      setPosition(userLocation);
       map.setView([userLocation.lat, userLocation.lng], 13);
     }
-  }, [userLocation.lat, userLocation.lng]);
+  }, [userLocation]);
 
-  return (
-    <Marker position={[userLocation.lat, userLocation.lng]} icon={customIcon} />
-  );
+  useMapEvents({
+    click: async (e) => {
+      const newLatLng = { lat: e.latlng.lat, lng: e.latlng.lng };
+      setPosition(newLatLng);
+      setFieldValue("latitude", e.latlng.lat);
+      setFieldValue("longitude", e.latlng.lng);
+
+      // **Fetch Address and Update Form**
+      const address = await fetchAddressFromCoordinates(
+        e.latlng.lat,
+        e.latlng.lng
+      );
+      setFieldValue("street", address.street);
+      setFieldValue("city", address.city);
+    },
+  });
+
+  return <Marker position={[position.lat, position.lng]} icon={customIcon} />;
 };
 
 const CreateAddressDialog: React.FC<CreateAddressDialogProps> = ({

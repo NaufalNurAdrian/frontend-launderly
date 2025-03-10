@@ -86,11 +86,7 @@ export default function WorkerAttendance({ token }: { token: string }) {
               handleCheckOut();
             }
           }}
-          className={`py-2 mt-2 px-5 rounded-xl text-white ${
-            attendanceStatus == "INACTIVE"
-              ? "bg-[#1678F2]  hover:bg-[#4b87cc]"
-              : "bg-red-500 hover:bg-red-400"
-          }`}
+          className={`py-2 mt-2 px-5 rounded-xl text-white ${attendanceStatus == "INACTIVE" ? "bg-[#1678F2]  hover:bg-[#4b87cc]" : "bg-red-500 hover:bg-red-400"}`}
         >
           {attendanceStatus == "INACTIVE" ? "Clock In" : "Clock Out"}
         </button>

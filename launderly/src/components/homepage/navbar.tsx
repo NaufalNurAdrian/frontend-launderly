@@ -56,7 +56,7 @@ export function Navbar() {
             >
               <li>
                 <Link
-                  href="#WhoWeAre"
+                  href="/#WhoWeAre"
                   onClick={closeDropdown}
                   className="hover:text-cyan-600"
                 >
@@ -65,7 +65,7 @@ export function Navbar() {
               </li>
               <li>
                 <Link
-                  href="#Services"
+                  href="/#Services"
                   onClick={closeDropdown}
                   className="hover:text-cyan-600"
                 >
@@ -74,7 +74,7 @@ export function Navbar() {
               </li>
               <li>
                 <Link
-                  href="#Quotes"
+                  href="/#Quotes"
                   onClick={closeDropdown}
                   className="hover:text-cyan-600"
                 >

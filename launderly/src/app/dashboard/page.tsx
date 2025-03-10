@@ -233,7 +233,7 @@ const ReportDashboard: React.FC = () => {
 
   if (outletsError) {
     return (
-      <div className="flex items-center justify-center h-64 text-red-500 p-4 mx-auto max-w-md">
+      <div className="flex items-center justify-center h-64 text-red-500 p-4 mx-auto max-w-md bg-white">
         <div className="bg-red-50 shadow-md rounded-lg p-6 w-full">
           <h3 className="text-xl font-bold text-red-700 mb-2">Error Loading Outlets</h3>
           <p className="text-gray-700 mb-4">We couldn't load the outlets data. Please try again later.</p>
@@ -247,7 +247,7 @@ const ReportDashboard: React.FC = () => {
 
   if (isSuperAdmin && reportError && !isSelectingDateRange) {
     return (
-      <div className="flex items-center justify-center h-64 text-red-500 p-4 mx-auto max-w-md">
+      <div className="flex items-center justify-center h-64 text-red-500 p-4 mx-auto max-w-md bg-white">
         <div className="bg-red-50 shadow-md rounded-lg p-6 w-full">
           <h3 className="text-xl font-bold text-red-700 mb-2">Error Loading Data</h3>
           <p className="text-gray-700 mb-4">We couldn't load the report data. Please try again later.</p>
@@ -262,7 +262,7 @@ const ReportDashboard: React.FC = () => {
   // Jika timeframe adalah custom dan kita sedang menunggu input date range, tampilkan pesan
   if (timeframe === "custom" && isSelectingDateRange) {
     return (
-      <div className="container mx-auto p-4 md:p-6">
+      <div className="container mx-auto p-4 md:p-6 bg-white">
         <h1 className="text-2xl md:text-3xl font-bold mb-6 text-gray-800">
           Outlet Transaction Analysis
         </h1>
@@ -294,7 +294,7 @@ const ReportDashboard: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto p-4 md:p-6">
+    <div className="container mx-auto p-4 md:p-6 bg-white">
       <h1 className="text-2xl md:text-3xl font-bold mb-6 text-gray-800">
         Outlet Transaction Analysis
       </h1>

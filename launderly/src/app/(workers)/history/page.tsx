@@ -6,14 +6,14 @@ import { useRole } from "@/hooks/useRole";
 import MobileHistoryTable from "@/components/feat-3/driver/driverHistoryCard";
 import HistoryTable from "@/components/feat-3/driver/driverHistory";
 import WorkerSidebar from "@/components/feat-3/workerSidebar";
-import ProtectedPage from "@/helpers/protectedRoutes";
+import ProtectedPage from "@/hoc/protectedRoutes";
 
 export default function History() {
   const role = useRole();
   return (
     <ProtectedPage allowedRoles={["DRIVER", "WORKER"]}>
       <div className="flex bg-[url('/LaundryPattern.jpeg')] bg-repeat w-full min-h-screen">
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-300 opacity-40 z-0"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-300 opacity-40 z-0"></div>
         <div className="z-30">
           <span className="hidden lg:block">
             <WorkerSidebar />

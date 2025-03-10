@@ -1,7 +1,7 @@
 "use client";
 
 import CompleteOrder from "@/components/feat-3/worker/completeOrder";
-import ProtectedPage from "@/helpers/protectedRoutes";
+import ProtectedPage from "@/hoc/protectedRoutes";
 import { useParams } from "next/navigation";
 
 export default function ProcessPage() {

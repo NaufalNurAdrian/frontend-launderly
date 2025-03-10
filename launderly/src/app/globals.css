@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  --font-sans: inherit; /* Tidak perlu langsung "Poppins", karena Next.js sudah menambahkannya */
+  --font-sans: inherit; 
 }
 
 body {

@@ -2,18 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { 
-  Box, 
-  TextField, 
-  Button, 
-  Typography, 
-  Paper,
-  CircularProgress,
   useTheme,
   useMediaQuery,
-  Fade,
-  alpha,
-  Tooltip,
-  IconButton
 } from '@mui/material';
 import { 
   Add as AddIcon, 

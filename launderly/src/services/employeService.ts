@@ -52,7 +52,6 @@ export interface EmployeeInput {
   fullName?: string;
   email?: string;
   password?: string;
-
 }
 
 export const updateEmployee = async (
@@ -60,9 +59,10 @@ export const updateEmployee = async (
   employeeData: EmployeeInput
 ): Promise<Employee> => {
   try {
-    const response = await api.patch<Employee>(`/employee/update/${id}`, employeeData);
-
-    console.log("Data yang dikirim ke backend:", response.data);
+    const response = await api.patch<Employee>(
+      `/employee/update/${id}`,
+      employeeData
+    );
 
     return response.data;
   } catch (error) {
@@ -71,3 +71,13 @@ export const updateEmployee = async (
   }
 };
 
+export const deleteEmployee = async (id: {id: string }): Promise<Employee> => {
+  try {
+    const response = await api.patch<Employee>(`/employee/delete`, id);
+
+    return response.data;
+  } catch (error) {
+    console.error("Failed to delete employee:");
+    throw new Error("Failed to delete employee");
+  }
+};

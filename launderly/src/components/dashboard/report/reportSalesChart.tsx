@@ -1,9 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import dynamic from 'next/dynamic';
-const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
-
 import {
   Card,
   CardContent,
@@ -18,55 +15,94 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { SalesReportApiResponse, SalesReportResult } from "@/types/reportSales.type";
+import { SalesReportApiResponse, SalesReportResult, ReportTimeframe } from "@/types/reportSales.type";
 import { getReportSales } from "@/services/reportService";
 import { GiWashingMachine } from "react-icons/gi";
+import { 
+  AreaChart, 
+  Area, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  ResponsiveContainer,
+  Legend
+} from "recharts";
+
+const formatCurrency = (value: number): string => {
+  return new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    minimumFractionDigits: 0
+  }).format(value);
+};
 
 export function ReportSalesChart({
   filterOutlet,
   filterMonth,
-  filterYear
+  filterYear,
+  timeframe = "daily",
+  onTimeframeChange
 }: {
   filterOutlet: string;
   filterMonth: string;
   filterYear: string;
+  timeframe?: ReportTimeframe;
+  onTimeframeChange?: (value: string) => void;
 }) {
-  const [timeRange, setTimeRange] = useState<"daily" | "monthly" | "yearly">("daily");
-  const [series, setSeries] = useState<any[]>([]);
-  const [categories, setCategories] = useState<string[]>([]);
+  const [chartData, setChartData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [totalIncome, setTotalIncome] = useState<number>(0);
+  const [currentTimeframe, setCurrentTimeframe] = useState<"daily" | "monthly" | "yearly">(
+    timeframe === "weekly" ? "daily" : timeframe as "daily" | "monthly" | "yearly"
+  );
 
   useEffect(() => {
+    let isMounted = true;
+    
     const fetchData = async () => {
+      if (!isMounted) return;
+      
       setLoading(true);
       setError(null);
       
       try {
-        const data: SalesReportApiResponse = await getReportSales(filterOutlet, filterMonth, filterYear);
+        const data: SalesReportApiResponse = await getReportSales(
+          filterOutlet, 
+          filterMonth, 
+          filterYear,
+          timeframe 
+        );
+        
+        if (!isMounted) return;
+        
         const report: SalesReportResult = data.result.result;
-
-        const labels: string[] = [];
-        const incomeData: number[] = [];
+        const formattedData: any[] = [];
         let total = 0;
 
-        // Format data based on selected time range
-        if (timeRange === "daily") {
-          const monthNames = [
-            "Jan", "Feb", "Mar", "Apr", "May", "Jun", 
-            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-          ];
-          
+        if (currentTimeframe === "daily") {
           report.incomeDaily.forEach((income, index) => {
-            total += income;
-            const day = index + 1;
-            const monthIndex = parseInt(filterMonth) - 1;
-            const monthName = monthNames[monthIndex >= 0 && monthIndex < 12 ? monthIndex : 0];
-            labels.push(`${day} ${monthName}`);
-            incomeData.push(income);
+            if (index < report.dateLabels.length) {
+              total += income;
+              
+              const actualDate = new Date(report.dateLabels[index]);
+              const day = actualDate.getDate();
+              const monthNames = [
+                "Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+              ];
+              const monthName = monthNames[actualDate.getMonth()];
+              
+              formattedData.push({
+                name: `${day} ${monthName}`,
+                revenue: income,
+                formattedRevenue: formatCurrency(income),
+                fullDate: report.dateLabels[index]
+              });
+            }
           });
-        } else if (timeRange === "monthly") {
+        } else if (currentTimeframe === "monthly") {
           const monthNames = [
             "January", "February", "March", "April", "May", "June", 
             "July", "August", "September", "October", "November", "December"
@@ -74,194 +110,70 @@ export function ReportSalesChart({
           
           report.incomeMonthly.forEach((income, index) => {
             total += income;
-            labels.push(monthNames[index]);
-            incomeData.push(income);
+            formattedData.push({
+              name: monthNames[index],
+              revenue: income,
+              formattedRevenue: formatCurrency(income)
+            });
           });
-        } else if (timeRange === "yearly") {
+        } else if (currentTimeframe === "yearly") {
           report.incomeYearly.forEach((income, index) => {
             total += income;
-            labels.push(`${report.pastYears[index]}`);
-            incomeData.push(income);
+            formattedData.push({
+              name: `${report.pastYears[index]}`,
+              revenue: income,
+              formattedRevenue: formatCurrency(income)
+            });
           });
         }
 
-        setCategories(labels);
-        setSeries([{
-          name: 'Revenue',
-          data: incomeData
-        }]);
-        setTotalIncome(total);
+        if (isMounted) {
+          setChartData(formattedData);
+          setTotalIncome(report.totalIncome);
+        }
       } catch (err: any) {
-        console.error("Error fetching sales report:", err);
-        setError(err.message || "Failed to fetch sales report");
+        if (isMounted) {
+          console.error("Error fetching sales report:", err);
+          setError(err.message || "Failed to fetch sales report");
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
     fetchData();
-  }, [timeRange, filterOutlet, filterMonth, filterYear]);
+    return () => {
+      isMounted = false;
+    };
+  }, [currentTimeframe, filterOutlet, filterMonth, filterYear, timeframe]);
 
-  const formatCurrency = (value: number): string => {
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      minimumFractionDigits: 0
-    }).format(value);
+  const handleTimeframeChange = (value: "daily" | "monthly" | "yearly") => {
+    setCurrentTimeframe(value);
+    if (onTimeframeChange) {
+      const mappedValue = value === "daily" 
+        ? "daily" 
+        : value === "monthly" 
+          ? "monthly" 
+          : "yearly";
+      
+      onTimeframeChange(mappedValue);
+    }
   };
 
-  // ApexCharts options
-  const options: ApexCharts.ApexOptions = {
-    chart: {
-      type: 'area',
-      toolbar: {
-        show: false
-      },
-      fontFamily: 'Inter, sans-serif',
-      height: 380,
-      width: '100%',
-      dropShadow: {
-        enabled: true,
-        enabledOnSeries: undefined,
-        top: 5,
-        left: 0,
-        blur: 3,
-        color: '#3b82f6',
-        opacity: 0.1
-      },
-      animations: {
-        enabled: true,
-        speed: 800,
-        animateGradually: {
-          enabled: true,
-          delay: 150
-        },
-        dynamicAnimation: {
-          enabled: true,
-          speed: 350
-        }
-      }
-    },
-    dataLabels: {
-      enabled: false
-    },
-    colors: ['#3b82f6'],
-    stroke: {
-      curve: 'smooth',
-      width: 3
-    },
-    fill: {
-      type: 'gradient',
-      gradient: {
-        shadeIntensity: 1,
-        opacityFrom: 0.6,
-        opacityTo: 0.1,
-        stops: [0, 90, 100]
-      }
-    },
-    xaxis: {
-      categories: categories,
-      labels: {
-        style: {
-          fontSize: '12px',
-          fontFamily: 'Inter, sans-serif',
-          colors: '#6b7280'
-        },
-        rotate: 0,
-        trim: true,
-        hideOverlappingLabels: true
-      },
-      axisBorder: {
-        show: false
-      },
-      axisTicks: {
-        show: false
-      }
-    },
-    yaxis: {
-      labels: {
-        formatter: function(val: number) {
-          return val.toLocaleString('id-ID');
-        },
-        style: {
-          fontSize: '12px',
-          fontFamily: 'Inter, sans-serif',
-          colors: '#6b7280'
-        }
-      }
-    },
-    tooltip: {
-      y: {
-        formatter: function(val: number) {
-          return formatCurrency(val);
-        }
-      },
-      theme: 'light',
-      style: {
-        fontSize: '12px',
-        fontFamily: 'Inter, sans-serif'
-      }
-    },
-    grid: {
-      borderColor: '#f1f5f9',
-      strokeDashArray: 4,
-      xaxis: {
-        lines: {
-          show: false
-        }
-      }
-    },
-    markers: {
-      size: 5,
-      colors: ['#3b82f6'],
-      strokeColors: '#fff',
-      strokeWidth: 2,
-      hover: {
-        size: 7
-      }
-    },
-    legend: {
-      position: 'top',
-      horizontalAlign: 'left',
-      fontSize: '14px',
-      fontFamily: 'Inter, sans-serif',
-      offsetY: 5,
-      itemMargin: {
-        horizontal: 10
-      }
-    },
-    responsive: [
-      {
-        breakpoint: 1024,
-        options: {
-          chart: {
-            height: 300
-          }
-        }
-      },
-      {
-        breakpoint: 768,
-        options: {
-          chart: {
-            height: 280
-          },
-          markers: {
-            size: 4
-          }
-        }
-      },
-      {
-        breakpoint: 480,
-        options: {
-          chart: {
-            height: 250
-          },
-          markers: {
-            size: 3
-          }
-        }
-      }
-    ]
+  const CustomTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-white p-3 rounded-lg shadow-md border border-gray-200">
+          <p className="font-medium text-gray-800">{payload[0].payload.name}</p>
+          <p className="text-blue-600 font-semibold">
+            {payload[0].payload.formattedRevenue}
+          </p>
+        </div>
+      );
+    }
+    return null;
   };
 
   return (
@@ -273,15 +185,21 @@ export function ReportSalesChart({
             <div>
               <CardTitle className="text-xl font-bold">Sales Report</CardTitle>
               <CardDescription className="text-blue-100 opacity-90">
-                {timeRange === "daily" ? "Daily" : timeRange === "monthly" ? "Monthly" : "Yearly"} revenue overview
+                {timeframe === "daily" 
+                  ? "Today's" 
+                  : timeframe === "weekly" 
+                    ? "Last 7 days" 
+                    : timeframe === "monthly" 
+                      ? "This month's" 
+                      : "This year's"} revenue overview
               </CardDescription>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-sm font-medium">View by:</span>
+            <span className="text-sm font-medium">Chart view:</span>
             <Select 
-              value={timeRange} 
-              onValueChange={(val: "daily" | "monthly" | "yearly") => setTimeRange(val)}
+              value={currentTimeframe} 
+              onValueChange={(val: "daily" | "monthly" | "yearly") => handleTimeframeChange(val)}
             >
               <SelectTrigger className="w-32 bg-white/10 border-blue-300/30 text-white hover:bg-white/20 focus:ring-blue-300">
                 <SelectValue placeholder="Select Range" />
@@ -319,7 +237,7 @@ export function ReportSalesChart({
               </div>
             </div>
           </div>
-        ) : categories.length === 0 ? (
+        ) : chartData.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-gray-500">
             <svg className="w-16 h-16 text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -336,22 +254,65 @@ export function ReportSalesChart({
               </div>
               <div className="font-bold text-xl text-blue-700">
                 {formatCurrency(totalIncome)}
-                <span className="text-sm font-normal text-gray-600 ml-1">total</span>
+                <span className="text-sm font-normal text-gray-600 ml-1">
+                  {timeframe === "daily" 
+                    ? "today" 
+                    : timeframe === "weekly" 
+                      ? "last 7 days" 
+                      : timeframe === "monthly" 
+                        ? "this month" 
+                        : "this year"}
+                </span>
               </div>
             </div>
             
-            <div className="border border-blue-100 rounded-xl p-2 md:p-4 bg-blue-50/50 w-full">
-              {typeof window !== 'undefined' && (
-                <div className="w-full min-h-[350px] md:min-h-[380px]">
-                  <Chart 
-                    options={options} 
-                    series={series} 
-                    type="area" 
-                    width="100%"
-                    height="100%"
-                  />
-                </div>
-              )}
+            <div className="border border-blue-100 rounded-xl p-4 bg-blue-50/50 w-full">
+              <div className="w-full h-[350px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart
+                    data={chartData}
+                    margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                  >
+                    <defs>
+                      <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8} />
+                        <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.1} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                    <XAxis 
+                      dataKey="name"
+                      tick={{ fontSize: 12, fill: '#6b7280' }}
+                      tickLine={false}
+                      axisLine={{ stroke: '#e2e8f0' }}
+                      interval="preserveStartEnd"
+                      minTickGap={5}
+                    />
+                    <YAxis 
+                      tickFormatter={(value) => new Intl.NumberFormat('id').format(value)}
+                      tick={{ fontSize: 12, fill: '#6b7280' }}
+                      tickLine={false}
+                      axisLine={{ stroke: '#e2e8f0' }}
+                      tickCount={5}
+                    />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Legend 
+                      iconType="circle"
+                      iconSize={8}
+                      wrapperStyle={{ paddingTop: 10 }}
+                    />
+                    <Area 
+                      type="monotone" 
+                      dataKey="revenue" 
+                      name="Revenue" 
+                      stroke="#3b82f6" 
+                      strokeWidth={3}
+                      fill="url(#colorRevenue)" 
+                      activeDot={{ r: 6 }} 
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
             </div>
           </>
         )}

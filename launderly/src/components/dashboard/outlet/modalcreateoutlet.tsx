@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import L from "leaflet";
@@ -23,6 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { toast } from "react-toastify";
 import axios from "axios";
 import {
   MapContainer,
@@ -31,8 +32,16 @@ import {
   Popup,
   useMapEvents,
 } from "react-leaflet";
-import Swal from "sweetalert2";
 import api from "@/libs/api";
+import {
+  MdOutlineLocationOn,
+  MdOutlineStorefront,
+  MdOutlineClose,
+  MdOutlineApartment,
+  MdOutlineLocationCity,
+} from "react-icons/md";
+import { HiOutlineLocationMarker } from "react-icons/hi";
+import { Loader2 } from "lucide-react";
 
 // Replace the existing icon configuration with this:
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -61,6 +70,21 @@ export default function ModalCreateOutlet({
   const [position, setPosition] = useState<[number, number]>([
     -6.2088, 106.8456,
   ]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Handle modal close on escape key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleEscape);
+    return () => window.removeEventListener("keydown", handleEscape);
+  }, [onClose]);
+
+  // Handle click outside to close
+  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) onClose();
+  };
 
   // Fetch address from coordinates
   async function fetchAddress(lat: number, lng: number) {
@@ -112,6 +136,7 @@ export default function ModalCreateOutlet({
     }),
     onSubmit: async (values) => {
       try {
+        setIsSubmitting(true);
         await api.post("/outlet/create", {
           outletName: values.name,
           outletType: values.type,
@@ -125,38 +150,14 @@ export default function ModalCreateOutlet({
           ],
         });
 
-        Swal.fire({
-          icon: "success",
-          title: "Success!",
-          text: "Outlet created successfully",
-          toast: true,
-          position: "top-end",
-          showConfirmButton: false,
-          timer: 3000,
-          timerProgressBar: true,
-          didOpen: (toast) => {
-            toast.addEventListener("mouseenter", Swal.stopTimer);
-            toast.addEventListener("mouseleave", Swal.resumeTimer);
-          },
-        });
+        toast.success("Success Create Outlet")
 
         onClose();
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error submitting form: ", error);
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Failed to create outlet",
-          toast: true,
-          position: "top-end",
-          showConfirmButton: false,
-          timer: 3000,
-          timerProgressBar: true,
-          didOpen: (toast) => {
-            toast.addEventListener("mouseenter", Swal.stopTimer);
-            toast.addEventListener("mouseleave", Swal.resumeTimer);
-          },
-        });
+        toast.error(error);
+      } finally {
+        setIsSubmitting(false);
       }
     },
   });
@@ -176,111 +177,262 @@ export default function ModalCreateOutlet({
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <Card className="w-[90vw] max-w-[500px] mx-4">
-        <CardHeader>
-          <div className="flex justify-between items-center">
-            <CardTitle>Create Outlet</CardTitle>
-            <button
-              onClick={onClose}
-              className="text-gray-500 hover:text-gray-700 text-lg"
-            >
-              ✕
-            </button>
-          </div>
-          <CardDescription>Create your new outlet in one-click</CardDescription>
-        </CardHeader>
-
-        <CardContent>
-          <form className="space-y-4" onSubmit={formik.handleSubmit}>
-            <div className="space-y-2">
-              <Label htmlFor="name">Outlet Name</Label>
-              <Input id="name" {...formik.getFieldProps("name")} />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="type">Type</Label>
-              <Select
-                value={formik.values.type}
-                onValueChange={(value: string) =>
-                  formik.setFieldValue("type", value)
-                }
+      <div
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto max-h-screen"
+        onClick={handleOverlayClick}
+      >
+        <Card className="w-full max-w-[550px] mx-auto shadow-xl animate-in fade-in-50 duration-300 border-0 overflow-hidden">
+          <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-800 text-white relative p-6">
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-2">
+                <MdOutlineStorefront className="h-6 w-6 text-blue-200" />
+                <CardTitle className="text-xl font-bold">
+                  Create New Outlet
+                </CardTitle>
+              </div>
+              <button
+                onClick={onClose}
+                className="text-white/80 hover:text-white hover:bg-white/10 rounded-full p-1.5 transition-colors duration-200"
+                aria-label="Close modal"
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select outlet type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="MAIN">Main</SelectItem>
-                  <SelectItem value="BRANCH">Branch</SelectItem>
-                </SelectContent>
-              </Select>
+                <MdOutlineClose className="h-5 w-5" />
+              </button>
             </div>
+            <CardDescription className="text-blue-100 mt-1">
+              Fill in the details below to add a new outlet to your network
+            </CardDescription>
+          </CardHeader>
 
-            <div className="mb-6">
-              <MapContainer
-                center={[
-                  formik.values.latitude || 0,
-                  formik.values.longitude || 0,
-                ]}
-                zoom={13}
-                style={{ height: "300px", width: "100%" }}
-              >
-                <TileLayer
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          <CardContent className="p-6 pt-5">
+            <form className="space-y-5" onSubmit={formik.handleSubmit}>
+              <div className="space-y-1.5">
+                <Label
+                  htmlFor="name"
+                  className="flex items-center gap-1.5 text-gray-700"
+                >
+                  <MdOutlineStorefront className="h-4 w-4 text-blue-500" />
+                  Outlet Name
+                </Label>
+                <Input
+                  id="name"
+                  {...formik.getFieldProps("name")}
+                  className={`${
+                    formik.errors.name && formik.touched.name
+                      ? "border-red-300 focus-visible:ring-red-300"
+                      : "focus-visible:ring-blue-300"
+                  }`}
+                  placeholder="Enter outlet name"
                 />
-                {formik.values.latitude && formik.values.longitude && (
-                  <Marker
-                    position={[
-                      Number(formik.values.latitude),
-                      Number(formik.values.longitude),
-                    ]}
-                    icon={new L.Icon.Default()}
-                  >
-                    <Popup>
-                      <span>Store Location</span>
-                    </Popup>
-                  </Marker>
+                {formik.errors.name && formik.touched.name && (
+                  <p className="text-xs text-red-500 mt-1">
+                    {formik.errors.name}
+                  </p>
                 )}
-                <MapClickHandler /> {/* Add this component */}
-              </MapContainer>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="latitude">Latitude</Label>
-                <Input id="latitude" {...formik.getFieldProps("latitude")} />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="longitude">Longitude</Label>
-                <Input id="longitude" {...formik.getFieldProps("longitude")} />
+
+              <div className="space-y-1.5">
+                <Label
+                  htmlFor="type"
+                  className="flex items-center gap-1.5 text-gray-700"
+                >
+                  <MdOutlineApartment className="h-4 w-4 text-blue-500" />
+                  Outlet Type
+                </Label>
+                <Select
+                  value={formik.values.type}
+                  onValueChange={(value: string) =>
+                    formik.setFieldValue("type", value)
+                  }
+                >
+                  <SelectTrigger
+                    className={`${
+                      formik.errors.type && formik.touched.type
+                        ? "border-red-300 ring-red-100"
+                        : "focus:ring-blue-200"
+                    }`}
+                  >
+                    <SelectValue placeholder="Select outlet type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="MAIN">Main Branch</SelectItem>
+                    <SelectItem value="BRANCH">Sub Branch</SelectItem>
+                  </SelectContent>
+                </Select>
+                {formik.errors.type && formik.touched.type && (
+                  <p className="text-xs text-red-500 mt-1">
+                    {formik.errors.type}
+                  </p>
+                )}
               </div>
-            </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="addressline">Address Line</Label>
-              <Input
-                id="addressline"
-                {...formik.getFieldProps("addressline")}
-              />
-            </div>
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <Label className="flex items-center gap-1.5 text-gray-700">
+                    <MdOutlineLocationOn className="h-4 w-4 text-blue-500" />
+                    Location
+                  </Label>
+                  <div className="flex items-center text-xs text-blue-600">
+                    <HiOutlineLocationMarker className="h-3.5 w-3.5 mr-1" />
+                    Click on map to set location
+                  </div>
+                </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="city">City</Label>
-              <Input id="city" {...formik.getFieldProps("city")} />
-            </div>
+                <div className="rounded-lg overflow-hidden border border-gray-200 shadow-sm">
+                  <MapContainer
+                    center={[
+                      formik.values.latitude || 0,
+                      formik.values.longitude || 0,
+                    ]}
+                    zoom={13}
+                    style={{ height: "250px", width: "100%" }}
+                    className="z-0"
+                  >
+                    <TileLayer
+                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    />
+                    {formik.values.latitude && formik.values.longitude && (
+                      <Marker
+                        position={[
+                          Number(formik.values.latitude),
+                          Number(formik.values.longitude),
+                        ]}
+                        icon={new L.Icon.Default()}
+                      >
+                        <Popup>
+                          <span className="text-sm font-medium">
+                            Store Location
+                          </span>
+                        </Popup>
+                      </Marker>
+                    )}
+                    <MapClickHandler />
+                  </MapContainer>
+                </div>
+              </div>
 
-            <CardFooter className="flex justify-end gap-2">
-              <Button variant="outline" onClick={onClose}>
-                Cancel
-              </Button>
-              <Button type="submit" className="bg-cyan-500">
-                Submit
-              </Button>
-            </CardFooter>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="latitude" className="text-xs text-gray-600">
+                    Latitude
+                  </Label>
+                  <Input
+                    id="latitude"
+                    {...formik.getFieldProps("latitude")}
+                    className={`${
+                      formik.errors.latitude && formik.touched.latitude
+                        ? "border-red-300"
+                        : ""
+                    } text-sm`}
+                  />
+                  {formik.errors.latitude && formik.touched.latitude && (
+                    <p className="text-xs text-red-500 mt-1">
+                      {formik.errors.latitude}
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="longitude" className="text-xs text-gray-600">
+                    Longitude
+                  </Label>
+                  <Input
+                    id="longitude"
+                    {...formik.getFieldProps("longitude")}
+                    className={`${
+                      formik.errors.longitude && formik.touched.longitude
+                        ? "border-red-300"
+                        : ""
+                    } text-sm`}
+                  />
+                  {formik.errors.longitude && formik.touched.longitude && (
+                    <p className="text-xs text-red-500 mt-1">
+                      {formik.errors.longitude}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label
+                  htmlFor="addressline"
+                  className="flex items-center gap-1.5 text-gray-700"
+                >
+                  <MdOutlineLocationOn className="h-4 w-4 text-blue-500" />
+                  Address Line
+                </Label>
+                <Input
+                  id="addressline"
+                  {...formik.getFieldProps("addressline")}
+                  className={`${
+                    formik.errors.addressline && formik.touched.addressline
+                      ? "border-red-300"
+                      : ""
+                  }`}
+                  placeholder="Enter street address"
+                />
+                {formik.errors.addressline && formik.touched.addressline && (
+                  <p className="text-xs text-red-500 mt-1">
+                    {formik.errors.addressline}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-1.5">
+                <Label
+                  htmlFor="city"
+                  className="flex items-center gap-1.5 text-gray-700"
+                >
+                  <MdOutlineLocationCity className="h-4 w-4 text-blue-500" />
+                  City
+                </Label>
+                <Input
+                  id="city"
+                  {...formik.getFieldProps("city")}
+                  className={`${
+                    formik.errors.city && formik.touched.city
+                      ? "border-red-300"
+                      : ""
+                  }`}
+                  placeholder="Enter city name"
+                />
+                {formik.errors.city && formik.touched.city && (
+                  <p className="text-xs text-red-500 mt-1">
+                    {formik.errors.city}
+                  </p>
+                )}
+              </div>
+            </form>
+          </CardContent>
+
+          <CardFooter className="flex justify-end gap-3 p-6 pt-2 bg-gray-50 border-t">
+            <Button
+              variant="outline"
+              onClick={onClose}
+              className="text-gray-700 border-gray-300 hover:bg-gray-100"
+              disabled={isSubmitting}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+              onClick={(e) => {
+                e.preventDefault();
+                formik.handleSubmit();
+              }}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Creating...
+                </>
+              ) : (
+                "Create Outlet"
+              )}
+            </Button>
+          </CardFooter>
+        </Card>
+      </div>
   );
 }

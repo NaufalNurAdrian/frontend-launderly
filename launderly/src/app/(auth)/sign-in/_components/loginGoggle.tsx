@@ -3,21 +3,21 @@
 import { useEffect } from "react";
 import { loginWithGoogle } from "@/app/api/auth";
 import { useRouter } from "next/navigation";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 
 const LoginGoogle = () => {
   const router = useRouter();
 
   const handleGoogleLogin = async (response: { credential?: string }) => {
-    console.log("Google Login Success:", response);
-  
+    //console.log("Google Login Success:", response);
+
     try {
       if (!response.credential) {
         throw new Error("Google login credential not found.");
       }
-  
+
       const data = await loginWithGoogle(response.credential);
-  
+
       if (data.token) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.data));
@@ -36,7 +36,6 @@ const LoginGoogle = () => {
       }
     }
   };
-  
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -47,7 +46,7 @@ const LoginGoogle = () => {
 
     script.onload = () => {
       if (window.google) {
-        console.log("Google SDK Loaded:", window.google);
+        //console.log("Google SDK Loaded:", window.google);
 
         window.google.accounts.id.initialize({
           client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,

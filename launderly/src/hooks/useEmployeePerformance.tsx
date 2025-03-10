@@ -15,9 +15,6 @@ interface UseEmployeePerformanceReturn {
   refetch: () => Promise<void>;
 }
 
-/**
- * Custom hook to fetch and manage employee performance data
- */
 export const useEmployeePerformance = ({
   outletId,
   month,
@@ -27,7 +24,6 @@ export const useEmployeePerformance = ({
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isError, setIsError] = useState<boolean>(false);
 
-  // Function to fetch data
   const fetchData = async () => {
     if (month === '0' || year === '0') {
       setData([]);
@@ -54,7 +50,6 @@ export const useEmployeePerformance = ({
     }
   };
 
-  // Fetch data when inputs change
   useEffect(() => {
     fetchData();
   }, [outletId, month, year]);

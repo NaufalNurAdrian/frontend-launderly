@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 import { calculateTimeDifference } from "@/helpers/timeCounter";
 import SortButton from "../sortingButton";
 import DefaultLoading from "../defaultLoading";

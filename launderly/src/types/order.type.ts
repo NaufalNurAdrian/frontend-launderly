@@ -40,11 +40,15 @@ export interface Order {
   payment: Payment[];
 }
 
-export interface OrderApiResponse{
-  data(data: any): unknown;
+export interface OrderApiResponse {
   message: string;
   getOrder: {
-    orders: Order[]
-    totalPages : ""
-  }
+    orders: Order[];
+    totalPages: string | number;
+    meta: {
+      page: number;
+      take: number;
+      total: number;
+    };
+  };
 }

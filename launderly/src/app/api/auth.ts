@@ -1,6 +1,6 @@
 import { RegisterValues } from "@/types/auth";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 
 const base_url = process.env.NEXT_PUBLIC_BASE_URL_BE;
 
@@ -32,13 +32,11 @@ export async function registerUser(values: RegisterValues): Promise<any> {
   }
 }
 
-
 export async function loginUser(values: { email: string; password: string }) {
   try {
     const payload = { email: values.email, password: values.password };
     const res = await axios.post(`${base_url}/auth/login`, payload);
 
-    // Simpan token ke localStorage
     localStorage.setItem("token", res.data.token);
     console.log("Token saved to localStorage:", res.data.token);
 
@@ -48,23 +46,20 @@ export async function loginUser(values: { email: string; password: string }) {
     console.error("Login failed", err);
 
     if (axios.isAxiosError(err)) {
-      const errorMessage = err.response?.data || "";
+      const errorMessage = err.response?.data?.message || "An error occurred.";
 
-      if (
-        err.response &&
-        err.response.status === 400 &&
-        typeof errorMessage === "string" &&
-        errorMessage.includes("Google")
-      ) {
+      if (err.response?.status === 400 && errorMessage.includes("Google")) {
         toast.error(
           "This email is registered via Google. Please log in using Google."
         );
+      } else {
+        toast.error(errorMessage);
       }
     } else {
       toast.error("An unexpected error occurred.");
     }
 
-    throw err; // Tetap lempar error agar bisa ditangani di tempat lain
+    throw err;
   }
 }
 

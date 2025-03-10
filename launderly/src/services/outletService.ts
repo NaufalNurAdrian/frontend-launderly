@@ -51,11 +51,21 @@ export const updateOutlet = async (outletData: {
 
     const response = await api.patch<Outlet>(`/outlet/update`, outletData);
 
-    console.log("Data yang dikirim ke backend:", response.data);
-
     return response.data;
   } catch (error) {
     console.error("Failed to update outlet:");
     throw new Error("Failed to update outlet");
+  }
+};
+
+export const deleteOutlet = async ( id: {id: string }): Promise<Outlet> => {
+  try {
+
+    const response = await api.patch<Outlet>(`/outlet/delete`, id);
+
+    return response.data;
+  } catch (error) {
+    console.error("Failed to delete outlet:");
+    throw new Error("Failed to delete outlet");
   }
 };

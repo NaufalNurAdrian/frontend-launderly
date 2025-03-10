@@ -20,6 +20,7 @@ import {
   ClockIcon, 
   XCircleIcon 
 } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 // Define order status types
 type OrderStatus = 
@@ -69,15 +70,34 @@ export default function OrderTable({
 }) {
   const [orders, setOrders] = useState<OrderApiResponse>();
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(15); // Default to 15 items per page
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectedOrderNumber, setSelectedOrderNumber] = useState<string | null>(null);
 
+  // Calculate total pages based on total count and items per page
+  const totalPages = orders?.getOrder?.meta?.total 
+    ? Math.ceil(orders.getOrder.meta.total / itemsPerPage) 
+    : 1;
+
   const handleOpenModal = (orderNumber: string) => {
     setSelectedOrderNumber(orderNumber);
     setModalOpen(true);
+  };
+
+  // Next page handler
+  const handleNextPage = () => {
+    if (page < totalPages) {
+      setPage(page + 1);
+    }
+  };
+
+  // Previous page handler
+  const handlePrevPage = () => {
+    if (page > 1) {
+      setPage(page - 1);
+    }
   };
 
   useEffect(() => {
@@ -92,11 +112,12 @@ export default function OrderTable({
           filterStatus,
           filterDate,
           filterCategory,
-          filterCustomerName
+          filterCustomerName,
+          itemsPerPage
         );
         setOrders(data);
-        setTotalPages(data?.getOrder?.totalPages || 1);
       } catch (err) {
+        console.error("Error fetching orders:", err);
         setError("Failed to load orders.");
       } finally {
         setIsLoading(false);
@@ -112,7 +133,14 @@ export default function OrderTable({
     filterDate,
     filterCategory,
     filterCustomerName,
+    itemsPerPage,
   ]);
+
+  // Handle items per page change
+  const handleItemsPerPageChange = (value: string) => {
+    setItemsPerPage(Number(value));
+    setPage(1); // Reset to first page when changing items per page
+  };
 
   // Loading State Component
   const LoadingState = () => (
@@ -140,7 +168,9 @@ export default function OrderTable({
     <div className="hidden md:block overflow-x-auto">
       <Table className="bg-white shadow-md rounded-xl overflow-hidden">
         <TableCaption className="bg-gray-100 p-2 text-gray-600">
-          Recent Orders
+          {orders?.getOrder?.meta?.total 
+            ? `Showing ${Math.min((page - 1) * itemsPerPage + 1, orders.getOrder.meta.total)} to ${Math.min(page * itemsPerPage, orders.getOrder.meta.total)} of ${orders.getOrder.meta.total} orders`
+            : 'Recent Orders'}
         </TableCaption>
         <TableHeader className="bg-sky-50 border-b-2 border-sky-200">
           <TableRow className="hover:bg-sky-100/50 transition-colors duration-200">
@@ -278,50 +308,78 @@ export default function OrderTable({
     </div>
   );
 
-  // Pagination Component
+  // Pagination Controls
   const PaginationControls = () => (
-    <div className="flex justify-between items-center mt-6 bg-sky-50 p-4 rounded-b-xl">
-      <button
-        onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-        disabled={page === 1}
-        className="
-          px-4 py-2 
-          bg-sky-600 
-          text-white 
-          rounded-lg 
-          hover:bg-sky-700 
-          transition-colors 
-          disabled:opacity-50 
-          disabled:cursor-not-allowed
-          flex items-center gap-2
-        "
-      >
-        <ChevronLeftIcon className="w-5 h-5" />
-        Previous
-      </button>
+    <div className="flex flex-col sm:flex-row justify-between items-center mt-6 bg-sky-50 p-4 rounded-b-xl gap-4">
+      <div className="flex items-center gap-2 w-full sm:w-auto">
+        <span className="text-sm text-gray-600">Show:</span>
+        <Select 
+          value={itemsPerPage.toString()} 
+          onValueChange={handleItemsPerPageChange}
+        >
+          <SelectTrigger className="w-[100px] bg-white">
+            <SelectValue placeholder="Per Page" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="10">10</SelectItem>
+            <SelectItem value="15">15</SelectItem>
+            <SelectItem value="25">25</SelectItem>
+            <SelectItem value="50">50</SelectItem>
+            <SelectItem value="100">100</SelectItem>
+          </SelectContent>
+        </Select>
+        <span className="text-sm text-gray-600">per page</span>
+      </div>
 
-      <p className="text-sm text-gray-600">
-        Page <span className="font-bold text-sky-700">{page}</span> of {totalPages}
-      </p>
+      <div className="flex flex-nowrap items-center gap-2 sm:gap-4 w-full sm:w-auto">
+        <button
+          onClick={handlePrevPage}
+          disabled={page <= 1}
+          className="
+            px-3 sm:px-4 py-2 
+            bg-sky-600 
+            text-white 
+            rounded-lg 
+            hover:bg-sky-700 
+            transition-colors 
+            disabled:opacity-50 
+            disabled:hover:bg-sky-600
+            disabled:cursor-not-allowed
+            flex items-center gap-1 sm:gap-2
+            text-sm sm:text-base
+            flex-nowrap whitespace-nowrap
+          "
+        >
+          <ChevronLeftIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+          <span>Prev</span>
+        </button>
 
-      <button
-        onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
-        disabled={page === totalPages}
-        className="
-          px-4 py-2 
-          bg-sky-600 
-          text-white 
-          rounded-lg 
-          hover:bg-sky-700 
-          transition-colors 
-          disabled:opacity-50 
-          disabled:cursor-not-allowed
-          flex items-center gap-2
-        "
-      >
-        Next
-        <ChevronRightIcon className="w-5 h-5" />
-      </button>
+        <p className="text-sm text-gray-600 whitespace-nowrap">
+          Page <span className="font-bold text-sky-700">{page}</span> of {totalPages}
+        </p>
+
+        <button
+          onClick={handleNextPage}
+          disabled={page >= totalPages}
+          className="
+            px-3 sm:px-4 py-2 
+            bg-sky-600 
+            text-white 
+            rounded-lg 
+            hover:bg-sky-700 
+            transition-colors 
+            disabled:opacity-50 
+            disabled:hover:bg-sky-600
+            disabled:cursor-not-allowed
+            flex items-center gap-1 sm:gap-2
+            text-sm sm:text-base
+            flex-nowrap whitespace-nowrap
+          "
+        >
+          <span>Next</span>
+          <ChevronRightIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+        </button>
+      </div>
     </div>
   );
 

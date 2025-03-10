@@ -2,7 +2,7 @@
 
 import { IAddress } from "@/types/address";
 import axios, { AxiosError } from "axios";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL_BE;
 
@@ -50,15 +50,14 @@ export async function getOutletAddress() {
 export async function createUserAddress(payload: Partial<IAddress>) {
   try {
     const token = localStorage.getItem("token");
-    console.log("Token in Frontend:", token);
-
+    
     const response = await axios.post(`${BASE_URL}/address`, payload, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
     });
-    console.log("Headers being sent:", response.config.headers);
+    //console.log("Headers being sent:", response.config.headers);
 
     toast.success(response.data?.message || "Create Address Success!");
     return response.data;

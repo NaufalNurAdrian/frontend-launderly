@@ -23,7 +23,7 @@ export default function OrderMobileHistoryTable() {
   });
   const token = useToken();
 
-  const fetchRequests = async (page: number, sortBy: string, order: "asc" | "desc") => {
+  const fetchHistory = async (page: number, sortBy: string, order: "asc" | "desc") => {
     if (!token) return;
     try {
       const pageSize = 5;
@@ -40,6 +40,7 @@ export default function OrderMobileHistoryTable() {
   };
 
   const handlePageChange = (page: number) => {
+    setLoading(true)
     setCurrentPage(page);
   };
 
@@ -49,13 +50,18 @@ export default function OrderMobileHistoryTable() {
       ...prevOrder,
       [sortBy]: prevOrder[sortBy] === "asc" ? "desc" : "asc",
     }));
+    setRequests([]);
+    setCurrentPage(1);
   };
-
+  
   useEffect(() => {
+    setRequests([]);
     if (token) {
-      fetchRequests(currentPage, sortBy, order[sortBy]);
+      fetchHistory( currentPage, sortBy, order[sortBy]);
     }
-  }, [sortBy, order, currentPage, token]);
+  }, [currentPage, sortBy, order, token]);
+  
+
 
   return (
     <div className="p-4">
@@ -77,8 +83,8 @@ export default function OrderMobileHistoryTable() {
           </div>
         ) : (
           requests.map((request) => (
-            <div key={request.id} className="flex bg-white w-full justify-between h-[100px] border-2 p-4 py-2 rounded-lg shadow-sm">
-              <div className="flex flex-col">
+            <div key={request.id} className="flex w-full justify-between h-[110px] border-2 bg-white p-4 py-2 rounded-lg shadow-sm">
+              <div className="flex flex-col gap-1">
                 <p className="text-sm text-blue-600 bg-blue-300 px-2 rounded-full">
                   {formatDate(request.updatedAt)} : {formatTime(new Date(request.updatedAt))}
                 </p>
@@ -90,7 +96,7 @@ export default function OrderMobileHistoryTable() {
 
               <div className="flex flex-col justify-center items-center">
                 <h1 className="font-medium text-sm">income: </h1>
-                <h1 className="font-semibold text-sm text-blue-400">{request.laundryPrice}</h1>
+                <h1 className="font-semibold text-sm text-blue-400">{`Rp.${request.laundryPrice}`}</h1>
               </div>
             </div>
           ))

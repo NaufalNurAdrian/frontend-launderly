@@ -44,36 +44,33 @@ export default function MobileHistoryTable() {
       setLoading(false);
     }
   };
-
-  const handleFilterChange = (selectedFilter: string) => {
-    setFilter(selectedFilter);
-  };
-
+  
   const handlePageChange = (page: number) => {
+    setLoading(true)
     setCurrentPage(page);
   };
-
-  const handleSort = (sortBy: string, newOrder: "asc" | "desc") => {
-    setSortBy(sortBy);
-    setOrder((prevOrder) => ({
-      ...prevOrder,
-      [sortBy]: prevOrder[sortBy] === "asc" ? "desc" : "asc",
-    }));
+  const handleFilterChange = (selectedFilter: string) => {
+    setFilter(selectedFilter);
+    setRequests([]);
+    setCurrentPage(1);
   };
 
-  useEffect(() => {
-    if (token) {
-      fetchRequests(currentPage, sortBy, order[sortBy], filter);
-    }
-  }, [sortBy, order, currentPage, filter, token]);
+const handleSort = (sortBy: string, newOrder: "asc" | "desc") => {
+  setSortBy(sortBy);
+  setOrder((prevOrder) => ({
+    ...prevOrder,
+    [sortBy]: prevOrder[sortBy] === "asc" ? "desc" : "asc",
+  }));
+  setRequests([]);
+  setCurrentPage(1);
+};
 
-  if (loading) {
-    return (
-      <div className="text-center items-center py-5">
-        <DefaultLoading />
-      </div>
-    );
+useEffect(() => {
+  setRequests([]);
+  if (token) {
+    fetchRequests(currentPage, sortBy, order[sortBy], filter);
   }
+}, [currentPage, sortBy, order, filter, token]);
 
   return (
     <div className="p-4 mb-10 bg-white mx-3 rounded-lg shadow-md">
@@ -96,19 +93,19 @@ export default function MobileHistoryTable() {
           </div>
         ) : (
           requests.map((request) => (
-            <div key={request.deliveryNumber} className="flex w-full justify-between h-[100px] border-2 bg-white p-4 py-2 rounded-lg shadow-sm">
-              <div className="flex flex-col">
+            <div key={request.deliveryNumber} className="flex w-full justify-between h-[110px] border-2 bg-white p-4 py-2 rounded-lg shadow-sm">
+              <div className="flex flex-col gap-1">
                 <p className="text-sm text-blue-600 bg-blue-300 px-2 rounded-full">
-                  {formatDate(request.updatedAt)} : {formatTime(new Date(request.updatedAt))}
+                  {formatDate(request.updatedAt)}
                 </p>
                 <div className="mt-1">
                   {request.type == "delivery" ? <h1 className="text-lg text-blue-500 font-bold">{request.deliveryNumber}</h1> : <h1 className="text-lg text-blue-500 font-bold">{request.pickupNumber}</h1>}
-                  <h1 className="text-sm">{roundDistance(request.distance)} km from outlet</h1>
+                  <h1 className="text-sm ">{roundDistance(request.distance)} km from outlet</h1>
                 </div>
               </div>
 
               <div className="flex flex-col justify-center items-center">
-                <h1 className="font-semibold text-sm">{request.type}</h1>
+                <h1 className="font-semibold text-sm text-blue-600 bg-blue-300 px-2 rounded-full" >{request.type}</h1>
               </div>
             </div>
           ))

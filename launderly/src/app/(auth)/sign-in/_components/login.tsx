@@ -4,12 +4,10 @@ import { loginUser } from "@/app/api/auth";
 import useSession from "@/hooks/useSession";
 import { LoginSchema } from "@/libs/schema";
 import { LoginValues } from "@/types/auth";
-import axios from "axios";
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { toast } from "react-toastify";
 import LoginGoogle from "./loginGoggle";
 import { ArrowBigLeftDash } from "lucide-react";
 

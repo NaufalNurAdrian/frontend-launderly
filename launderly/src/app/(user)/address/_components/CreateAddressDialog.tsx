@@ -13,7 +13,7 @@ import {
 import { Input } from "@/components/feat-1/input";
 import { createUserAddress } from "@/app/api/address";
 import { AddressSchema } from "@/libs/schema";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 import useSession from "@/hooks/useSession";
 import "leaflet/dist/leaflet.css";
 import { customIcon } from "@/components/feat-1/customIcon";

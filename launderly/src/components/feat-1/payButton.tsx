@@ -17,16 +17,16 @@ const PayButton: React.FC<PayButtonProps> = ({ orderId }) => {
 
       window.snap.pay(snapToken, {
         onSuccess: function (result) {
-          console.log("Payment success:", result);
+          // console.log("Payment success:", result);
         },
         onPending: function (result) {
-          console.log("Payment pending:", result);
+          // console.log("Payment pending:", result);
         },
         onError: function (result) {
           console.error("Payment failed:", result);
         },
         onClose: function () {
-          console.log("User closed the payment popup.");
+          // console.log("User closed the payment popup.");
         },
       });
     } catch (error) {

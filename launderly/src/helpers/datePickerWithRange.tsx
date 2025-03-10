@@ -1,15 +1,15 @@
-"use client"
-import React, { useState, useEffect, useRef } from "react"
-import { format, isValid } from "date-fns"
-import { CalendarIcon } from "lucide-react"
-import { DateRange } from "react-day-picker"
-import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
+"use client";
+import React, { useState, useEffect, useRef } from "react";
+import { format, isValid } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import { DateRange } from "react-day-picker";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
+} from "@/components/ui/popover";
 
 interface DatePickerWithRangeProps {
   value?: DateRange;
@@ -24,89 +24,91 @@ export function DatePickerWithRange({
   disabled = false,
   className,
 }: DatePickerWithRangeProps) {
-  const [date, setDate] = useState<DateRange | undefined>(value)
-  const [isOpen, setIsOpen] = useState(false)
-  
+  const [date, setDate] = useState<DateRange | undefined>(value);
+  const [isOpen, setIsOpen] = useState(false);
+
   // Use ref to track submitting state and avoid extra renders
-  const isSubmittingRef = useRef(false)
-  
+  const isSubmittingRef = useRef(false);
+
   // Use ref to track previous values for comparison
-  const prevValueRef = useRef<DateRange | undefined>(value)
+  const prevValueRef = useRef<DateRange | undefined>(value);
 
   // Sync with parent component's value when it changes externally
   useEffect(() => {
     // Only update if the parent value changed and it's different from our current state
-    if (value !== prevValueRef.current && 
-        JSON.stringify(value) !== JSON.stringify(date) && 
-        !isSubmittingRef.current) {
-      setDate(value)
-      prevValueRef.current = value
+    if (
+      value !== prevValueRef.current &&
+      JSON.stringify(value) !== JSON.stringify(date) &&
+      !isSubmittingRef.current
+    ) {
+      setDate(value);
+      prevValueRef.current = value;
     }
-  }, [value, date])
+  }, [value, date]);
 
   // Handle date selection changes
   const handleDateChange = (selectedDate: DateRange | undefined) => {
-    console.log("Date picker selection changed:", selectedDate)
-    setDate(selectedDate)
-  }
+    // console.log("Date picker selection changed:", selectedDate);
+    setDate(selectedDate);
+  };
 
   // Handle applying a selected date range
   const applyDateRange = () => {
     if (date?.from && date?.to && onChange) {
-      console.log("Applying date range:", date)
-      isSubmittingRef.current = true
-      
-      const formattedFrom = new Date(date.from)
-      formattedFrom.setHours(0, 0, 0, 0)
-      
-      const formattedTo = new Date(date.to)
-      formattedTo.setHours(23, 59, 59, 999)
-      
+      // console.log("Applying date range:", date);
+      isSubmittingRef.current = true;
+
+      const formattedFrom = new Date(date.from);
+      formattedFrom.setHours(0, 0, 0, 0);
+
+      const formattedTo = new Date(date.to);
+      formattedTo.setHours(23, 59, 59, 999);
+
       onChange({
         from: formattedFrom,
-        to: formattedTo
-      })
-      
+        to: formattedTo,
+      });
+
       // Reset the submitting flag after the parent has processed the change
       setTimeout(() => {
-        isSubmittingRef.current = false
-        prevValueRef.current = date
-      }, 0)
+        isSubmittingRef.current = false;
+        prevValueRef.current = date;
+      }, 0);
     }
-    
-    setIsOpen(false)
-  }
-  
+
+    setIsOpen(false);
+  };
+
   // Handle clearing the date range
   const clearDateRange = () => {
-    setDate(undefined)
-    
+    setDate(undefined);
+
     if (onChange) {
-      isSubmittingRef.current = true
-      onChange(undefined)
-      
+      isSubmittingRef.current = true;
+      onChange(undefined);
+
       // Reset the submitting flag after the parent has processed the change
       setTimeout(() => {
-        isSubmittingRef.current = false
-        prevValueRef.current = undefined
-      }, 0)
+        isSubmittingRef.current = false;
+        prevValueRef.current = undefined;
+      }, 0);
     }
-    
-    setIsOpen(false)
-  }
+
+    setIsOpen(false);
+  };
 
   // Handle popover open/close
   const handleOpenChange = (open: boolean) => {
-    setIsOpen(open)
-    
+    setIsOpen(open);
+
     // When closing without applying, reset to the last confirmed value
     if (!open && !isSubmittingRef.current) {
-      setDate(prevValueRef.current)
+      setDate(prevValueRef.current);
     }
-  }
+  };
 
   return (
-    <div className={`grid gap-2 ${className || ''}`}>
+    <div className={`grid gap-2 ${className || ""}`}>
       <Popover open={isOpen} onOpenChange={handleOpenChange}>
         <PopoverTrigger asChild>
           <Button
@@ -122,8 +124,8 @@ export function DatePickerWithRange({
               hover:bg-gray-50
               hover:text-gray-900
               hover:border-gray-300
-              ${!date ? 'text-gray-500' : ''} 
-              ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
+              ${!date ? "text-gray-500" : ""} 
+              ${disabled ? "opacity-50 cursor-not-allowed" : ""}
             `}
             disabled={disabled}
           >
@@ -173,5 +175,5 @@ export function DatePickerWithRange({
         </PopoverContent>
       </Popover>
     </div>
-  )
+  );
 }

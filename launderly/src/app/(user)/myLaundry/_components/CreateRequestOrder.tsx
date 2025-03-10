@@ -10,7 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/feat-1/dialog";
 import { createRequestOrder, getOutletNearby } from "@/app/api/order";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 import useSession from "@/hooks/useSession";
 import { getUserAddresses } from "@/app/api/address";
 import { calculateDistance } from "@/helpers/calculateDistance";

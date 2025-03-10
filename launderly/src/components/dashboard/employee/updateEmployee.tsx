@@ -31,7 +31,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Outlet, OutletApiResponse } from "@/types/outlet.type";
 import { fetchAllOutlet } from "@/services/outletService";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 // Updated validation schema with conditional validation
@@ -129,7 +129,6 @@ export default function ModalEmployeeUpdate({
     onSubmit: async (values) => {
       // Check if at least one field is enabled
       if (!Object.values(enabledFields).some(value => value)) {
-        toast.warning("Please select at least one field to update");
         return;
       }
 

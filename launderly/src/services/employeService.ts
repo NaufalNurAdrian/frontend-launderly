@@ -27,7 +27,7 @@ export const createEmployee = async (
 ): Promise<Employee> => {
   try {
     const response = await api.post<Employee>("/employee/create", data);
-    console.log("data :", data);
+    // console.log("data :", data);
 
     return response.data;
   } catch (error) {
@@ -71,7 +71,7 @@ export const updateEmployee = async (
   }
 };
 
-export const deleteEmployee = async (id: {id: string }): Promise<Employee> => {
+export const deleteEmployee = async (id: { id: string }): Promise<Employee> => {
   try {
     const response = await api.patch<Employee>(`/employee/delete`, id);
 

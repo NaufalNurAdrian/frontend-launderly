@@ -12,7 +12,7 @@ import { BiTimeFive } from "react-icons/bi";
 import { IoArrowBack, IoArrowForward } from "react-icons/io5";
 import { GiWashingMachine } from "react-icons/gi";
 import ModalEmployeeUpdate from "./updateEmployee";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 import {
   AlertDialog,
   AlertDialogAction,

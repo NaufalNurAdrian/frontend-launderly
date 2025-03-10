@@ -35,7 +35,9 @@ export default function WorkerAttendance({ token }: { token: string }) {
       const responseData = await res.json();
 
       if (!res.ok) {
-        toast.error(`Failed to Clock-in: ${responseData.message || "Unknown error"}`);
+        const errorMessage =
+        responseData?.message || responseData?.error?.message || "Unknown error";
+      toast.error(`Failed to Clock-in: ${errorMessage}`);
         return;
       }
       setAttendanceStatus("ACTIVE");

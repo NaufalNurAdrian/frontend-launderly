@@ -9,7 +9,7 @@ import "swiper/css";
 import { useRef, useState } from "react";
 import SwiperButton from "@/components/feat-3/swipperButton";
 import WorkerSidebar from "@/components/feat-3/workerSidebar";
-import ProtectedPage from "@/helpers/protectedRoutes";
+import ProtectedPage from "@/hoc/protectedRoutes";
 
 export default function RequestsPage() {
   const role = useRole();
@@ -18,8 +18,8 @@ export default function RequestsPage() {
 
   return (
     <ProtectedPage allowedRoles={["DRIVER", "WORKER"]}>
-      <div className="flex bg-[url('/LaundryPattern.jpeg')] bg-repeat mix-blend-multiply w-full min-h-screen relative">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-300 opacity-40 z-10"></div>
+          <div className="flex bg-[url('/LaundryPattern.jpeg')] bg-repeat w-full min-h-screen">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-300 opacity-40 z-0"></div>
         <div className="relative z-30">
           <div>
             <span className="hidden lg:block">

@@ -1,7 +1,7 @@
 import Navbar from "@/components/feat-3/navbar";
 import WorkerProfile from "@/components/feat-3/workerProfile";
 import Sidebar from "@/components/feat-3/workerSidebar";
-import ProtectedPage from "@/helpers/protectedRoutes";
+import ProtectedPage from "@/hoc/protectedRoutes";
 
 export default function WorkerProfilePage() {
   return (

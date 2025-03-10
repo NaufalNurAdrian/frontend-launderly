@@ -24,8 +24,12 @@ import {
 import { Outlet, OutletApiResponse } from "@/types/outlet.type";
 import { fetchAllOutlet } from "@/services/outletService";
 import { createEmployee } from "@/services/employeService";
-import { AddEmployeeInput, EmployeeStation, EmployeeWorkShift } from "@/types/employee.type";
-import { toast } from "react-toastify";
+import {
+  AddEmployeeInput,
+  EmployeeStation,
+  EmployeeWorkShift,
+} from "@/types/employee.type";
+import { toast } from "react-hot-toast";
 
 const validationSchema = Yup.object().shape({
   fullName: Yup.string().required("Fullname is required"),
@@ -57,7 +61,7 @@ export default function ModalAddEmployee({ onClose }: { onClose: () => void }) {
   const [outlets, setOutlets] = useState<Outlet[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [allerMessage, setAllertMessage] = useState<string | null>(null)
+  const [allerMessage, setAllertMessage] = useState<string | null>(null);
 
   const formik = useFormik({
     initialValues: {
@@ -80,18 +84,19 @@ export default function ModalAddEmployee({ onClose }: { onClose: () => void }) {
           password: values.password,
           role: values.role as AddEmployeeInput["role"],
           outletId: parseInt(values.outletId),
-          workShift: values.workShift as EmployeeWorkShift || undefined,
-          station: values.station as EmployeeStation || undefined,
+          workShift: (values.workShift as EmployeeWorkShift) || undefined,
+          station: (values.station as EmployeeStation) || undefined,
         };
-        console.log(payload);
-        
+        // console.log(payload);
+
         await createEmployee(payload);
-        toast.success("success create employee")
+        toast.success("success create employee");
         onClose();
       } catch (error: unknown) {
-        const errorMessage = error instanceof Error ? error.message : "cannot create employe"
-        setAllertMessage(errorMessage)
-        toast.error(errorMessage)
+        const errorMessage =
+          error instanceof Error ? error.message : "cannot create employe";
+        setAllertMessage(errorMessage);
+        toast.error(errorMessage);
         console.error("Error adding employee:", error);
       } finally {
         setIsSubmitting(false);
@@ -188,11 +193,12 @@ export default function ModalAddEmployee({ onClose }: { onClose: () => void }) {
                 {...formik.getFieldProps("confirmPassword")}
                 placeholder="Confirm Password"
               />
-              {formik.touched.confirmPassword && formik.errors.confirmPassword && (
-                <p className="text-red-500 text-sm">
-                  {formik.errors.confirmPassword}
-                </p>
-              )}
+              {formik.touched.confirmPassword &&
+                formik.errors.confirmPassword && (
+                  <p className="text-red-500 text-sm">
+                    {formik.errors.confirmPassword}
+                  </p>
+                )}
             </div>
 
             {/* Role Selection */}
@@ -223,7 +229,9 @@ export default function ModalAddEmployee({ onClose }: { onClose: () => void }) {
                 <Label htmlFor="station">Station</Label>
                 <Select
                   value={formik.values.station}
-                  onValueChange={(value: string) => formik.setFieldValue("station", value)}
+                  onValueChange={(value: string) =>
+                    formik.setFieldValue("station", value)
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select Station" />
@@ -235,7 +243,9 @@ export default function ModalAddEmployee({ onClose }: { onClose: () => void }) {
                   </SelectContent>
                 </Select>
                 {formik.touched.station && formik.errors.station && (
-                  <p className="text-red-500 text-sm">{formik.errors.station}</p>
+                  <p className="text-red-500 text-sm">
+                    {formik.errors.station}
+                  </p>
                 )}
               </div>
             )}
@@ -246,7 +256,9 @@ export default function ModalAddEmployee({ onClose }: { onClose: () => void }) {
                 <Label htmlFor="workShift">Shift</Label>
                 <Select
                   value={formik.values.workShift}
-                  onValueChange={(value: string) => formik.setFieldValue("workShift", value)}
+                  onValueChange={(value: string) =>
+                    formik.setFieldValue("workShift", value)
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select Shift" />
@@ -257,18 +269,24 @@ export default function ModalAddEmployee({ onClose }: { onClose: () => void }) {
                   </SelectContent>
                 </Select>
                 {formik.touched.workShift && formik.errors.workShift && (
-                  <p className="text-red-500 text-sm">{formik.errors.workShift}</p>
+                  <p className="text-red-500 text-sm">
+                    {formik.errors.workShift}
+                  </p>
                 )}
               </div>
             )}
 
             {/* Outlet - For Outlet Admin, Worker and Driver */}
-            {["OUTLET_ADMIN", "WORKER", "DRIVER"].includes(formik.values.role) && (
+            {["OUTLET_ADMIN", "WORKER", "DRIVER"].includes(
+              formik.values.role
+            ) && (
               <div className="space-y-2">
                 <Label htmlFor="outletId">Outlet</Label>
                 <Select
                   value={formik.values.outletId}
-                  onValueChange={(value: string) => formik.setFieldValue("outletId", value)}
+                  onValueChange={(value: string) =>
+                    formik.setFieldValue("outletId", value)
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select Outlet" />
@@ -282,7 +300,9 @@ export default function ModalAddEmployee({ onClose }: { onClose: () => void }) {
                   </SelectContent>
                 </Select>
                 {formik.touched.outletId && formik.errors.outletId && (
-                  <p className="text-red-500 text-sm">{formik.errors.outletId}</p>
+                  <p className="text-red-500 text-sm">
+                    {formik.errors.outletId}
+                  </p>
                 )}
               </div>
             )}

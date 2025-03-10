@@ -4,7 +4,7 @@ import { requestForgetPassword } from "@/app/api/user";
 import { ForgotPasswordSchema } from "@/libs/schema";
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
 import Link from "next/link";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 
 const ForgotPassword = () => {
   const initialValues = { email: "" };

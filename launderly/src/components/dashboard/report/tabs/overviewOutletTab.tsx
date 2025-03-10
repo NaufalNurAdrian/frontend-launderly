@@ -23,7 +23,6 @@ const OverviewOutletTab = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [report, setReport] = useState<SalesReportApiResponse | undefined>();
-
   const reportData = report?.result?.result;
 
   useEffect(() => {

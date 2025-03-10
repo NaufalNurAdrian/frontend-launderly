@@ -110,7 +110,7 @@ const ReportDashboard: React.FC = () => {
   // Single effect to handle refetching data when necessary
   useEffect(() => {
     if (shouldRefetchRef.current && !isSelectingDateRange) {
-      console.log(`Refetching data (trigger count: ${refreshCountRef.current})`);
+      //console.log(`Refetching data (trigger count: ${refreshCountRef.current})`);
       refetchReportData();
       refetchComparisonData();
       shouldRefetchRef.current = false;
@@ -125,9 +125,9 @@ const ReportDashboard: React.FC = () => {
       setIsSelectingDateRange(true);
       // Jangan hapus date range yang sudah ada jika ada
       if (!dateRange) {
-        console.log("Switched to custom timeframe, waiting for date range selection");
+        //console.log("Switched to custom timeframe, waiting for date range selection");
       } else {
-        console.log("Switched to custom timeframe with existing date range");
+        //console.log("Switched to custom timeframe with existing date range");
         // Jika sudah ada date range, kita bisa langsung fetch data
         setIsSelectingDateRange(false);
         triggerRefetch();
@@ -150,7 +150,7 @@ const ReportDashboard: React.FC = () => {
       triggerRefetch();
     }
     
-    console.log(`Timeframe changed to ${newTimeframe}`);
+    //console.log(`Timeframe changed to ${newTimeframe}`);
   };
 
   const handleOutletChange = (value: string) => {
@@ -160,7 +160,7 @@ const ReportDashboard: React.FC = () => {
   };
 
   const handleDateRangeChange = (range: { from: Date; to: Date } | undefined) => {
-    console.log("Date range changed:", range);
+    //console.log("Date range changed:", range);
     
     if (range) {
       // Ensure both from and to dates are present
@@ -192,11 +192,11 @@ const ReportDashboard: React.FC = () => {
           setTimeframe("custom");
         }
         
-        console.log("Date range set:", {
-          from: fromDate.toISOString(),
-          to: toDate.toISOString(),
-          timeframe: "custom"
-        });
+        // console.log("Date range set:", {
+        //   from: fromDate.toISOString(),
+        //   to: toDate.toISOString(),
+        //   timeframe: "custom"
+        // });
         
         // Mark for refetch
         triggerRefetch();

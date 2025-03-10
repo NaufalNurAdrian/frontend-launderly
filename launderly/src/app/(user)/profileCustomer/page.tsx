@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import CustomerSidebar from "@/components/ui/sidebar";
 import Image from "next/image";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 import ResetPasswordForm from "@/components/resetPassword/resetPassword";
 import useSession from "@/hooks/useSession";
 import ChangeEmailForm from "@/components/changeEmailUser/changeEmail";
@@ -15,7 +15,7 @@ const ProfileCustomer: React.FC = () => {
   const [showResetPasswordModal, setShowResetPasswordModal] = useState(false);
   const [showUpdateEmailModal, setShowUpdateEmailModal] = useState(false);
 
-  console.log("User state in ProfileCustomer:", user);
+  //console.log("User state in ProfileCustomer:", user);
 
   const editAvatar = async (file: File) => {
     if (!file || !user) return;
@@ -42,7 +42,7 @@ const ProfileCustomer: React.FC = () => {
         }
       );
 
-      console.log("Response:", res.data);
+      //console.log("Response:", res.data);
       if (res.status === 200) {
         toast.success(
           "Avatar updated successfully! Please refresh the page to see changes."

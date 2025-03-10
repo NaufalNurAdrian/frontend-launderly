@@ -69,7 +69,7 @@ export default function WorkerAttendance({ token }: { token: string }) {
   return (
     <div className="flex bg-neutral-100 lg:py-8 p-3 lg:px-10 rounded-xl justify-evenly items-center shadow-md lg:mx-2">
       <div className="flex flex-col justify-center items-start h-full w-full">
-        <p className="text-white border-blue-600 w-full bg-blue-400 px-2 rounded-xl mb-1">{formatDate(new Date().toISOString())}</p>
+        <p className="text-white border-blue-600 w-max bg-blue-400 px-2 rounded-xl mb-1">{formatDate(new Date().toISOString())}</p>
         <div className="grid grid-cols-[50px_auto] gap-1">
           <span className="font-semibold">ID </span>
           <span>: {formatId(worker?.id!)}</span>
@@ -86,7 +86,11 @@ export default function WorkerAttendance({ token }: { token: string }) {
               handleCheckOut();
             }
           }}
-          className={`py-2 mt-2 px-5 rounded-xl text-white ${attendanceStatus == "INACTIVE" ? "bg-[#1678F2]  hover:bg-[#4b87cc]" : "bg-red-500 hover:bg-red-400"}`}
+          className={`py-2 mt-2 px-5 rounded-xl text-white ${
+            attendanceStatus == "INACTIVE"
+              ? "bg-[#1678F2]  hover:bg-[#4b87cc]"
+              : "bg-red-500 hover:bg-red-400"
+          }`}
         >
           {attendanceStatus == "INACTIVE" ? "Clock In" : "Clock Out"}
         </button>

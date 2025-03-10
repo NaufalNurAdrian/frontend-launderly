@@ -121,7 +121,7 @@ export default function Navbar() {
         const result: IApiResponse = await res.json();
         setNotifications(result.data);
         setUnreadCount(result.pagination.total);
-      } catch (err : any) {
+      } catch (err: any) {
         toast.error("Fetch failed: " + err.message);
       }
     };

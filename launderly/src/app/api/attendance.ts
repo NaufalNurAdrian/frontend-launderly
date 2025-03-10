@@ -33,7 +33,7 @@ export async function fetchAttendanceStatus(token: string): Promise<{ status: st
       headers: { Authorization: `Bearer ${token}` },
     });
 
-    const initialData = initialRes.data;
+    const initialData: any = initialRes.data;
 
     if (initialData.data.length === 0) {
       return { status: "INACTIVE" };
@@ -45,7 +45,7 @@ export async function fetchAttendanceStatus(token: string): Promise<{ status: st
       headers: { Authorization: `Bearer ${token}` },
     });
 
-    const lastPageData = lastPageRes.data;
+    const lastPageData: any = lastPageRes.data;
 
     const lastAttendance = lastPageData.data[lastPageData.data.length - 1].attendanceStatus;
 

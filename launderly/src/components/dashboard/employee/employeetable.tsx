@@ -3,15 +3,28 @@
 import { useEffect, useState, useMemo } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Employee, EmployeeApiResponse } from "@/types/employee.type";
-import { fetchAllEmployee } from "@/services/employeService";
+import { deleteEmployee, fetchAllEmployee } from "@/services/employeService";
 import { Card } from "@/components/ui/card";
 import { LiaEdit } from "react-icons/lia";
-import { RiUserLine } from "react-icons/ri";
+import { RiUserLine, RiDeleteBin6Line } from "react-icons/ri";
 import { MdOutlineStore, MdOutlineWorkOutline } from "react-icons/md";
 import { BiTimeFive } from "react-icons/bi";
 import { IoArrowBack, IoArrowForward } from "react-icons/io5";
 import { GiWashingMachine } from "react-icons/gi";
 import ModalEmployeeUpdate from "./updateEmployee";
+import { toast } from "react-toastify";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 
 interface EmployeeTableProps {
   searchQuery?: string;
@@ -26,6 +39,7 @@ export default function EmployeeTable({ searchQuery = "" }: EmployeeTableProps) 
   const [totalPages, setTotalPages] = useState(1);
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<string>("");
+  const [employeeToDelete, setEmployeeToDelete] = useState<string | null>(null);
   const pageSize = 15;
 
   useEffect(() => {
@@ -70,7 +84,40 @@ export default function EmployeeTable({ searchQuery = "" }: EmployeeTableProps) 
     setModalOpen(true);
   };
 
-  // Calculate if we show "No results" message
+  const handleDeleteClick = (id: string) => {
+    setEmployeeToDelete(id);
+  };
+
+  const handleDelete = async () => {
+    if (!employeeToDelete) return;
+    
+    try {
+      setLoading(true);
+      await deleteEmployee({ id: employeeToDelete });
+      toast.success("Employee successfully deleted");
+      
+      setAllEmployees(prev => prev.filter(emp => emp.id.toString() !== employeeToDelete));
+      setEmployees(prev => prev.filter(emp => emp.id.toString() !== employeeToDelete));
+      
+      setEmployeeToDelete(null);
+      
+      if (employees.length === 1 && currentPage > 1) {
+        setCurrentPage(prev => prev - 1);
+      } else {
+        const data = await fetchAllEmployee(currentPage, pageSize);
+        setAllEmployees(data.employees);
+        setEmployees(data.employees);
+        setTotalPages(data.totalPages);
+      }
+    } catch (error: any) {
+      console.error("Failed to delete employee:", error);
+      setError(error instanceof Error ? error.message : "Failed to delete employee");
+      toast.error(error.message || "Failed to delete employee");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const showNoResults = useMemo(() => {
     return !loading && employees.length === 0 && searchQuery.trim() !== "";
   }, [loading, employees, searchQuery]);
@@ -121,12 +168,12 @@ export default function EmployeeTable({ searchQuery = "" }: EmployeeTableProps) 
           </div>
           <h3 className="text-xl font-medium text-gray-600 mb-2">No employees found</h3>
           <p className="text-gray-500">Try adjusting your search criteria</p>
-          <button 
+          <Button 
             onClick={() => setCurrentPage(1)} 
             className="mt-6 px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
           >
             View all employees
-          </button>
+          </Button>
         </div>
       </Card>
     );
@@ -173,12 +220,45 @@ export default function EmployeeTable({ searchQuery = "" }: EmployeeTableProps) 
                 <TableCell className="px-4 py-3">{employee.station || "-"}</TableCell>
                 <TableCell className="px-4 py-3">{employee.workShift || "-"}</TableCell>
                 <TableCell className="px-4 py-3 text-right">
-                  <button 
-                    onClick={() => handleEditClick(employee.id.toString())}
-                    className="bg-blue-100 p-2 rounded-full hover:bg-blue-200 transition-colors"
-                  >
-                    <LiaEdit className="text-blue-700" size={18} />
-                  </button>
+                  <div className="flex justify-end gap-2">
+                    <Button 
+                      onClick={() => handleEditClick(employee.id.toString())}
+                      className="bg-blue-100 p-2 rounded-full hover:bg-blue-200 transition-colors"
+                      title="Edit Employee"
+                    >
+                      <LiaEdit className="text-blue-700" size={18} />
+                    </Button>
+                    
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button 
+                          onClick={() => handleDeleteClick(employee.id.toString())}
+                          className="bg-red-100 p-2 rounded-full hover:bg-red-200 transition-colors"
+                          title="Delete Employee"
+                        >
+                          <RiDeleteBin6Line className="text-red-700" size={18} />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action will permanently delete the employee <strong>{employee.user.fullName}</strong>. 
+                            This action cannot be undone.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction 
+                            onClick={handleDelete}
+                            className="bg-red-600 hover:bg-red-700 text-white"
+                          >
+                            Delete
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}
@@ -198,12 +278,43 @@ export default function EmployeeTable({ searchQuery = "" }: EmployeeTableProps) 
                 <h3 className="font-medium text-gray-900">{employee.user.fullName}</h3>
                 <span className="text-xs text-blue-700">ID: {employee.id}</span>
               </div>
-              <button 
-                onClick={() => handleEditClick(employee.id.toString())}
-                className="bg-white p-2 rounded-full hover:bg-blue-100 transition-colors"
-              >
-                <LiaEdit className="text-blue-700" size={18} />
-              </button>
+              <div className="flex gap-2">
+                <Button 
+                  onClick={() => handleEditClick(employee.id.toString())}
+                  className="bg-white p-2 rounded-full hover:bg-blue-100 transition-colors"
+                >
+                  <LiaEdit className="text-blue-700" size={18} />
+                </Button>
+                
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button 
+                      onClick={() => handleDeleteClick(employee.id.toString())}
+                      className="bg-white p-2 rounded-full hover:bg-red-100 transition-colors"
+                    >
+                      <RiDeleteBin6Line className="text-red-700" size={18} />
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This action will permanently delete the employee <strong>{employee.user.fullName}</strong>. 
+                        This action cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction 
+                        onClick={handleDelete}
+                        className="bg-red-600 hover:bg-red-700 text-white"
+                      >
+                        Delete
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
             </div>
             <div className="p-4 space-y-2 text-sm">
               <div className="flex items-center">
@@ -253,14 +364,14 @@ export default function EmployeeTable({ searchQuery = "" }: EmployeeTableProps) 
       {/* Pagination - Works for both mobile and desktop */}
       {employees.length > 0 && (
         <div className="flex justify-between items-center p-4 bg-blue-50 border-t border-blue-100">
-          <button
+          <Button
             className="flex items-center gap-1 px-4 py-2 bg-white border border-blue-200 rounded-lg hover:bg-blue-100 transition disabled:opacity-50 disabled:hover:bg-white"
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}
           >
             <IoArrowBack size={16} />
             <span className="hidden sm:inline-block">Previous</span>
-          </button>
+          </Button>
           
           <div className="flex items-center gap-2">
             <div className="hidden sm:flex gap-1">
@@ -277,7 +388,7 @@ export default function EmployeeTable({ searchQuery = "" }: EmployeeTableProps) 
                 }
                 
                 return (
-                  <button
+                  <Button
                     key={pageNum}
                     onClick={() => setCurrentPage(pageNum)}
                     className={`w-8 h-8 flex items-center justify-center rounded-md ${
@@ -287,7 +398,7 @@ export default function EmployeeTable({ searchQuery = "" }: EmployeeTableProps) 
                     }`}
                   >
                     {pageNum}
-                  </button>
+                  </Button>
                 );
               })}
             </div>
@@ -297,14 +408,14 @@ export default function EmployeeTable({ searchQuery = "" }: EmployeeTableProps) 
             </span>
           </div>
           
-          <button
+          <Button
             className="flex items-center gap-1 px-4 py-2 bg-white border border-blue-200 rounded-lg hover:bg-blue-100 transition disabled:opacity-50 disabled:hover:bg-white"
             onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
             disabled={currentPage === totalPages}
           >
             <span className="hidden sm:inline-block">Next</span>
             <IoArrowForward size={16} />
-          </button>
+          </Button>
         </div>
       )}
 

@@ -1,8 +1,8 @@
 "use client";
 
 import { IAddress } from "@/types/address";
-import axios, { AxiosError } from 'axios';
-import { toast } from "react-toastify";
+import axios, { AxiosError } from "axios";
+import { toast } from "react-hot-toast";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL_BE;
 

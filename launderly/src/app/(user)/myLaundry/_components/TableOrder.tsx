@@ -15,6 +15,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/feat-1/table";
+import OrderStatusBadge from "@/helpers/getColoursStatus";
+import { OrderStatus } from "@/types/order.type";
 
 interface OrderResult {
   id: number;
@@ -100,6 +102,12 @@ const OrderPage = () => {
                   <TableHead className="px-3 py-2 text-left">Status</TableHead>
                   <TableHead className="px-3 py-2 text-left">Weight</TableHead>
                   <TableHead className="px-3 py-2 text-left">
+                    Laundry Price
+                  </TableHead>
+                  <TableHead className="px-3 py-2 text-left">
+                    Delivery Price
+                  </TableHead>
+                  <TableHead className="px-3 py-2 text-left">
                     Total Price
                   </TableHead>
                   <TableHead className="px-3 py-2 text-left">
@@ -121,14 +129,25 @@ const OrderPage = () => {
                       {order.orderNumber}
                     </TableCell>
                     <TableCell className="px-3 py-2">
-                      {toTitleCase(order.orderStatus)}
+                      <OrderStatusBadge
+                        status={order.orderStatus as OrderStatus}
+                      />
                     </TableCell>
                     <TableCell className="px-3 py-2">
-                      {order.weight} kg
+                      {order.weight ? `${order.weight} Kg` : `TBA`}
                     </TableCell>
                     <TableCell className="px-3 py-2">
-                      Rp.{order.laundryPrice}
+                      {order.laundryPrice ? `Rp.${order.laundryPrice}` : "TBA"}
                     </TableCell>
+
+                    <TableCell className="px-3 py-2">Rp.5000</TableCell>
+
+                    <TableCell className="px-3 py-2">
+                      {order.laundryPrice
+                        ? `Rp.${order.laundryPrice + 5000}`
+                        : "-"}
+                    </TableCell>
+
                     <TableCell className="px-3 py-2">
                       {new Date(order.createdAt).toLocaleDateString()}
                     </TableCell>

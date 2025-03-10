@@ -9,6 +9,7 @@ import NotFound from "../notFound";
 import Pagination from "../paginationButton";
 import { useToken } from "@/hooks/useToken";
 import { getWorkerHistory } from "@/app/api/worker";
+import DefaultLoading from "../defaultLoading";
 
 export default function OrderHistoryTable() {
   const [loading, setLoading] = useState(true);
@@ -39,22 +40,28 @@ export default function OrderHistoryTable() {
   };
 
   const handlePageChange = (page: number) => {
+    setLoading(true)
     setCurrentPage(page);
   };
 
-  const handleSort = (sortBy: string, newOrder: "asc" | "desc") => {
-    setSortBy(sortBy);
-    setOrder((prevOrder) => ({
-      ...prevOrder,
-      [sortBy]: prevOrder[sortBy] === "asc" ? "desc" : "asc",
-    }));
-  };
+  
+const handleSort = (sortBy: string, newOrder: "asc" | "desc") => {
+  setSortBy(sortBy);
+  setOrder((prevOrder) => ({
+    ...prevOrder,
+    [sortBy]: prevOrder[sortBy] === "asc" ? "desc" : "asc",
+  }));
+  setRequests([]);
+  setCurrentPage(1);
+};
 
-  useEffect(() => {
-    if (token) {
-      fetchHistory(token, currentPage, sortBy, order[sortBy]);
-    }
-  }, [sortBy, order, currentPage, token]);
+useEffect(() => {
+  setRequests([]);
+  if (token) {
+    fetchHistory(token, currentPage, sortBy, order[sortBy]);
+  }
+}, [currentPage, sortBy, order, token]);
+
 
   return (
     <div className="flex flex-col justify-center z-0 bg-white shadow-md w-full lg:w-[1200px] rounded-lg p-5 my-4">
@@ -74,14 +81,22 @@ export default function OrderHistoryTable() {
             </tr>
           </thead>
           <tbody className="text-center">
-            {requests.length > 0 ? (
+          {loading ? (
+              <tr>
+                <td colSpan={5} className="py-10">
+                  <div className="flex justify-center items-center">
+                    <DefaultLoading/>
+                  </div>
+                </td>
+              </tr>
+            ) : requests.length > 0 ? (
               requests.map((request: IOrder) => (
                 <tr key={request.id} className="hover:bg-blue-50 transition-colors border-b border-blue-200">
                   <td className="py-2 px-4">{request.orderNumber}</td>
                   <td className="py-2 px-4">{formatDate(request.createdAt)}</td>
                   <td className="py-2 px-4">{formatTime(new Date(request.updatedAt))}</td>
                   <td className="py-2 px-4">{request.weight}</td>
-                  <td className="py-2 px-4">{request.laundryPrice}</td>
+                  <td className="py-2 px-4">{`Rp.${request.laundryPrice}`}</td>
                 </tr>
               ))
             ) : (

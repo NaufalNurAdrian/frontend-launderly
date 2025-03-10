@@ -10,6 +10,7 @@ import FilterDropdown from "../filterButton";
 import NotFound from "../notFound";
 import { useToken } from "@/hooks/useToken";
 import { getDriverHistory } from "@/app/api/driver";
+import DefaultLoading from "../defaultLoading";
 
 function roundDistance(distance: number): number {
   return Math.round(distance * 10) / 10;
@@ -43,12 +44,15 @@ export default function HistoryTable() {
     }
   };
 
-  const handleFilterChange = (selectedFilter: string) => {
-    setFilter(selectedFilter);
+  const handlePageChange = (page: number) => {
+    setLoading(true);
+    setCurrentPage(page);
   };
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
+  const handleFilterChange = (selectedFilter: string) => {
+    setFilter(selectedFilter);
+    setRequests([]);
+    setCurrentPage(1);
   };
 
   const handleSort = (sortBy: string, newOrder: "asc" | "desc") => {
@@ -57,12 +61,16 @@ export default function HistoryTable() {
       ...prevOrder,
       [sortBy]: prevOrder[sortBy] === "asc" ? "desc" : "asc",
     }));
+    setRequests([]);
+    setCurrentPage(1);
   };
+
   useEffect(() => {
+    setRequests([]);
     if (token) {
       fetchRequests(currentPage, sortBy, order[sortBy], filter);
     }
-  }, [sortBy, order, currentPage, filter, token]);
+  }, [currentPage, sortBy, order, filter, token]);
 
   return (
     <div className="flex flex-col justify-center z-0 bg-white shadow-md rounded-lg p-5 my-4 w-full lg:w-[1200px]">
@@ -83,7 +91,15 @@ export default function HistoryTable() {
             </tr>
           </thead>
           <tbody className="text-center">
-            {requests.length > 0 ? (
+            {loading ? (
+              <tr>
+                <td colSpan={5} className="py-10">
+                  <div className="flex justify-center items-center">
+                    <DefaultLoading/>
+                  </div>
+                </td>
+              </tr>
+            ) : requests.length > 0 ? (
               requests.map((request: IRequest) => (
                 <tr key={request.id} className="hover:bg-blue-50 transition-colors border-b border-blue-200">
                   <td className="py-2 px-4">{request.type === "delivery" ? request.deliveryNumber : request.pickupNumber}</td>

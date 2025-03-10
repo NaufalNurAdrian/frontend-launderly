@@ -88,8 +88,8 @@ export default function WorkerAttendance({ token }: { token: string }) {
           }}
           className={`py-2 mt-2 px-5 rounded-xl text-white ${
             attendanceStatus == "INACTIVE"
-              ? "bg-[#1678F2]  hover:bg-[#4b87cc]"
-              : "bg-red-500 hover:bg-red-400"
+              ? " bg-gradient-to-r from-blue-400 to-blue-300 hover:bg-[#4b87cc]"
+              : " bg-gradient-to-r from-red-400 to-red-300 hover:bg-red-400"
           }`}
         >
           {attendanceStatus == "INACTIVE" ? "Clock In" : "Clock Out"}

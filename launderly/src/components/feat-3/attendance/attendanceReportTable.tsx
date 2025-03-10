@@ -44,12 +44,16 @@ export default function AttendanceReportTableForOutlet() {
       setLoading(false);
     }
   };
-  const handleFilterChange = (selectedFilter: string) => {
-    setFilter(selectedFilter);
-  };
   const handlePageChange = (page: number) => {
+    setLoading(true)
     setCurrentPage(page);
   };
+  
+    const handleFilterChange = (selectedFilter: string) => {
+      setFilter(selectedFilter);
+      setReport([]);
+      setCurrentPage(1);
+    };
 
   const handleSort = (sortBy: string, newOrder: "asc" | "desc") => {
     setSortBy(sortBy);
@@ -57,13 +61,14 @@ export default function AttendanceReportTableForOutlet() {
       ...prevOrder,
       [sortBy]: prevOrder[sortBy] === "asc" ? "desc" : "asc",
     }));
+    setReport([]);
+    setCurrentPage(1);
   };
-
   useEffect(() => {
     if (token) {
       fetchReport(currentPage, sortBy, order[sortBy], filter);
     }
-  }, [sortBy, order, currentPage, token, filter]);
+  }, [token, sortBy, order, currentPage, filter]);
 
   return (
     <div className="flex flex-col justify-center z-0 bg-white shadow-md w-full lg:w-[1200px] rounded-lg p-5 mb-4">

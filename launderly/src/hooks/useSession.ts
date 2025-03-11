@@ -20,11 +20,11 @@ const useSession = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      console.log("User data received:", data);
+      // console.log("User data received:", data);
       if (data) {
         setUser(data.user);
         setIsAuth(true);
-        console.log("User state set:", data.user);
+        // console.log("User state set:", data.user);
       }
     } catch (err) {
       console.error("Session check failed:", err);

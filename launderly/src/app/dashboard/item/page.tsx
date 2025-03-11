@@ -1,21 +1,22 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { 
-  Container, 
-  Box, 
-  Typography, 
+import React, { useState, useEffect } from "react";
+import {
+  Container,
+  Box,
+  Typography,
   Snackbar,
   Alert,
-  CircularProgress
-} from '@mui/material';
-import itemService, { getItem, Item } from '@/services/itemService';
-import { LaundryItem } from '@/types/laundryItem.type';
-import AddItemForm from '@/components/dashboard/item/addItemForm';
-import ItemList from '@/components/dashboard/item/itemList';
-import DeleteConfirmDialog from '@/components/dashboard/item/deleteConfirmationDialog';
-import { withSuperAdmin } from '@/hoc/adminAuthorizaton';
-import { useRole } from '@/hooks/useRole';
+  CircularProgress,
+} from "@mui/material";
+import itemService, { getItem, Item } from "@/services/itemService";
+import { LaundryItem } from "@/types/laundryItem.type";
+import AddItemForm from "@/components/dashboard/item/addItemForm";
+import ItemList from "@/components/dashboard/item/itemList";
+import DeleteConfirmDialog from "@/components/dashboard/item/deleteConfirmationDialog";
+import { withSuperAdmin } from "@/hoc/adminAuthorizaton";
+import { useRole } from "@/hooks/useRole";
+import toast from "react-hot-toast";
 
 function ItemManagementPage() {
   const [items, setItems] = useState<LaundryItem[]>([]);
@@ -25,13 +26,13 @@ function ItemManagementPage() {
   const role = useRole();
   const [alert, setAlert] = useState({
     open: false,
-    message: '',
-    severity: 'success' as 'success' | 'error' | 'info' | 'warning'
+    message: "",
+    severity: "success" as "success" | "error" | "info" | "warning",
   });
   const [deleteDialog, setDeleteDialog] = useState({
     open: false,
-    itemId: '',
-    itemName: ''
+    itemId: "",
+    itemName: "",
   });
   useEffect(() => {
     fetchItems();
@@ -42,8 +43,8 @@ function ItemManagementPage() {
       const response = await getItem();
       setItems(response.getitem || []);
     } catch (error) {
-      console.error('Error fetching items:', error);
-      showAlert('Failed to load items', 'error');
+      console.error("Error fetching items:", error);
+      toast.success("Failed to load items");
     } finally {
       setLoading(false);
     }
@@ -52,10 +53,13 @@ function ItemManagementPage() {
   const handleCreateItem = async (item: Item) => {
     try {
       await itemService.createItem(item);
-      showAlert('Item created successfully!', 'success');
+      toast.success("Item created successfully!");
       fetchItems();
     } catch (error: any) {
-      showAlert(error.response?.data?.message || 'Failed to create item', 'error');
+      showAlert(
+        error.response?.data?.message || "Failed to create item",
+        "error"
+      );
       throw error;
     }
   };
@@ -63,12 +67,15 @@ function ItemManagementPage() {
   const handleUpdateItem = async (item: Item) => {
     try {
       await itemService.updateItem(item);
-      showAlert('Item updated successfully!', 'success');
+      toast.success("Item updated successfully!");
       fetchItems();
       setEditMode(false);
       setCurrentItem(null);
     } catch (error: any) {
-      showAlert(error.response?.data?.message || 'Failed to update item', 'error');
+      showAlert(
+        error.response?.data?.message || "Failed to update item",
+        "error"
+      );
       throw error;
     }
   };
@@ -87,22 +94,22 @@ function ItemManagementPage() {
     setDeleteDialog({
       open: true,
       itemId: id,
-      itemName: name
+      itemName: name,
     });
   };
 
   const handleConfirmDelete = async () => {
     try {
       await itemService.deleteItem(deleteDialog.itemId);
-      showAlert('Item deleted successfully!', 'success');
+      toast.success("Item deleted successfully!", );
       fetchItems();
     } catch (error) {
-      showAlert('Failed to delete item', 'error');
+      toast.error("Failed to delete item");
     } finally {
       setDeleteDialog({
         open: false,
-        itemId: '',
-        itemName: ''
+        itemId: "",
+        itemName: "",
       });
     }
   };
@@ -110,34 +117,37 @@ function ItemManagementPage() {
   const handleCancelDelete = () => {
     setDeleteDialog({
       open: false,
-      itemId: '',
-      itemName: ''
+      itemId: "",
+      itemName: "",
     });
   };
 
-  const showAlert = (message: string, severity: 'success' | 'error' | 'info' | 'warning') => {
+  const showAlert = (
+    message: string,
+    severity: "success" | "error" | "info" | "warning"
+  ) => {
     setAlert({
       open: true,
       message,
-      severity
+      severity,
     });
   };
 
   const handleCloseAlert = () => {
     setAlert({
       ...alert,
-      open: false
+      open: false,
     });
   };
 
   const mapLaundryItemsToItems = (laundryItems: LaundryItem[]): Item[] => {
-    return laundryItems.map(item => ({
+    return laundryItems.map((item) => ({
       id: item.id.toString(),
       itemName: item.itemName,
       qty: item.qty,
       isDelete: item.isDelete,
       createdAt: item.createdAt,
-      updatedAt: item.updatedAt
+      updatedAt: item.updatedAt,
     }));
   };
 
@@ -151,32 +161,30 @@ function ItemManagementPage() {
         <Typography variant="h4" component="h1" gutterBottom>
           Laundry Item Management
         </Typography>
-        
+
         {editMode ? (
-          <AddItemForm 
+          <AddItemForm
             initialData={currentItem!}
             isEdit={true}
             onSubmit={handleUpdateItem}
             onCancel={handleCancelEdit}
           />
         ) : (
-          <AddItemForm 
-            onSubmit={handleCreateItem}
-          />
+          <AddItemForm onSubmit={handleCreateItem} />
         )}
-        
+
         {loading && items.length === 0 ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
+          <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
             <CircularProgress />
           </Box>
         ) : (
           <Box sx={{ mt: 4 }}>
-            <ItemList 
+            <ItemList
               items={mapLaundryItemsToItems(items)}
               loading={loading && items.length > 0}
               onEdit={handleEdit}
               onDelete={(id) => {
-                const item = items.find(item => item.id.toString() === id);
+                const item = items.find((item) => item.id.toString() === id);
                 if (item) {
                   handleDeleteClick(id, item.itemName);
                 }
@@ -189,14 +197,15 @@ function ItemManagementPage() {
         open={deleteDialog.open}
         itemName={deleteDialog.itemName}
         onConfirm={handleConfirmDelete}
-        onCancel={handleCancelDelete}
         onClose={handleCancelDelete}
       />
-      <Snackbar 
-        open={alert.open} 
-        autoHideDuration={6000} 
+
+      <Snackbar
+        open={alert.open}
+        autoHideDuration={6000}
         onClose={handleCloseAlert}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
         <Alert onClose={handleCloseAlert} severity={alert.severity}>
           {alert.message}
         </Alert>
@@ -205,4 +214,4 @@ function ItemManagementPage() {
   );
 }
 
-export default withSuperAdmin(ItemManagementPage)
+export default withSuperAdmin(ItemManagementPage);

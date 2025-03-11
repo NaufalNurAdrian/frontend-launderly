@@ -72,7 +72,7 @@ function BypassRequest() {
           ...data,
           getOrder: { ...data.getOrder, orders: filteredOrders },
         });
-        setTotalPages(data?.getOrder?.totalPages || 1);
+        setTotalPages(Number(data?.getOrder?.totalPages) || 1);
       } catch (err) {
         setError("Failed to load orders.");
       } finally {

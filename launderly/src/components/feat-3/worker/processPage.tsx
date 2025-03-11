@@ -53,7 +53,13 @@ export default function OrderProcessingPage() {
       ),
     }),
     onSubmit: (values) => {
+<<<<<<< HEAD
       const isValid = values.items.every((item) => item.workerQuantity === item.quantity);
+=======
+      const isValid = values.items.every(
+        (item) => item.workerQuantity === item.quantity
+      );
+>>>>>>> b39ac95dc8d9d7c3f32bc72b1219fc7b8d7b713f
 
       if (isValid) {
         toast.success("Order process succeed");
@@ -144,13 +150,27 @@ export default function OrderProcessingPage() {
             type="button"
             className={`w-full sm:w-auto mt-2 sm:mt-0 sm:ml-2 px-4 py-2 rounded-lg ${formik.values.items.every((item) => item.workerQuantity === item.quantity) ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-red-500 text-white"}`}
             onClick={handleOpenModal}
+<<<<<<< HEAD
             disabled={formik.values.items.every((item) => item.workerQuantity === item.quantity)}
+=======
+            disabled={formik.values.items.every(
+              (item) => item.workerQuantity === item.quantity
+            )}
+>>>>>>> b39ac95dc8d9d7c3f32bc72b1219fc7b8d7b713f
           >
             Request Bypass
           </button>
         </div>
       </form>
+<<<<<<< HEAD
       <BypassModal isOpen={isModalOpen} onClose={handleCloseModal} onSubmit={handleSubmitBypass} />
+=======
+      <BypassModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onSubmit={handleSubmitBypass}
+      />
+>>>>>>> b39ac95dc8d9d7c3f32bc72b1219fc7b8d7b713f
     </div>
   );
 }

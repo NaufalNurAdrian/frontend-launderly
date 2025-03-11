@@ -100,10 +100,8 @@ export default function Navbar() {
       );
 
       setUnreadCount(0);
-
-      console.log("All notifications marked as read");
-    } catch (error) {
-      console.error("Error marking all notifications as read:", error);
+    } catch (error: any) {
+      toast.error("Error marking all notifications as read:", error.message);
     }
   };
 
@@ -123,7 +121,7 @@ export default function Navbar() {
         const result: IApiResponse = await res.json();
         setNotifications(result.data);
         setUnreadCount(result.pagination.total);
-      } catch (err : any) {
+      } catch (err: any) {
         toast.error("Fetch failed: " + err.message);
       }
     };

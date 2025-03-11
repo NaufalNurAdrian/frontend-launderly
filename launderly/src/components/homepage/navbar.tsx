@@ -21,7 +21,7 @@ export function Navbar() {
     localStorage.removeItem("token");
     setIsAuth(false);
     setUser(null);
-    window.location.href = "/sign-in"; 
+    window.location.href = "/sign-in";
   };
 
   return (
@@ -56,7 +56,7 @@ export function Navbar() {
             >
               <li>
                 <Link
-                  href="#WhoWeAre"
+                  href="/#WhoWeAre"
                   onClick={closeDropdown}
                   className="hover:text-cyan-600"
                 >
@@ -65,7 +65,7 @@ export function Navbar() {
               </li>
               <li>
                 <Link
-                  href="#Services"
+                  href="/#Services"
                   onClick={closeDropdown}
                   className="hover:text-cyan-600"
                 >
@@ -74,7 +74,7 @@ export function Navbar() {
               </li>
               <li>
                 <Link
-                  href="#Quotes"
+                  href="/#Quotes"
                   onClick={closeDropdown}
                   className="hover:text-cyan-600"
                 >
@@ -116,11 +116,19 @@ export function Navbar() {
                 <ul className="py-2">
                   <li>
                     <Link
-                      href={user.role == "CUSTOMER" ? "/dashboardCustomer" : user.role == "DRIVER" || "WORKER" ? "/attendance" : "/dashboard"}
+                      href={
+                        user.role == "CUSTOMER"
+                          ? "/dashboardCustomer"
+                          : user.role == "DRIVER" || user.role == "WORKER"
+                          ? "/attendance"
+                          : "/dashboard"
+                      }
                       className="block px-4 py-2 text-gray-700 hover:bg-gray-200"
                       onClick={closeDropdown}
                     >
-                      {user.role == "DRIVER" || "WORKER" ? "Attendance" : "Dashboard"}
+                      {user.role == "DRIVER" || user.role == "WORKER"
+                        ? "Attendance"
+                        : "Dashboard"}
                     </Link>
                   </li>
                   <li>

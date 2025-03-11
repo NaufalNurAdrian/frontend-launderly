@@ -14,7 +14,7 @@ import { Button } from "@/components/feat-1/button";
 import { Input } from "@/components/feat-1/input";
 import { updateUserAddress } from "@/app/api/address";
 import { AddressSchema } from "@/libs/schema";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 import { useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { customIcon } from "@/components/feat-1/customIcon";

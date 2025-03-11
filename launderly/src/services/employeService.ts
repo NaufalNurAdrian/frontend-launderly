@@ -27,10 +27,11 @@ export const createEmployee = async (
 ): Promise<Employee> => {
   try {
     const response = await api.post<Employee>("/employee/create", data);
-    console.log("data :", data);
+    // console.log("data :", data);
 
     return response.data;
   } catch (error) {
+    console.log({message: "cannot create employee", error})
     throw new Error("Failed to create employee");
   }
 };

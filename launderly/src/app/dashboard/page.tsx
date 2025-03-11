@@ -110,7 +110,7 @@ const ReportDashboard: React.FC = () => {
   // Single effect to handle refetching data when necessary
   useEffect(() => {
     if (shouldRefetchRef.current && !isSelectingDateRange) {
-      console.log(`Refetching data (trigger count: ${refreshCountRef.current})`);
+      //console.log(`Refetching data (trigger count: ${refreshCountRef.current})`);
       refetchReportData();
       refetchComparisonData();
       shouldRefetchRef.current = false;
@@ -125,9 +125,9 @@ const ReportDashboard: React.FC = () => {
       setIsSelectingDateRange(true);
       // Jangan hapus date range yang sudah ada jika ada
       if (!dateRange) {
-        console.log("Switched to custom timeframe, waiting for date range selection");
+        //console.log("Switched to custom timeframe, waiting for date range selection");
       } else {
-        console.log("Switched to custom timeframe with existing date range");
+        //console.log("Switched to custom timeframe with existing date range");
         // Jika sudah ada date range, kita bisa langsung fetch data
         setIsSelectingDateRange(false);
         triggerRefetch();
@@ -150,7 +150,7 @@ const ReportDashboard: React.FC = () => {
       triggerRefetch();
     }
     
-    console.log(`Timeframe changed to ${newTimeframe}`);
+    //console.log(`Timeframe changed to ${newTimeframe}`);
   };
 
   const handleOutletChange = (value: string) => {
@@ -160,7 +160,7 @@ const ReportDashboard: React.FC = () => {
   };
 
   const handleDateRangeChange = (range: { from: Date; to: Date } | undefined) => {
-    console.log("Date range changed:", range);
+    //console.log("Date range changed:", range);
     
     if (range) {
       // Ensure both from and to dates are present
@@ -192,11 +192,11 @@ const ReportDashboard: React.FC = () => {
           setTimeframe("custom");
         }
         
-        console.log("Date range set:", {
-          from: fromDate.toISOString(),
-          to: toDate.toISOString(),
-          timeframe: "custom"
-        });
+        // console.log("Date range set:", {
+        //   from: fromDate.toISOString(),
+        //   to: toDate.toISOString(),
+        //   timeframe: "custom"
+        // });
         
         // Mark for refetch
         triggerRefetch();
@@ -233,7 +233,7 @@ const ReportDashboard: React.FC = () => {
 
   if (outletsError) {
     return (
-      <div className="flex items-center justify-center h-64 text-red-500 p-4 mx-auto max-w-md">
+      <div className="flex items-center justify-center h-64 text-red-500 p-4 mx-auto max-w-md bg-white">
         <div className="bg-red-50 shadow-md rounded-lg p-6 w-full">
           <h3 className="text-xl font-bold text-red-700 mb-2">Error Loading Outlets</h3>
           <p className="text-gray-700 mb-4">We couldn't load the outlets data. Please try again later.</p>
@@ -247,7 +247,7 @@ const ReportDashboard: React.FC = () => {
 
   if (isSuperAdmin && reportError && !isSelectingDateRange) {
     return (
-      <div className="flex items-center justify-center h-64 text-red-500 p-4 mx-auto max-w-md">
+      <div className="flex items-center justify-center h-64 text-red-500 p-4 mx-auto max-w-md bg-white">
         <div className="bg-red-50 shadow-md rounded-lg p-6 w-full">
           <h3 className="text-xl font-bold text-red-700 mb-2">Error Loading Data</h3>
           <p className="text-gray-700 mb-4">We couldn't load the report data. Please try again later.</p>
@@ -262,7 +262,7 @@ const ReportDashboard: React.FC = () => {
   // Jika timeframe adalah custom dan kita sedang menunggu input date range, tampilkan pesan
   if (timeframe === "custom" && isSelectingDateRange) {
     return (
-      <div className="container mx-auto p-4 md:p-6">
+      <div className="container mx-auto p-4 md:p-6 bg-white">
         <h1 className="text-2xl md:text-3xl font-bold mb-6 text-gray-800">
           Outlet Transaction Analysis
         </h1>
@@ -294,7 +294,7 @@ const ReportDashboard: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto p-4 md:p-6">
+    <div className="container mx-auto p-4 md:p-6 bg-white">
       <h1 className="text-2xl md:text-3xl font-bold mb-6 text-gray-800">
         Outlet Transaction Analysis
       </h1>

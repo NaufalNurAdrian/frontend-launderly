@@ -58,13 +58,13 @@ export const useReportData = (
             params.startDate = dateRange.from.toISOString();
             params.endDate = dateRange.to.toISOString();
 
-            console.log("Custom timeframe with date range:", {
-              startDate: params.startDate,
-              endDate: params.endDate,
-            });
+            // console.log("Custom timeframe with date range:", {
+            //   startDate: params.startDate,
+            //   endDate: params.endDate,
+            // });
           }
         } else {
-          console.log("Custom timeframe without date range - skipping fetch");
+          // console.log("Custom timeframe without date range - skipping fetch");
           setLoading(false);
           shouldFetch = false;
         }
@@ -144,7 +144,7 @@ export const useReportData = (
           lastParamsRef.current = currentParamsString;
           setError(null);
         } else {
-          console.log("Skipping duplicate API request with same parameters");
+          // console.log("Skipping duplicate API request with same parameters");
           setLoading(false);
         }
       }
@@ -191,12 +191,12 @@ export const useSalesReport = (
           params.startDate = dateRange.from.toISOString();
           params.endDate = dateRange.to.toISOString();
 
-          console.log("Using custom date range for sales report:", {
-            startDate: params.startDate,
-            endDate: params.endDate,
-          });
+          // console.log("Using custom date range for sales report:", {
+          //   startDate: params.startDate,
+          //   endDate: params.endDate,
+          // });
         } else {
-          console.log("Custom timeframe without date range - skipping fetch");
+          // console.log("Custom timeframe without date range - skipping fetch");
           setLoading(false);
           return;
         }
@@ -252,13 +252,13 @@ export const useSalesReport = (
       const currentParamsString = JSON.stringify(params);
 
       if (currentParamsString !== lastParamsRef.current) {
-        console.log("Fetching sales report with params:", params);
+        // console.log("Fetching sales report with params:", params);
 
         const salesData = await fetchSalesReportData(params);
         setData(salesData);
         lastParamsRef.current = currentParamsString;
       } else {
-        console.log("Skipping duplicate API request with same parameters");
+        // console.log("Skipping duplicate API request with same parameters");
       }
     } catch (err: any) {
       setError(err.message || "Failed to fetch sales report data");
@@ -307,9 +307,9 @@ export const useOutletComparison = (
       const params: any = { timeframe };
 
       if (timeframe === "custom") {
-        console.log(
-          "Custom timeframe without date range for comparison - skipping fetch"
-        );
+        // console.log(
+        //   "Custom timeframe without date range for comparison - skipping fetch"
+        // );
         setLoading(false);
         return;
       }
@@ -378,7 +378,7 @@ export const useOutletComparison = (
         setData(comparisonData);
         lastParamsRef.current = currentParamsString;
       } else {
-        console.log("Skipping duplicate API request with same parameters");
+        // console.log("Skipping duplicate API request with same parameters");
         setLoading(false);
       }
     } catch (err) {
@@ -442,13 +442,13 @@ export const useTransactionTrends = (
       const currentParamsString = JSON.stringify(params);
 
       if (currentParamsString !== lastParamsRef.current) {
-        console.log("Fetching transaction trends with params:", params);
+        // console.log("Fetching transaction trends with params:", params);
 
         const trendsData = await fetchTransactionTrends(params);
         setData(trendsData);
         lastParamsRef.current = currentParamsString;
       } else {
-        console.log("Skipping duplicate API request with same parameters");
+        // console.log("Skipping duplicate API request with same parameters");
         setLoading(false);
       }
     } catch (err) {
@@ -496,9 +496,9 @@ export const useCustomerAnalytics = (
       }
 
       if (timeframe === "custom") {
-        console.log(
-          "Custom timeframe without date range for customer analytics - skipping fetch"
-        );
+        // console.log(
+        //   "Custom timeframe without date range for customer analytics - skipping fetch"
+        // );
         setLoading(false);
         return;
       }
@@ -547,13 +547,13 @@ export const useCustomerAnalytics = (
       const currentParamsString = JSON.stringify(params);
 
       if (currentParamsString !== lastParamsRef.current) {
-        console.log("Fetching customer analytics with params:", params);
+        // console.log("Fetching customer analytics with params:", params);
 
         const analyticsData = await fetchCustomerAnalytics(params);
         setData(analyticsData);
         lastParamsRef.current = currentParamsString;
       } else {
-        console.log("Skipping duplicate API request with same parameters");
+        // console.log("Skipping duplicate API request with same parameters");
         setLoading(false);
       }
     } catch (err) {
@@ -604,13 +604,13 @@ export const useEmployeePerformance = (
       const currentParamsString = JSON.stringify(params);
 
       if (currentParamsString !== lastParamsRef.current) {
-        console.log("Fetching employee performance with params:", params);
+        // console.log("Fetching employee performance with params:", params);
 
         const performanceData = await fetchEmployeePerformanceData(params);
         setData(performanceData);
         lastParamsRef.current = currentParamsString;
       } else {
-        console.log("Skipping duplicate API request with same parameters");
+        // console.log("Skipping duplicate API request with same parameters");
       }
     } catch (err) {
       setError("Failed to fetch employee performance data");

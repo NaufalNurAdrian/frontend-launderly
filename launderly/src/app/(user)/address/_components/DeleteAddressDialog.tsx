@@ -12,7 +12,7 @@ import {
 import { FiTrash } from "react-icons/fi";
 import { Button } from "@/components/feat-1/button";
 import { deleteUserAddress } from "@/app/api/address";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 
 interface DeleteDialogProps {
   addressId: number;

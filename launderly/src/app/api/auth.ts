@@ -32,7 +32,6 @@ export async function registerUser(values: RegisterValues): Promise<any> {
   }
 }
 
-
 export async function loginUser(values: { email: string; password: string }) {
   try {
     const payload = { email: values.email, password: values.password };
@@ -54,16 +53,15 @@ export async function loginUser(values: { email: string; password: string }) {
           "This email is registered via Google. Please log in using Google."
         );
       } else {
-        toast.error(errorMessage); 
+        toast.error(errorMessage);
       }
     } else {
       toast.error("An unexpected error occurred.");
     }
 
-    throw err; 
+    throw err;
   }
 }
-
 
 // 🆕 Fungsi login dengan Google
 export async function loginWithGoogle(googleToken: string) {

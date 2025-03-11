@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 import { ResetPasswordSchema } from "@/libs/schema";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 import { confirmForgetPassword } from "@/app/api/user";
 
 const ResetPasswordPage = ({ params }: { params: { token: string } }) => {

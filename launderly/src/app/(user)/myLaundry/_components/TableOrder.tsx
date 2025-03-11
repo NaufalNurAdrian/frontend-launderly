@@ -4,9 +4,8 @@ import React, { useEffect, useState } from "react";
 import useSession from "@/hooks/useSession";
 import { getUserOrders } from "@/app/api/order";
 import { confirmOrder } from "@/app/api/user";
-import { toTitleCase } from "@/helpers/toTitleCase";
 import PayButton from "@/components/feat-1/payButton";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 import {
   Table,
   TableBody,

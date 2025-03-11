@@ -12,8 +12,8 @@ export default function History() {
   const role = useRole();
   return (
     <ProtectedPage allowedRoles={["DRIVER", "WORKER"]}>
-      <div className="flex bg-[url('/LaundryPattern.jpeg')] bg-repeat w-full min-h-screen">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-300 opacity-40 z-0"></div>
+      <div className="relative flex bg-[url('/LaundryPattern.jpeg')] bg-repeat w-full min-h-screen">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-300 h-full opacity-40 z-0"></div>
         <div className="z-30">
           <span className="hidden lg:block">
             <WorkerSidebar />

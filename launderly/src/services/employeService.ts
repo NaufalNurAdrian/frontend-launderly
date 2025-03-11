@@ -72,7 +72,7 @@ export const updateEmployee = async (
   }
 };
 
-export const deleteEmployee = async (id: {id: string }): Promise<Employee> => {
+export const deleteEmployee = async (id: { id: string }): Promise<Employee> => {
   try {
     const response = await api.patch<Employee>(`/employee/delete`, id);
 

@@ -60,12 +60,16 @@ export default function AttendanceReportTableForOutlet() {
       setLoading(false);
     }
   };
-  const handleFilterChange = (selectedFilter: string) => {
-    setFilter(selectedFilter);
-  };
   const handlePageChange = (page: number) => {
+    setLoading(true)
     setCurrentPage(page);
   };
+  
+    const handleFilterChange = (selectedFilter: string) => {
+      setFilter(selectedFilter);
+      setReport([]);
+      setCurrentPage(1);
+    };
 
   const handleSort = (sortBy: string, newOrder: "asc" | "desc") => {
     setSortBy(sortBy);
@@ -73,8 +77,9 @@ export default function AttendanceReportTableForOutlet() {
       ...prevOrder,
       [sortBy]: prevOrder[sortBy] === "asc" ? "desc" : "asc",
     }));
+    setReport([]);
+    setCurrentPage(1);
   };
-
   useEffect(() => {
     if (!order[sortBy]) {
       setOrder((prevOrder) => ({
@@ -110,7 +115,7 @@ export default function AttendanceReportTableForOutlet() {
       <h1 className="text-2xl md:text-3xl font-bold text-blue-800">
         Attendance Report
       </h1>
-      <div className="flex max-sm:flex-col justify-end mb-4">
+      <div className="flex max-sm:flex-col justify-end mb-4 gap-3">
         <span className="flex gap-3 justify-center">
           <SortButton
             sortBy="createdAt"

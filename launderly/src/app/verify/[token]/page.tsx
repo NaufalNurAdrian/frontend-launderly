@@ -3,11 +3,7 @@
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-<<<<<<< HEAD
-import { toast } from "react-toastify";
-=======
 import { toast } from "react-hot-toast";
->>>>>>> b39ac95dc8d9d7c3f32bc72b1219fc7b8d7b713f
 
 const base_url = process.env.NEXT_PUBLIC_BASE_URL_BE;
 

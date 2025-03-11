@@ -115,7 +115,7 @@ export default function AttendanceReportTableForOutlet() {
       <h1 className="text-2xl md:text-3xl font-bold text-blue-800">
         Attendance Report
       </h1>
-      <div className="flex max-sm:flex-col justify-end mb-4">
+      <div className="flex max-sm:flex-col justify-end mb-4 gap-3">
         <span className="flex gap-3 justify-center">
           <SortButton
             sortBy="createdAt"

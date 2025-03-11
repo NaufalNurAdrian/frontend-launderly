@@ -86,7 +86,7 @@ export default function OrderMobileHistoryTable() {
             <div key={request.id} className="flex w-full justify-between h-[110px] border-2 bg-white p-4 py-2 rounded-lg shadow-sm">
               <div className="flex flex-col gap-1">
                 <p className="text-sm text-blue-600 bg-blue-300 px-2 rounded-full">
-                  {formatDate(request.updatedAt)} : {formatTime(new Date(request.updatedAt))}
+                  {formatDate(request.updatedAt)}
                 </p>
                 <div className="mt-1">
                   <h1 className="text-lg text-blue-500 font-bold">{request.orderNumber}</h1>

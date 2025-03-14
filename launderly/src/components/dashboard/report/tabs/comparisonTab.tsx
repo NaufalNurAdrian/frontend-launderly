@@ -14,7 +14,9 @@ import { ComparisonTabProps } from "@/types/report.types";
 
 const ComparisonTab: React.FC<ComparisonTabProps> = ({ 
   comparisonData, 
-  comparisonLoading 
+  comparisonLoading,
+  dateRange,
+  timeframe
 }) => {
   if (comparisonLoading) {
     return (
@@ -44,13 +46,67 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({
     );
   }
 
+  // Get readable timeframe description
+  const getTimeframeDescription = () => {
+    switch(comparisonData.timeframe) {
+      case 'daily':
+        return 'Today only';
+      case 'weekly':
+        return 'Last 7 days';
+      case 'monthly':
+        return 'Last 30 days';
+      case 'yearly':
+        return 'Last 365 days';
+      case 'custom':
+        return 'Custom date range';
+      default:
+        return comparisonData.timeframe;
+    }
+  };
+
+  // Format the date range for display
+  const dateRangeDisplay = comparisonData.dateRange ? 
+    `(${new Date(comparisonData.dateRange.from).toLocaleDateString()} - ${new Date(comparisonData.dateRange.to).toLocaleDateString()})` : 
+    '';
+
+  // Calculate totals for summary display
+  const totalRevenue = comparisonData.outlets.reduce((sum, outlet) => sum + outlet.revenue, 0);
+  const totalOrders = comparisonData.outlets.reduce((sum, outlet) => sum + outlet.orders, 0);
+  const totalCustomers = comparisonData.outlets.reduce((sum, outlet) => sum + outlet.customers, 0);
+
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
-      <Card className="overflow-hidden">
-        <CardHeader className="border-b">
-          <CardTitle>Outlet Performance Comparison</CardTitle>
+      <Card className="overflow-hidden bg-white">
+        <CardHeader className="border-b bg-gradient-to-r from-blue-50 to-indigo-50">
+          <div className="flex flex-col md:flex-row md:justify-between md:items-center">
+            <CardTitle>Outlet Performance Comparison</CardTitle>
+            <span className="text-sm text-gray-700 mt-1 md:mt-0 font-medium">
+              {getTimeframeDescription()} {dateRangeDisplay}
+            </span>
+          </div>
         </CardHeader>
-        <CardContent className="pt-6">
+        <CardContent className="p-0">
+          {/* Summary section */}
+          <div className="bg-blue-50 p-4 border-b border-blue-100">
+            <div className="grid grid-cols-3 gap-4 text-center">
+              <div>
+                <div className="text-sm text-gray-600">Total Revenue</div>
+                <div className="text-lg font-bold text-blue-700">{formatCurrency(totalRevenue)}</div>
+              </div>
+              <div>
+                <div className="text-sm text-gray-600">Total Orders</div>
+                <div className="text-lg font-bold text-blue-700">{totalOrders}</div>
+              </div>
+              <div>
+                <div className="text-sm text-gray-600">Total Customers</div>
+                <div className="text-lg font-bold text-blue-700">{totalCustomers}</div>
+              </div>
+            </div>
+            <div className="text-xs text-gray-500 mt-2 text-center">
+              Note: These totals represent data from all displayed outlets for the selected time period.
+            </div>
+          </div>
+          
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
@@ -148,6 +204,23 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({
           </ResponsiveContainer>
         </CardContent>
       </Card>
+      
+      {/* Add debug information card that can be expanded */}
+      <details className="text-xs text-gray-500 p-2 border border-gray-200 rounded-lg">
+        <summary className="cursor-pointer font-medium">Debug Information</summary>
+        <div className="p-2 space-y-1">
+          <div><strong>Timeframe:</strong> {comparisonData.timeframe}</div>
+          <div><strong>Date Range:</strong> {dateRangeDisplay || 'None'}</div>
+          <div><strong>Outlet Count:</strong> {comparisonData.outlets.length}</div>
+          <div><strong>Total Revenue:</strong> {formatCurrency(totalRevenue)}</div>
+          <div><strong>Total Orders:</strong> {totalOrders}</div>
+          <div><strong>Total Customers:</strong> {totalCustomers}</div>
+          <div className="text-xs text-blue-500 mt-2">
+            Note: If totals differ from Overview tab, it may be due to different calculation methods or filters.
+            The Comparison tab counts only direct orders per outlet, while Overview may include aggregated data.
+          </div>
+        </div>
+      </details>
     </div>
   );
 };

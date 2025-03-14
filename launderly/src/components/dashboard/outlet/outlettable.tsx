@@ -11,9 +11,10 @@ import { IoArrowBack, IoArrowForward } from "react-icons/io5";
 
 interface OutletTableProps {
   searchQuery?: string;
+  refreshTrigger?: number;
 }
 
-export default function OutletTable({ searchQuery = "" }: OutletTableProps) {
+export default function OutletTable({ searchQuery = "", refreshTrigger = 0  }: OutletTableProps) {
   const [outlets, setOutlets] = useState<Outlet[]>([]);
   const [allOutlets, setAllOutlets] = useState<Outlet[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -47,7 +48,7 @@ export default function OutletTable({ searchQuery = "" }: OutletTableProps) {
     };
   
     fetchOutlets();
-  }, [page]);
+  }, [page, refreshTrigger]);
   
   useEffect(() => {
     if (!searchQuery.trim()) {

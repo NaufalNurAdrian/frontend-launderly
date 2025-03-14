@@ -58,13 +58,8 @@ export const useReportData = (
             params.startDate = dateRange.from.toISOString();
             params.endDate = dateRange.to.toISOString();
 
-            // console.log("Custom timeframe with date range:", {
-            //   startDate: params.startDate,
-            //   endDate: params.endDate,
-            // });
           }
         } else {
-          // console.log("Custom timeframe without date range - skipping fetch");
           setLoading(false);
           shouldFetch = false;
         }
@@ -144,7 +139,6 @@ export const useReportData = (
           lastParamsRef.current = currentParamsString;
           setError(null);
         } else {
-          // console.log("Skipping duplicate API request with same parameters");
           setLoading(false);
         }
       }
@@ -191,12 +185,7 @@ export const useSalesReport = (
           params.startDate = dateRange.from.toISOString();
           params.endDate = dateRange.to.toISOString();
 
-          // console.log("Using custom date range for sales report:", {
-          //   startDate: params.startDate,
-          //   endDate: params.endDate,
-          // });
         } else {
-          // console.log("Custom timeframe without date range - skipping fetch");
           setLoading(false);
           return;
         }
@@ -252,7 +241,6 @@ export const useSalesReport = (
       const currentParamsString = JSON.stringify(params);
 
       if (currentParamsString !== lastParamsRef.current) {
-        // console.log("Fetching sales report with params:", params);
 
         const salesData = await fetchSalesReportData(params);
         setData(salesData);
@@ -286,7 +274,8 @@ export const useEmptyReportData = () => {
 
 export const useOutletComparison = (
   timeframe: ReportTimeframe = "monthly",
-  skipFetch: boolean = false
+  skipFetch: boolean = false,
+  dateRange?: { from: Date; to: Date }
 ) => {
   const [data, setData] = useState<OutletComparisonData | null>(null);
   const [loading, setLoading] = useState<boolean>(!skipFetch);
@@ -306,79 +295,32 @@ export const useOutletComparison = (
     try {
       const params: any = { timeframe };
 
+      // For custom timeframe, use the provided date range
       if (timeframe === "custom") {
-        // console.log(
-        //   "Custom timeframe without date range for comparison - skipping fetch"
-        // );
-        setLoading(false);
-        return;
+        if (dateRange && dateRange.from && dateRange.to) {
+          params.startDate = dateRange.from.toISOString();
+          params.endDate = dateRange.to.toISOString();
+          console.log("Using custom date range:", {
+            start: params.startDate,
+            end: params.endDate
+          });
+        } else {
+          setLoading(false);
+          setError("Custom timeframe requires a date range");
+          return;
+        }
       }
-
-      const now = new Date();
-      switch (timeframe) {
-        case "daily":
-          const dailyStart = new Date(now);
-          dailyStart.setDate(now.getDate() - 30);
-          dailyStart.setHours(0, 0, 0, 0);
-          params.startDate = dailyStart.toISOString();
-
-          const dailyEnd = new Date(now);
-          dailyEnd.setHours(23, 59, 59, 999);
-          params.endDate = dailyEnd.toISOString();
-          break;
-
-        case "weekly":
-          const weeklyStart = new Date(now);
-          weeklyStart.setDate(now.getDate() - 84);
-          weeklyStart.setHours(0, 0, 0, 0);
-          params.startDate = weeklyStart.toISOString();
-
-          const weeklyEnd = new Date(now);
-          weeklyEnd.setHours(23, 59, 59, 999);
-          params.endDate = weeklyEnd.toISOString();
-          break;
-
-        case "monthly":
-          const monthlyStart = new Date(now.getFullYear(), 0, 1);
-          params.startDate = monthlyStart.toISOString();
-
-          const monthlyEnd = new Date(
-            now.getFullYear(),
-            11,
-            31,
-            23,
-            59,
-            59,
-            999
-          );
-          params.endDate = monthlyEnd.toISOString();
-          break;
-
-        case "yearly":
-          const yearlyStart = new Date(now.getFullYear() - 4, 0, 1);
-          params.startDate = yearlyStart.toISOString();
-
-          const yearlyEnd = new Date(
-            now.getFullYear(),
-            11,
-            31,
-            23,
-            59,
-            59,
-            999
-          );
-          params.endDate = yearlyEnd.toISOString();
-          break;
-      }
+      // Do not add any dateRange parameters for non-custom timeframes
+      // This ensures the backend decides the proper date range for each timeframe
 
       const currentParamsString = JSON.stringify(params);
+      console.log(`Outlet comparison parameters for ${timeframe}:`, params);
 
       if (currentParamsString !== lastParamsRef.current) {
         const comparisonData = await fetchComparisonData(params);
         setData(comparisonData);
         lastParamsRef.current = currentParamsString;
       } else {
-        // console.log("Skipping duplicate API request with same parameters");
         setLoading(false);
       }
     } catch (err) {
@@ -387,7 +329,7 @@ export const useOutletComparison = (
     } finally {
       setLoading(false);
     }
-  }, [timeframe, skipFetch]);
+  }, [timeframe, skipFetch, dateRange]);
 
   useEffect(() => {
     fetchData();

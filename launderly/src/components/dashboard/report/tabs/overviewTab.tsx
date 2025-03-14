@@ -20,20 +20,27 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
   selectedMonth,
   selectedYear,
   timeframe = "monthly",
+  dateRange,
   onTimeframeChange
 }) => {
   const [shouldFetchData, setShouldFetchData] = useState(false);
 
   const getDateRange = () => {
-    if (timeframe === "custom" && selectedMonth && selectedYear) {
+    if (timeframe === "custom" && dateRange) {
+      return dateRange;
+    } else if (timeframe === "custom" && selectedMonth && selectedYear) {
       const year = parseInt(selectedYear);
       const month = parseInt(selectedMonth) - 1; 
       
       const startDate = new Date(year, month, 1);
+      startDate.setHours(0, 0, 0, 0);
+      
       const endDate = new Date(year, month + 1, 0); 
+      endDate.setHours(23, 59, 59, 999);
       
       return { from: startDate, to: endDate };
     }
+    
     return undefined;
   };
 
@@ -204,6 +211,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
         filterMonth={selectedMonth}
         filterYear={selectedYear}
         timeframe={timeframe}
+        dateRange={dateRange}
         onTimeframeChange={onTimeframeChange}
       />
 

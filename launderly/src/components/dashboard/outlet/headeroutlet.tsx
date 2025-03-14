@@ -8,14 +8,14 @@ import ModalCreateOutlet from "./modalcreateoutlet";
 
 interface HeaderOutletProps {
   onSearch?: (query: string) => void;
+  onRefresh?: () => void; // Add this prop
 }
 
-export default function HeaderOutlet({ onSearch }: HeaderOutletProps) {
+export default function HeaderOutlet({ onSearch, onRefresh }: HeaderOutletProps) {
   const [isModalOpen, setModalOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [debouncedValue, setDebouncedValue] = useState("");
   
-  // Debounce implementation
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedValue(searchValue);
@@ -29,6 +29,13 @@ export default function HeaderOutlet({ onSearch }: HeaderOutletProps) {
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value);
+  };
+
+  const handleOutletCreated = () => {
+    setModalOpen(false);
+    if (onRefresh) {
+      onRefresh();
+    }
   };
 
   return (
@@ -65,7 +72,7 @@ export default function HeaderOutlet({ onSearch }: HeaderOutletProps) {
       </div>
 
       {isModalOpen && (
-        <ModalCreateOutlet onClose={() => setModalOpen(false)} />
+        <ModalCreateOutlet onClose={() => setModalOpen(false)} onSuccess={handleOutletCreated} />
       )}
     </div>
   );

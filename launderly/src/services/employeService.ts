@@ -31,6 +31,7 @@ export const createEmployee = async (
 
     return response.data;
   } catch (error) {
+    console.log({message: "cannot create employee", error})
     throw new Error("Failed to create employee");
   }
 };

@@ -53,9 +53,19 @@ export default function OrderProcessingPage() {
       ),
     }),
     onSubmit: (values) => {
+<<<<<<< HEAD
+<<<<<<< HEAD
+      const isValid = values.items.every((item) => item.workerQuantity === item.quantity);
+=======
       const isValid = values.items.every(
         (item) => item.workerQuantity === item.quantity
       );
+>>>>>>> b39ac95dc8d9d7c3f32bc72b1219fc7b8d7b713f
+=======
+      const isValid = values.items.every(
+        (item) => item.workerQuantity === item.quantity
+      );
+>>>>>>> 29233b1c232abb8e0c829063399476b6e7f64bff
 
       if (isValid) {
         toast.success("Order process succeed");
@@ -146,19 +156,39 @@ export default function OrderProcessingPage() {
             type="button"
             className={`w-full sm:w-auto mt-2 sm:mt-0 sm:ml-2 px-4 py-2 rounded-lg ${formik.values.items.every((item) => item.workerQuantity === item.quantity) ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-red-500 text-white"}`}
             onClick={handleOpenModal}
+<<<<<<< HEAD
+<<<<<<< HEAD
+            disabled={formik.values.items.every((item) => item.workerQuantity === item.quantity)}
+=======
             disabled={formik.values.items.every(
               (item) => item.workerQuantity === item.quantity
             )}
+>>>>>>> b39ac95dc8d9d7c3f32bc72b1219fc7b8d7b713f
+=======
+            disabled={formik.values.items.every(
+              (item) => item.workerQuantity === item.quantity
+            )}
+>>>>>>> 29233b1c232abb8e0c829063399476b6e7f64bff
           >
             Request Bypass
           </button>
         </div>
       </form>
+<<<<<<< HEAD
+<<<<<<< HEAD
+      <BypassModal isOpen={isModalOpen} onClose={handleCloseModal} onSubmit={handleSubmitBypass} />
+=======
+=======
+>>>>>>> 29233b1c232abb8e0c829063399476b6e7f64bff
       <BypassModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         onSubmit={handleSubmitBypass}
       />
+<<<<<<< HEAD
+>>>>>>> b39ac95dc8d9d7c3f32bc72b1219fc7b8d7b713f
+=======
+>>>>>>> 29233b1c232abb8e0c829063399476b6e7f64bff
     </div>
   );
 }

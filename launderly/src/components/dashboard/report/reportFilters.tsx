@@ -22,7 +22,6 @@ interface ReportFiltersProps {
   onDateRangeChange: (range: { from: Date; to: Date } | undefined) => void;
   role?: string | null;
 }
-
 const ReportFilters: React.FC<ReportFiltersProps> = ({
   timeframe,
   outletId,
@@ -76,14 +75,14 @@ const ReportFilters: React.FC<ReportFiltersProps> = ({
   const handleDateRangeChange = (
     range: { from: Date; to: Date } | undefined
   ) => {
-    // console.log("Date range picker change:", range);
+    console.log("Date range picker change:", range);
 
     // Set local state immediately
     setLocalDateRange(range);
 
     // Only propagate changes to parent when we have a complete range or clearing the range
     if (range === undefined || (range.from && range.to)) {
-      // console.log("Propagating date range to parent:", range);
+      console.log("Propagating date range to parent:", range);
 
       if (range) {
         // Format date range consistently
@@ -93,14 +92,21 @@ const ReportFilters: React.FC<ReportFiltersProps> = ({
         const toDate = new Date(range.to);
         toDate.setHours(23, 59, 59, 999);
 
-        onDateRangeChange({
+        // Ensure dates are properly serialized and not losing timezone info
+        const formattedRange = {
           from: fromDate,
           to: toDate,
+        };
+
+        console.log("Formatted date range:", {
+          from: formattedRange.from.toISOString(),
+          to: formattedRange.to.toISOString()
         });
+
+        onDateRangeChange(formattedRange);
       } else {
         onDateRangeChange(undefined);
       }
-
       setIsDirty(false);
     } else {
       setIsDirty(true);

@@ -321,7 +321,7 @@ html {
 }
 
 .logout-button::after {
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   left: 0;
@@ -347,8 +347,7 @@ html {
 }
 
 /* Additional hover effects for all links */
-a,
-button {
+a, button {
   transition: all 0.3s ease;
 }
 
@@ -398,8 +397,7 @@ button {
   font-size: 4rem;
   color: #3b82f6;
   animation: spin 3s infinite linear;
-  filter: drop-shadow(0 10px 8px rgb(0 0 0 / 0.04))
-    drop-shadow(0 4px 3px rgb(0 0 0 / 0.1));
+  filter: drop-shadow(0 10px 8px rgb(0 0 0 / 0.04)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.1));
 }
 
 .loading-text {
@@ -419,33 +417,15 @@ button {
   transform-style: preserve-3d;
 }
 
-.text-char:nth-child(1) {
-  animation-delay: 0s;
-}
-.text-char:nth-child(2) {
-  animation-delay: 0.1s;
-}
-.text-char:nth-child(3) {
-  animation-delay: 0.2s;
-}
-.text-char:nth-child(4) {
-  animation-delay: 0.3s;
-}
-.text-char:nth-child(5) {
-  animation-delay: 0.4s;
-}
-.text-char:nth-child(6) {
-  animation-delay: 0.5s;
-}
-.text-char:nth-child(7) {
-  animation-delay: 0.6s;
-}
-.text-char:nth-child(8) {
-  animation-delay: 0.7s;
-}
-.text-char:nth-child(9) {
-  animation-delay: 0.8s;
-}
+.text-char:nth-child(1) { animation-delay: 0.0s; }
+.text-char:nth-child(2) { animation-delay: 0.1s; }
+.text-char:nth-child(3) { animation-delay: 0.2s; }
+.text-char:nth-child(4) { animation-delay: 0.3s; }
+.text-char:nth-child(5) { animation-delay: 0.4s; }
+.text-char:nth-child(6) { animation-delay: 0.5s; }
+.text-char:nth-child(7) { animation-delay: 0.6s; }
+.text-char:nth-child(8) { animation-delay: 0.7s; }
+.text-char:nth-child(9) { animation-delay: 0.8s; }
 
 .loading-bar {
   width: 200px;
@@ -476,8 +456,7 @@ button {
 }
 
 @keyframes wave-text {
-  0%,
-  100% {
+  0%, 100% {
     transform: translateY(0) rotateX(0);
     text-shadow: 0 10px 15px rgba(59, 130, 246, 0.2);
   }

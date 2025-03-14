@@ -86,6 +86,7 @@ export interface OverviewTabProps {
   selectedMonth: string;
   selectedYear: string;
   timeframe?: ReportTimeframe;
+  dateRange?: DateRange;
   onTimeframeChange?: (value: string) => void;
 }
 
@@ -104,6 +105,8 @@ export interface CustomersTabProps {
 export interface ComparisonTabProps {
   comparisonData: OutletComparisonData | null;
   comparisonLoading: boolean;
+  dateRange?: DateRange;
+  timeframe?: ReportTimeframe;
 }
 
 export interface EmployeePerformanceTabProps {
@@ -119,6 +122,7 @@ export interface ReportSalesChartProps {
   filterMonth: string;
   filterYear: string;
   timeframe?: ReportTimeframe;
+  dateRange?: DateRange;
   onTimeframeChange?: (value: string) => void;
 }
 

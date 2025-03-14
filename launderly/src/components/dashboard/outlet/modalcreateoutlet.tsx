@@ -64,8 +64,10 @@ interface NominatimResponse {
 
 export default function ModalCreateOutlet({
   onClose,
+  onSuccess
 }: {
   onClose: () => void;
+  onSuccess?: () => void; // Add this prop
 }) {
   const [position, setPosition] = useState<[number, number]>([
     -6.2088, 106.8456,
@@ -151,6 +153,12 @@ export default function ModalCreateOutlet({
         });
 
         toast.success("Success Create Outlet")
+
+        if (onSuccess) {
+          onSuccess();
+        } else {
+          onClose();
+        }
 
         onClose();
       } catch (error: any) {

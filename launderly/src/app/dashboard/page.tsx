@@ -16,6 +16,7 @@ import OverviewOutletTab from "@/components/dashboard/report/tabs/overviewOutlet
 import { ChevronDown } from "lucide-react";
 import { OutletApiResponse } from "@/types/outlet.type";
 import { fetchAllOutlet } from "@/services/outletService";
+import DownloadReport from "@/components/dashboard/report/downloadReport";
 
 const ReportDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState("overview");
@@ -95,22 +96,23 @@ const ReportDashboard: React.FC = () => {
     timeframe, 
     "comprehensive", 
     dateRange,
-    !isSuperAdmin || isSelectingDateRange // Skip fetch jika sedang memilih date range
+    !isSuperAdmin || isSelectingDateRange
   );
-
+  
   const { 
     data: comparisonData, 
     loading: comparisonLoading,
     refetch: refetchComparisonData
   } = useOutletComparison(
     timeframe,
-    !isSuperAdmin || isSelectingDateRange // Skip fetch jika sedang memilih date range
+    !isSuperAdmin || isSelectingDateRange,
+    dateRange
   );
   
   // Single effect to handle refetching data when necessary
   useEffect(() => {
     if (shouldRefetchRef.current && !isSelectingDateRange) {
-      //console.log(`Refetching data (trigger count: ${refreshCountRef.current})`);
+      console.log(`Refetching data (trigger count: ${refreshCountRef.current})`);
       refetchReportData();
       refetchComparisonData();
       shouldRefetchRef.current = false;
@@ -120,37 +122,43 @@ const ReportDashboard: React.FC = () => {
   const handleTimeframeChange = (value: string) => {
     const newTimeframe = value as ReportTimeframe;
     
-    // Jika berganti ke custom, tandai bahwa kita sedang memilih date range
+    // If switching to custom, mark that we're selecting date range
     if (newTimeframe === "custom") {
       setIsSelectingDateRange(true);
-      // Jangan hapus date range yang sudah ada jika ada
+      // Don't clear existing date range if we have one
       if (!dateRange) {
-        //console.log("Switched to custom timeframe, waiting for date range selection");
+        console.log("Switched to custom timeframe, waiting for date range selection");
       } else {
-        //console.log("Switched to custom timeframe with existing date range");
-        // Jika sudah ada date range, kita bisa langsung fetch data
+        console.log("Switched to custom timeframe with existing date range");
+        // If we already have a date range, we can fetch data immediately
         setIsSelectingDateRange(false);
         triggerRefetch();
       }
     } else {
-      // Bukan custom timeframe, langsung fetch data
+      // Not a custom timeframe, fetch data immediately
       setIsSelectingDateRange(false);
       
       // If switching away from custom, clear date range
       if (timeframe === "custom") {
         setDateRange(undefined);
       }
+      
+      // Update specific month/year for UI consistency based on timeframe
+      const now = new Date();
+      if (newTimeframe === "monthly") {
+        setSelectedYear(now.getFullYear().toString());
+      }
     }
     
-    // Update timeframe
+    // Update timeframe state
     setTimeframe(newTimeframe);
     
-    // Mark for refetch if not custom or if custom but date range already exists
+    // Trigger refetch if not custom or if custom with existing date range
     if (newTimeframe !== "custom" || (newTimeframe === "custom" && dateRange)) {
       triggerRefetch();
     }
     
-    //console.log(`Timeframe changed to ${newTimeframe}`);
+    console.log(`Timeframe changed to ${newTimeframe}`);
   };
 
   const handleOutletChange = (value: string) => {
@@ -160,7 +168,7 @@ const ReportDashboard: React.FC = () => {
   };
 
   const handleDateRangeChange = (range: { from: Date; to: Date } | undefined) => {
-    //console.log("Date range changed:", range);
+    console.log("Date range changed:", range);
     
     if (range) {
       // Ensure both from and to dates are present
@@ -177,6 +185,13 @@ const ReportDashboard: React.FC = () => {
           to: toDate
         };
         
+        console.log("Setting date range:", {
+          fromISO: fromDate.toISOString(),
+          toISO: toDate.toISOString(),
+          fromLocal: fromDate.toString(),
+          toLocal: toDate.toString()
+        });
+        
         // Update selected month/year based on from date for UI consistency
         setSelectedMonth((fromDate.getMonth() + 1).toString());
         setSelectedYear(fromDate.getFullYear().toString());
@@ -184,32 +199,26 @@ const ReportDashboard: React.FC = () => {
         // Set the date range
         setDateRange(formattedRange);
         
-        // Tandai bahwa kita sudah selesai memilih date range
+        // Mark that we're done selecting date range
         setIsSelectingDateRange(false);
         
-        // Always set timeframe to custom when a date range is selected
+        // Always make sure timeframe is custom when a date range is provided
         if (timeframe !== "custom") {
           setTimeframe("custom");
         }
         
-        // console.log("Date range set:", {
-        //   from: fromDate.toISOString(),
-        //   to: toDate.toISOString(),
-        //   timeframe: "custom"
-        // });
-        
-        // Mark for refetch
+        // Trigger refetch
         triggerRefetch();
       }
     } else {
       // Clear date range
       setDateRange(undefined);
       
-      // Mark for refetch if not custom timeframe
+      // Trigger refetch if not in custom timeframe
       if (timeframe !== "custom") {
         triggerRefetch();
       } else {
-        // Jika custom timeframe tapi date range dihapus, tandai sedang memilih
+        // If in custom timeframe but date range is cleared, mark as selecting
         setIsSelectingDateRange(true);
       }
     }
@@ -263,9 +272,11 @@ const ReportDashboard: React.FC = () => {
   if (timeframe === "custom" && isSelectingDateRange) {
     return (
       <div className="container mx-auto p-4 md:p-6 bg-white">
-        <h1 className="text-2xl md:text-3xl font-bold mb-6 text-gray-800">
-          Outlet Transaction Analysis
-        </h1>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
+            Outlet Transaction Analysis
+          </h1>
+        </div>
 
         <ReportFilters
           timeframe={timeframe}
@@ -295,9 +306,24 @@ const ReportDashboard: React.FC = () => {
 
   return (
     <div className="container mx-auto p-4 md:p-6 bg-white">
-      <h1 className="text-2xl md:text-3xl font-bold mb-6 text-gray-800">
-        Outlet Transaction Analysis
-      </h1>
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
+          Outlet Transaction Analysis
+        </h1>
+        
+        {/* Download Report Button */}
+        {!isSelectingDateRange && reportData && (
+          <div className="mt-3 md:mt-0">
+            <DownloadReport
+              activeTab={activeTab}
+              reportData={reportData}
+              timeframe={timeframe}
+              dateRange={dateRange}
+              outletId={outletId?.toString() || "all"}
+            />
+          </div>
+        )}
+      </div>
 
       <ReportFilters
         timeframe={timeframe}
@@ -385,51 +411,44 @@ const ReportDashboard: React.FC = () => {
         )}
 
         <div className="p-1">
-          <TabsContent value="overview" className="mt-0">
-            {isSuperAdmin ? (
-              <OverviewTab 
-                reportData={reportData} 
-                outletId={outletId?.toString() || "all"} 
-                selectedMonth={selectedMonth}
-                selectedYear={selectedYear}
-                timeframe={timeframe}
-              />
-            ) : (
-              <OverviewOutletTab 
-                outletId={outletId?.toString() || "all"} 
-                filterMonth={selectedMonth}
-                filterYear={selectedYear}
-                filterOutlet={outletId?.toString() || "all"}
-                timeframe={timeframe}
-                onTimeframeChange={handleTimeframeChange}
-              />
-            )}
+          <TabsContent value="overview" className="mt-0" data-value="overview">
+            <OverviewTab 
+              reportData={reportData} 
+              outletId={outletId?.toString() || "all"} 
+              selectedMonth={selectedMonth}
+              selectedYear={selectedYear}
+              timeframe={timeframe}
+              dateRange={dateRange}
+              onTimeframeChange={handleTimeframeChange}
+            />
           </TabsContent>
 
           {isSuperAdmin && (
             <>
-              <TabsContent value="transactions" className="mt-0">
+              <TabsContent value="transactions" className="mt-0" data-value="transactions">
                 <TransactionsTab reportData={reportData} />
               </TabsContent>
 
-              <TabsContent value="orders" className="mt-0">
+              <TabsContent value="orders" className="mt-0" data-value="orders">
                 <OrdersTab reportData={reportData} />
               </TabsContent>
 
-              <TabsContent value="customers" className="mt-0">
+              <TabsContent value="customers" className="mt-0" data-value="customers">
                 <CustomersTab reportData={reportData} />
               </TabsContent>
 
-              <TabsContent value="comparison" className="mt-0">
+              <TabsContent value="comparison" className="mt-0" data-value="comparison">
                 <ComparisonTab 
                   comparisonData={comparisonData} 
                   comparisonLoading={comparisonLoading} 
+                  dateRange={dateRange} 
+                  timeframe={timeframe} 
                 />
               </TabsContent>
             </>
           )}
 
-          <TabsContent value="employees" className="mt-0">
+          <TabsContent value="employees" className="mt-0" data-value="employees">
             <EmployeePerformanceTab
               outletId={outletId}
               selectedMonth={selectedMonth}

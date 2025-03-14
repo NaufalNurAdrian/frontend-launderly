@@ -76,7 +76,6 @@ const ItemList: React.FC<ItemListProps> = ({
             <span>Items List</span>
           </h2>
         </div>
-
         <div className="flex flex-col items-center justify-center py-16">
           <div className="text-blue-200 mb-6">
             <SearchIcon sx={{ fontSize: 96 }} />
@@ -108,7 +107,6 @@ const ItemList: React.FC<ItemListProps> = ({
           )}
         </h2>
       </div>
-
       {/* Desktop view - Table */}
       {!isMobile && (
         <div className="overflow-x-auto">
@@ -227,7 +225,6 @@ const ItemList: React.FC<ItemListProps> = ({
             <ArrowBackIcon sx={{ fontSize: 16 }} />
             <span className="hidden sm:inline-block">Previous</span>
           </button>
-
           <div className="flex items-center gap-2">
             <div className="hidden sm:flex gap-1">
               {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
@@ -241,7 +238,6 @@ const ItemList: React.FC<ItemListProps> = ({
                 } else {
                   pageNum = currentPage - 2 + i;
                 }
-
                 return (
                   <button
                     key={pageNum}
@@ -258,12 +254,10 @@ const ItemList: React.FC<ItemListProps> = ({
                 );
               })}
             </div>
-
             <span className="text-sm text-blue-700 sm:hidden">
               Page {currentPage} of {totalPages}
             </span>
           </div>
-
           <button
             className="flex items-center gap-1 px-4 py-2 bg-white border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors disabled:opacity-50 disabled:hover:bg-white"
             onClick={() => handlePageChange(currentPage + 1)}

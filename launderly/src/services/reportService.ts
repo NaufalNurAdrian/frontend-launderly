@@ -16,28 +16,34 @@ export const getReportSales = async (
       timeframe,
     };
 
+    // Add filters based on timeframe
     if (timeframe === "custom") {
       if (startDate && endDate) {
-        params.startDate = startDate;
-        params.endDate = endDate;
-
-        // console.log("Using custom date range for API request:", {
-        //   startDate,
-        //   endDate,
-        // });
+        // Ensure dates are properly formatted as YYYY-MM-DD
+        const startDateObj = new Date(startDate);
+        const endDateObj = new Date(endDate);
+        
+        params.startDate = startDateObj.toISOString().split('T')[0];
+        params.endDate = endDateObj.toISOString().split('T')[0];
+        
+        console.log("Custom date range params:", {
+          startRaw: startDate,
+          endRaw: endDate,
+          startFormatted: params.startDate,
+          endFormatted: params.endDate
+        });
       } else {
-        throw new Error("Custom timeframe requires start and end dates");
+        console.warn("Custom timeframe without start/end dates");
       }
     } else {
+      // For non-custom timeframes, include month/year if provided
       if (filterMonth) params.filterMonth = filterMonth;
       if (filterYear) params.filterYear = filterYear;
-
-      if (startDate && endDate) {
-        params.startDate = startDate;
-        params.endDate = endDate;
-      }
     }
-
+    
+    console.log("API request params:", params);
+    
+    // Build query string with proper encoding
     let queryString;
     try {
       queryString = Object.entries(params)
@@ -50,8 +56,15 @@ export const getReportSales = async (
       }&timeframe=${timeframe}`;
     }
 
+    console.log(`Making API request to: /report/sales-report?${queryString}`);
+    
     const response = await api.get<SalesReportApiResponse>(
       `/report/sales-report?${queryString}`
+    );
+
+    console.log("API response status:", response.status);
+    console.log("Data returned - dateLabels length:", 
+      response.data?.result?.result?.dateLabels?.length || 0
     );
 
     return response.data;
@@ -199,20 +212,66 @@ export const fetchComparisonData = async (
   params: ComparisonParams
 ): Promise<OutletComparisonData> => {
   try {
-    const queryString = buildQueryString(params);
-
+    const apiParams: Record<string, any> = {
+      timeframe: params.timeframe || 'monthly'
+    };
+    
+    // Consistent date handling for custom timeframe
+    if (params.timeframe === 'custom') {
+      if (!params.startDate || !params.endDate) {
+        throw new Error("Start date and end date are required for custom timeframe");
+      }
+      
+      // Ensure consistent date formatting - use the same format as other tabs
+      if (params.startDate) {
+        const startDate = typeof params.startDate === 'object' 
+          ? params.startDate as Date 
+          : new Date(params.startDate);
+        
+        // Format consistently - use same hours/minutes/seconds as other services
+        startDate.setHours(0, 0, 0, 0);
+        apiParams.startDate = startDate.toISOString();
+      }
+      
+      if (params.endDate) {
+        const endDate = typeof params.endDate === 'object' 
+          ? params.endDate as Date 
+          : new Date(params.endDate);
+        
+        // Format consistently - use same hours/minutes/seconds as other services
+        endDate.setHours(23, 59, 59, 999);
+        apiParams.endDate = endDate.toISOString();
+      }
+    }
+    
+    // Debug log the actual dates that will be sent to the API
+    if (apiParams.startDate && apiParams.endDate) {
+      console.log("Comparison API date range:", {
+        start: new Date(apiParams.startDate).toLocaleDateString(),
+        end: new Date(apiParams.endDate).toLocaleDateString()
+      });
+    }
+    
+    const queryString = buildQueryString(apiParams);
+    
+    // Make the API request
     const response = await api.get<{
       success: boolean;
       data: OutletComparisonData;
     }>(`/report/compare?${queryString}`);
-
-    // Log response status
-    // console.log("Comparison data API response status:", response.status);
-
-    if (!response.data.success) {
-      throw new Error(
-        (response.data.data as any) || "Failed to load outlet comparison data"
-      );
+    
+    // More detailed logging of the response
+    if (response.data && response.data.data) {
+      console.log("Comparison data response:", {
+        timeframe: response.data.data.timeframe,
+        dateRange: {
+          from: new Date(response.data.data.dateRange.from).toLocaleDateString(),
+          to: new Date(response.data.data.dateRange.to).toLocaleDateString()
+        },
+        outletCount: response.data.data.outlets?.length || 0,
+        totalRevenue: response.data.data.outlets.reduce((sum, o) => sum + o.revenue, 0),
+        totalOrders: response.data.data.outlets.reduce((sum, o) => sum + o.orders, 0)
+      });
     }
 
     return response.data.data;

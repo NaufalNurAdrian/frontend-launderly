@@ -2,14 +2,18 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { GiWashingMachine } from "react-icons/gi";
-import useSession from "@/hooks/useSession";
-import { IUser } from "@/types/user";
 import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import { deleteCookie } from "@/libs/action";
 import { toTitleCase } from "@/helpers/toTitleCase";
+import useSession from "@/hooks/useSession";
 import { useRole } from "@/hooks/useRole";
-import { useState, useEffect } from "react";
+import { IUser } from "@/types/user";
+
+// Import React Icons
+import { GiWashingMachine } from "react-icons/gi";
+import { MdDashboard, MdShoppingCart, MdSettings, MdLogout } from "react-icons/md";
+import { FaStore, FaUser, FaBox, FaCalendarAlt } from "react-icons/fa";
 
 interface SidebarProps {
   currentPath?: string;
@@ -46,26 +50,26 @@ function Sidebar({ currentPath }: SidebarProps) {
 
   const getMenuItems = () => {
     const baseItems = [
-      { href: "/dashboard", icon: "/dashboard Layout.svg", label: "Dashboard" },
+      { href: "/dashboard", icon: <MdDashboard size={24} />, label: "Dashboard" },
     ];
 
     if (role === "SUPER_ADMIN") {
       return [
         ...baseItems,
-        { href: "/dashboard/outlet", icon: "/Online Store.svg", label: "Outlet" },
-        { href: "/dashboard/employee", icon: "/customer.svg", label: "Employee" },
-        { href: "/dashboard/item", icon: "/item.svg", label: "Item" },
-        { href: "/dashboard/order", icon: "/Shopping Trolley.svg", label: "Orders" },
-        { href: "/dashboard/bypass", icon: "/Settings.svg", label: "Bypass" },
-        { href: "/dashboard/attendance", icon: "/Attendance.svg", label: "Attendance" }
+        { href: "/dashboard/outlet", icon: <FaStore size={24} />, label: "Outlet" },
+        { href: "/dashboard/employee", icon: <FaUser size={24} />, label: "Employee" },
+        { href: "/dashboard/item", icon: <FaBox size={24} />, label: "Item" },
+        { href: "/dashboard/order", icon: <MdShoppingCart size={24} />, label: "Orders" },
+        { href: "/dashboard/bypass", icon: <MdSettings size={24} />, label: "Bypass" },
+        { href: "/dashboard/attendance", icon: <FaCalendarAlt size={24} />, label: "Attendance" }
       ];
     }
 
     if (role === "OUTLET_ADMIN") {
       return [
         ...baseItems,
-        { href: "/dashboard/order", icon: "/Shopping Trolley.svg", label: "Orders" },
-        { href: "/dashboard/bypass", icon: "/Settings.svg", label: "Bypass" },
+        { href: "/dashboard/order", icon: <MdShoppingCart size={24} />, label: "Orders" },
+        { href: "/dashboard/bypass", icon: <MdSettings size={24} />, label: "Bypass" },
       ];
     }
 
@@ -98,19 +102,9 @@ function Sidebar({ currentPath }: SidebarProps) {
             >
               <div className={`flex items-center justify-center ${active ? 'icon-pulse' : ''}`}>
                 <div className={`p-2 rounded-full ${active ? 'bg-white bg-opacity-20' : 'bg-white bg-opacity-10'}`}>
-                  <Image
-                    alt={item.label}
-                    src={item.icon}
-                    width={24}
-                    height={24}
-                    style={{ 
-                      height: "auto",
-                      filter: active 
-                        ? "invert(100%) brightness(1.5) drop-shadow(0 0 4px rgba(255, 255, 255, 0.7))" 
-                        : "invert(100%) brightness(1.2)"
-                    }}
-                    className={`${active ? "animate-float" : ""}`}
-                  />
+                  <span className={`text-white ${active ? "brightness-150 drop-shadow-glow" : "brightness-120"}`}>
+                    {item.icon}
+                  </span>
                 </div>
               </div>
               <div className={`text-base ${active ? "font-bold" : "font-normal"} text-white hidden md:block transition-all duration-300`}>
@@ -152,14 +146,7 @@ function Sidebar({ currentPath }: SidebarProps) {
         ) : (
           <div className="w-full flex items-center justify-center md:justify-start gap-4 px-3 py-3 rounded-lg hover:bg-white hover:bg-opacity-10 transition-all duration-300">
             <div className="bg-white bg-opacity-20 p-2 rounded-full">
-              <Image
-                alt="profile"
-                src="/Male User.svg"
-                width={24}
-                height={24}
-                style={{ height: "auto", width: "auto" }}
-                className="invert brightness-200"
-              />
+              <FaUser className="text-white" size={24} />
             </div>
             <div className="text-base font-normal text-white hidden md:block">
               Profile
@@ -172,14 +159,7 @@ function Sidebar({ currentPath }: SidebarProps) {
           className="w-full flex items-center justify-center md:justify-start gap-4 px-3 py-3 rounded-lg bg-red-500 bg-opacity-20 hover:bg-opacity-30 transition-all duration-300 mt-2 logout-button"
         >
           <div className="flex items-center justify-center bg-red-500 bg-opacity-20 p-2 rounded-full">
-            <Image
-              alt="logout"
-              src="/Export.svg"
-              width={20}
-              height={20}
-              style={{ height: "auto", width: "auto" }}
-              className="invert brightness-200"
-            />
+            <MdLogout className="text-red-200" size={20} />
           </div>
           <div className="text-base font-medium text-red-200 hidden md:block">
             Log Out

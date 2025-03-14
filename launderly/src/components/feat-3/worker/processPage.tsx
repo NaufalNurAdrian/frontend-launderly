@@ -154,7 +154,6 @@ export default function OrderProcessingPage() {
           </button>
         </div>
       </form>
-      <BypassModal isOpen={isModalOpen} onClose={handleCloseModal} onSubmit={handleSubmitBypass} />
       <BypassModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
